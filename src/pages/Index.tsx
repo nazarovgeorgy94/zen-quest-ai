@@ -14,18 +14,21 @@ interface Message {
 }
 
 const mockSources = [
-  { id: 1, title: "Политика удалённой работы 2026.pdf", relevance: 94, lastUpdated: "12 марта 2026", type: "PDF" },
-  { id: 2, title: "HR Handbook — Раздел 4.2", relevance: 87, lastUpdated: "5 февраля 2026", type: "Wiki" },
-  { id: 3, title: "Протокол совещания руководства Q1", relevance: 72, lastUpdated: "28 января 2026", type: "Doc" },
+  { id: 1, title: "Policy Rule: velocity_check_24h", relevance: 96, lastUpdated: "10 марта 2026", type: "Rule" },
+  { id: 2, title: "Fraud Detection Playbook — Section 3.1", relevance: 89, lastUpdated: "2 февраля 2026", type: "Wiki" },
+  { id: 3, title: "Incident Report: Card-Not-Present Spike Q4", relevance: 74, lastUpdated: "15 января 2026", type: "Report" },
 ];
 
-const mockResponse = `<p>Согласно актуальной <strong>Политике удалённой работы</strong> <span class="citation-tag">1</span>, сотрудники имеют право на гибридный формат — до 3 дней удалённой работы в неделю при согласовании с непосредственным руководителем.</p>
+const mockResponse = `<p>Правило <strong>velocity_check_24h</strong> <span class="citation-tag">1</span> отслеживает количество транзакций с одного устройства или карты за скользящее окно в 24 часа. При превышении порога в 15 транзакций правило присваивает score +35 и генерирует алерт уровня <strong>HIGH</strong>.</p>
 
-<h3>Ключевые положения</h3>
+<h3>Условия срабатывания</h3>
 
-<p>Процедура оформления описана в <strong>HR Handbook</strong> <span class="citation-tag">2</span>: необходимо подать заявку через внутренний портал не позднее чем за 5 рабочих дней. Руководитель обязан рассмотреть заявку в течение 48 часов.</p>
+<p>Согласно <strong>Fraud Detection Playbook</strong> <span class="citation-tag">2</span>, правило активируется при выполнении любого из условий:</p>
+<p>• Более 15 транзакций с одного device_fingerprint за 24ч<br/>
+• Более 5 уникальных получателей с одного аккаунта за 1ч<br/>
+• Сумма транзакций превышает 500 000 ₽ за 6ч</p>
 
-<p>Важно учитывать, что по итогам совещания руководства <span class="citation-tag">3</span>, с апреля 2026 планируется расширение программы до 4 дней для сотрудников с рейтингом эффективности выше 85%.</p>`;
+<p>По данным инцидент-репорта <span class="citation-tag">3</span>, после калибровки порогов в Q4 2025 false positive rate снизился с 12% до 4.3%, при этом detection rate вырос до 94%.</p>`;
 
 const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
