@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { MessageSquare, Clock, Settings, Sparkles } from "lucide-react";
 
 const historyItems = [
-  "Политика удалённой работы",
-  "Процедура онбординга",
-  "Квартальные KPI команд",
+  "velocity_check_24h",
+  "Порог блокировки CNP",
+  "AML-мониторинг правила",
 ];
 
 const SideNav = () => {
