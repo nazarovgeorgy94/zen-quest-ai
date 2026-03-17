@@ -6,28 +6,28 @@ interface EmptyStateProps {
 }
 
 const recentQueries = [
-  "Политика удалённой работы",
-  "Процедура онбординга",
-  "Квартальные KPI команд",
-  "Бюджет на обучение",
+  "velocity_check_24h",
+  "Порог скоринга для блокировки",
+  "Правила CNP-фрода",
+  "Device fingerprinting",
 ];
 
 const trendingQueries = [
-  { num: 1, text: "Обновления политики безопасности" },
-  { num: 2, text: "Структура отделов Q1 2026" },
-  { num: 3, text: "Руководство по код-ревью" },
-  { num: 4, text: "Корпоративные льготы" },
+  { num: 1, text: "Новые правила AML-мониторинга" },
+  { num: 2, text: "Калибровка score-модели Q1 2026" },
+  { num: 3, text: "Chargeback dispute workflow" },
+  { num: 4, text: "Гео-аномалии транзакций" },
 ];
 
 const forYouCards = [
   {
-    icon: "📋",
-    title: "Регламент согласования договоров",
-    subtitle: "На основе ваших запросов",
+    icon: "🛡️",
+    title: "Policy Rule: multi_device_login",
+    subtitle: "Связано с вашими недавними кейсами",
   },
   {
-    icon: "🔐",
-    title: "Политика информационной безопасности",
+    icon: "📊",
+    title: "False Positive Report — март 2026",
     subtitle: "Обновлено недавно",
   },
 ];
