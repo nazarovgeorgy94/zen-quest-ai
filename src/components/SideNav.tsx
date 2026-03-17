@@ -22,7 +22,7 @@ const SideNav = () => {
             <Sparkles className="w-4 h-4 text-primary" />
           </div>
           <span className="hidden lg:block text-sm font-semibold text-sidebar-foreground tracking-tight-custom">
-            Knowledge Base
+            Antifraud KB
           </span>
         </div>
       </div>

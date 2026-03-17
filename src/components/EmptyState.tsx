@@ -57,10 +57,10 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       <motion.div variants={item} className="space-y-2">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium tracking-tight-custom">Knowledge Assistant</span>
+          <span className="text-sm font-medium tracking-tight-custom">Antifraud Knowledge Assistant</span>
         </div>
         <h1 className="text-2xl font-semibold tracking-tight-custom text-foreground text-balance">
-          Чем могу помочь?
+          Что хотите узнать о правилах и политиках?
         </h1>
       </motion.div>
 

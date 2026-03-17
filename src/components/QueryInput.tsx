@@ -40,7 +40,7 @@ const QueryInput = ({ onSubmit, isProcessing }: QueryInputProps) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="What would you like to extract from the collective intelligence?"
+              placeholder="Найти правило, политику или описание сущности..."
               className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground resize-none outline-none text-[15px] leading-relaxed max-h-32 min-h-[24px]"
               rows={1}
               disabled={isProcessing}
