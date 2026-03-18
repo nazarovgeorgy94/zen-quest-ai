@@ -189,7 +189,7 @@ const AiWidget = () => {
               <div className="h-[2px] w-full shimmer-line relative z-10" />
 
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/10 bg-card/60 backdrop-blur-2xl relative z-10">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/20 bg-surface-elevated/80 backdrop-blur-2xl relative z-10">
                 <div className="flex items-center gap-3">
                   <div className="relative w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 ai-btn-ring opacity-30" />
