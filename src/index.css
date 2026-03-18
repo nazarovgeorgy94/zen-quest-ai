@@ -116,7 +116,7 @@
     font-family: 'IBM Plex Serif', Georgia, serif;
     font-size: 14px;
     line-height: 1.75;
-    color: hsl(160 10% 85%);
+    color: hsl(var(--foreground) / 0.85);
   }
 
   .prose-ai p {
@@ -128,7 +128,7 @@
   }
 
   .prose-ai strong {
-    color: hsl(160 10% 95%);
+    color: hsl(var(--foreground) / 0.95);
     font-weight: 600;
   }
 
@@ -137,7 +137,7 @@
     font-weight: 600;
     font-size: 0.9rem;
     letter-spacing: -0.02em;
-    color: hsl(160 10% 95%);
+    color: hsl(var(--foreground) / 0.95);
     margin: 1.2em 0 0.4em;
   }
 
