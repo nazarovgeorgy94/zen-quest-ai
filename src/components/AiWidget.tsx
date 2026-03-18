@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus } from "lucide-react";
+import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 import QueryInput from "./QueryInput";
 import EmptyState from "./EmptyState";
 import ChatMessage from "./ChatMessage";
@@ -33,6 +34,7 @@ const mockResponse = `<p>Правило <strong>velocity_check_24h</strong> <spa
 <p>По данным инцидент-репорта <span class="citation-tag">3</span>, после калибровки порогов в Q4 2025 false positive rate снизился с 12% до 4.3%, при этом detection rate вырос до 94%.</p>`;
 
 const AiWidget = () => {
+  const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -202,6 +204,13 @@ const AiWidget = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
+                  <button
+                    onClick={toggleTheme}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
+                    title={theme === "dark" ? "Светлая тема" : "Тёмная тема"}
+                  >
+                    {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+                  </button>
                   <button
                     onClick={() => setMessages([])}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
