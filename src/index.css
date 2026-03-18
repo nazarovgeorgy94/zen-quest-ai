@@ -197,19 +197,19 @@
 
   .citation-tag {
     @apply inline-flex items-center justify-center text-xs font-medium rounded-full px-2 py-0.5 cursor-pointer transition-all duration-200;
-    background: hsl(160 60% 45% / 0.15);
-    color: hsl(160 60% 55%);
+    background: hsl(var(--primary) / 0.15);
+    color: hsl(var(--primary));
     font-family: 'Geist', sans-serif;
     font-variant-numeric: tabular-nums;
   }
 
   .citation-tag:hover {
-    background: hsl(160 60% 45% / 0.3);
+    background: hsl(var(--primary) / 0.25);
   }
 
   .source-highlight {
-    background: hsl(160 60% 45% / 0.15);
-    border-left: 2px solid hsl(160 60% 45% / 0.5);
+    background: hsl(var(--primary) / 0.1);
+    border-left: 2px solid hsl(var(--primary) / 0.5);
     padding: 0.5rem 1rem;
     border-radius: 0 0.5rem 0.5rem 0;
   }
@@ -230,11 +230,11 @@
   /* Shimmer animation for accent lines */
   .shimmer-line {
     background: 
-      linear-gradient(90deg, hsl(160 60% 45% / 0.15), hsl(160 60% 45% / 0.15)),
+      linear-gradient(90deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.15)),
       linear-gradient(
         90deg,
         transparent 0%,
-        hsl(160 70% 55% / 0.45) 50%,
+        hsl(var(--primary) / 0.45) 50%,
         transparent 100%
       );
     background-size: 100% 100%, 50% 100%;
@@ -260,7 +260,7 @@
   .ambient-blob-1 {
     width: 200px;
     height: 200px;
-    background: hsl(160 60% 45%);
+    background: hsl(var(--primary));
     top: -40px;
     right: -60px;
     animation-delay: 0s;
@@ -269,7 +269,7 @@
   .ambient-blob-2 {
     width: 160px;
     height: 160px;
-    background: hsl(180 50% 50%);
+    background: hsl(var(--accent));
     bottom: 20%;
     left: -40px;
     animation-delay: -7s;
@@ -278,7 +278,7 @@
   .ambient-blob-3 {
     width: 120px;
     height: 120px;
-    background: hsl(140 60% 40%);
+    background: hsl(var(--primary));
     top: 40%;
     right: 10%;
     animation-delay: -14s;
@@ -293,15 +293,15 @@
 
   /* Frosted glass input */
   .frosted-input {
-    background: hsl(160 12% 10% / 0.6);
+    background: hsl(var(--card) / 0.6);
     backdrop-filter: blur(16px);
-    border: 1px solid hsl(160 60% 45% / 0.1);
+    border: 1px solid hsl(var(--primary) / 0.1);
     transition: all 0.3s ease;
   }
 
   .frosted-input:focus-within {
-    border-color: hsl(160 60% 45% / 0.3);
-    box-shadow: 0 0 0 3px hsl(160 60% 45% / 0.08), 0 0 20px -5px hsl(160 60% 45% / 0.15);
+    border-color: hsl(var(--primary) / 0.3);
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.08), 0 0 20px -5px hsl(var(--primary) / 0.15);
   }
 }
 
