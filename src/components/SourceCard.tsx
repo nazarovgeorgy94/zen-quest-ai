@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileText, Clock, ChevronRight } from "lucide-react";
+import { FileText, ChevronRight } from "lucide-react";
 
 interface Source {
   id: number;
@@ -35,11 +35,16 @@ const SourceCard = ({ sources, onSourceClick }: SourceCardProps) => {
       
       {/* Horizontal scrollable source chips */}
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
-        {sources.map((source) => (
-          <button
+        {sources.map((source, i) => (
+          <motion.button
             key={source.id}
             onClick={() => onSourceClick?.(source)}
-            className="shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-card border border-border/60 hover:border-primary/25 transition-all duration-200 group max-w-[200px]"
+            initial={{ opacity: 0, scale: 0.9, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: i * 0.08, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            className="shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl glass-card group max-w-[200px]"
           >
             <span className="citation-tag shrink-0 text-[10px] w-5 h-5 flex items-center justify-center">{source.id}</span>
             <div className="text-left min-w-0">
@@ -53,8 +58,8 @@ const SourceCard = ({ sources, onSourceClick }: SourceCardProps) => {
                 <span className="text-[10px] text-primary/60 font-medium">{source.relevance}%</span>
               </div>
             </div>
-            <ChevronRight className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary/60 transition-colors shrink-0" />
-          </button>
+            <ChevronRight className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary/60 transition-all duration-200 group-hover:translate-x-0.5 shrink-0" />
+          </motion.button>
         ))}
       </div>
     </motion.div>

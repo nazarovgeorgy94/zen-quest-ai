@@ -134,29 +134,30 @@ const AiWidget = () => {
               className="relative w-[60px] h-[60px] group cursor-pointer"
               onClick={() => setIsOpen(true)}
               whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
+              whileTap={{ scale: 0.88 }}
               transition={{ type: "spring", stiffness: 500, damping: 15 }}
             >
               {/* Rotating conic gradient border */}
               <div className="absolute inset-0 rounded-full ai-btn-ring opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
 
-              {/* Multi-layer glow */}
+              {/* Multi-layer glow — enhanced */}
               <motion.div
-                className="absolute inset-[-6px] rounded-full bg-primary/25 blur-2xl pointer-events-none"
-                animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.15, 1] }}
+                className="absolute inset-[-8px] rounded-full pointer-events-none"
+                style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.3), hsl(var(--teal-accent) / 0.15), transparent 70%)" }}
+                animate={{ opacity: [0.4, 0.8, 0.4], scale: [1, 1.2, 1] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               />
               <motion.div
-                className="absolute inset-[-3px] rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.2), transparent 70%)" }}
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                className="absolute inset-[-4px] rounded-full pointer-events-none blur-xl"
+                style={{ background: "radial-gradient(circle, hsl(var(--cyan-pop) / 0.2), transparent 60%)" }}
+                animate={{ opacity: [0.2, 0.5, 0.2], scale: [0.9, 1.1, 0.9] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               />
 
               {/* Inner button */}
-              <button className="absolute inset-[2.5px] rounded-full bg-card flex items-center justify-center transition-all duration-300 group-hover:bg-card/90">
+              <button className="absolute inset-[2.5px] rounded-full bg-card/90 flex items-center justify-center transition-all duration-300 group-hover:bg-card/80 backdrop-blur-sm">
                 <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
+                  animate={{ rotate: [0, 12, -12, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <Sparkles className="w-[22px] h-[22px] text-primary transition-all duration-500 group-hover:rotate-90 group-hover:scale-110" />
@@ -199,18 +200,15 @@ const AiWidget = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className={`fixed z-50 bg-background border border-border/80 shadow-2xl flex flex-col overflow-hidden ${
+              className={`fixed z-50 bg-background/80 backdrop-blur-2xl border border-border/60 shadow-2xl flex flex-col overflow-hidden iridescent-border ${
                 isFullscreen
                   ? "inset-3 rounded-2xl transition-[inset] duration-300"
                   : "bottom-6 right-6 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl"
               }`}
             >
-              {/* Ambient background blobs */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="ambient-blob ambient-blob-1" />
-                <div className="ambient-blob ambient-blob-2" />
-                <div className="ambient-blob ambient-blob-3" />
-              </div>
+              {/* Aurora mesh background */}
+              <div className="aurora-mesh" />
+              <div className="aurora-mesh-extra" />
 
               {/* Noise texture */}
               <div className="absolute inset-0 noise-overlay pointer-events-none" />
@@ -219,7 +217,7 @@ const AiWidget = () => {
               <div className="h-[2px] w-full shimmer-line relative z-10" />
 
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/20 bg-surface-elevated/80 backdrop-blur-2xl relative z-10">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/15 bg-surface-elevated/60 backdrop-blur-2xl relative z-10 refraction-highlight">
                 <div className="flex items-center gap-3">
                   <div className="relative w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 ai-btn-ring opacity-30" />
@@ -313,7 +311,7 @@ const AiWidget = () => {
               </div>
 
               {/* Input */}
-              <div className="px-4 pb-4 pt-2 border-t border-primary/20 bg-surface-elevated/80 backdrop-blur-2xl relative z-10">
+              <div className="px-4 pb-4 pt-2 border-t border-primary/15 bg-surface-elevated/60 backdrop-blur-2xl relative z-10">
                 <QueryInput onSubmit={handleQuery} isProcessing={isProcessing} />
               </div>
             </motion.div>
