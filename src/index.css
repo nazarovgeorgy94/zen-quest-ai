@@ -184,10 +184,12 @@
       hsl(180 50% 50%) 75%,
       hsl(160 60% 45% / 0.1) 100%
     );
-    animation: border-spin 8s linear infinite;
+    animation: border-spin 14s ease-in-out infinite;
   }
 
   @keyframes border-spin {
-    to { --border-angle: 360deg; }
+    0% { --border-angle: 0deg; }
+    50% { --border-angle: 200deg; }
+    100% { --border-angle: 360deg; }
   }
 }
