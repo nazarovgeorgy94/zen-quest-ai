@@ -179,23 +179,16 @@ const AiWidget = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-1">
                   <button
-                    onClick={() => { setMessages([]); }}
+                    onClick={() => setIsFullscreen((f) => !f)}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
-                    title="Новый чат"
+                    title={isFullscreen ? "Свернуть" : "На весь экран"}
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
+                    {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
                   </button>
                   <button
-                    onClick={() => setIsOpen(false)}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
-                    title="Свернуть"
-                  >
-                    <Minimize2 className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => { setIsOpen(false); setMessages([]); }}
+                    onClick={() => { setIsOpen(false); setIsFullscreen(false); }}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200"
                     title="Закрыть"
                   >
