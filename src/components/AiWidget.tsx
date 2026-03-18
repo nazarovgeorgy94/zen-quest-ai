@@ -75,7 +75,8 @@ const AiWidget = () => {
   }, [messages, showScrollBtn, scrollToBottom, checkScrollState]);
 
   const handleQuery = (query: string) => {
-    const userMsg: Message = { id: Date.now().toString(), role: "user", content: query };
+    const now = new Date();
+    const userMsg: Message = { id: Date.now().toString(), role: "user", content: query, timestamp: now };
     const assistantId = (Date.now() + 1).toString();
     const assistantMsg: Message = {
       id: assistantId,
@@ -84,6 +85,7 @@ const AiWidget = () => {
       sources: undefined,
       isStreaming: true,
       statusText: "Думаю...",
+      timestamp: new Date(now.getTime() + 1000),
     };
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setIsProcessing(true);
