@@ -124,27 +124,57 @@ const AiWidget = () => {
       <AnimatePresence>
         {!isOpen && (
           <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            initial={{ scale: 0, opacity: 0, rotate: -180 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            exit={{ scale: 0, opacity: 0, rotate: 180 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="fixed bottom-6 right-6 z-50"
           >
-            <div className="relative w-[60px] h-[60px] group cursor-pointer" onClick={() => setIsOpen(true)}>
+            <motion.div
+              className="relative w-[60px] h-[60px] group cursor-pointer"
+              onClick={() => setIsOpen(true)}
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.92 }}
+              transition={{ type: "spring", stiffness: 500, damping: 15 }}
+            >
               {/* Rotating conic gradient border */}
               <div className="absolute inset-0 rounded-full ai-btn-ring opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
-              
-              {/* Glow effect */}
-              <div className="absolute inset-[-4px] rounded-full bg-primary/20 blur-xl opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
-              
+
+              {/* Multi-layer glow */}
+              <motion.div
+                className="absolute inset-[-6px] rounded-full bg-primary/25 blur-2xl pointer-events-none"
+                animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.15, 1] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div
+                className="absolute inset-[-3px] rounded-full pointer-events-none"
+                style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.2), transparent 70%)" }}
+                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              />
+
               {/* Inner button */}
               <button className="absolute inset-[2.5px] rounded-full bg-card flex items-center justify-center transition-all duration-300 group-hover:bg-card/90">
-                <Sparkles className="w-[22px] h-[22px] text-primary transition-all duration-500 group-hover:rotate-90 group-hover:scale-110" />
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Sparkles className="w-[22px] h-[22px] text-primary transition-all duration-500 group-hover:rotate-90 group-hover:scale-110" />
+                </motion.div>
               </button>
-              
-              {/* Pulse ring */}
-              <span className="absolute inset-[-3px] rounded-full border border-primary/25 animate-ping pointer-events-none" style={{ animationDuration: "3s" }} />
-            </div>
+
+              {/* Pulse rings */}
+              <motion.span
+                className="absolute inset-[-4px] rounded-full border border-primary/20 pointer-events-none"
+                animate={{ scale: [1, 1.5], opacity: [0.4, 0] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeOut" }}
+              />
+              <motion.span
+                className="absolute inset-[-4px] rounded-full border border-accent/15 pointer-events-none"
+                animate={{ scale: [1, 1.7], opacity: [0.3, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeOut", delay: 1.2 }}
+              />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
