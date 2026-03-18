@@ -155,7 +155,11 @@ const AiWidget = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className="fixed bottom-6 right-6 z-50 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl bg-background border border-border/80 shadow-2xl flex flex-col overflow-hidden"
+              className={`fixed z-50 bg-background border border-border/80 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+                isFullscreen
+                  ? "inset-3 rounded-2xl"
+                  : "bottom-6 right-6 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl"
+              }`}
             >
               {/* Gradient top accent line */}
               <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
