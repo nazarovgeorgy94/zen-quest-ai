@@ -173,11 +173,21 @@ const AiWidget = () => {
                   : "bottom-6 right-6 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl"
               }`}
             >
-              {/* Gradient top accent line */}
-              <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+              {/* Ambient background blobs */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="ambient-blob ambient-blob-1" />
+                <div className="ambient-blob ambient-blob-2" />
+                <div className="ambient-blob ambient-blob-3" />
+              </div>
+
+              {/* Noise texture */}
+              <div className="absolute inset-0 noise-overlay pointer-events-none" />
+
+              {/* Shimmer top accent line */}
+              <div className="h-[2px] w-full shimmer-line relative z-10" />
 
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/10 bg-card/60 backdrop-blur-2xl">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/10 bg-card/60 backdrop-blur-2xl relative z-10">
                 <div className="flex items-center gap-3">
                   <div className="relative w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 ai-btn-ring opacity-30" />
@@ -264,7 +274,7 @@ const AiWidget = () => {
               </div>
 
               {/* Input */}
-              <div className="px-4 pb-4 pt-2 border-t border-primary/10 bg-card/40 backdrop-blur-2xl">
+              <div className="px-4 pb-4 pt-2 border-t border-primary/10 bg-card/40 backdrop-blur-2xl relative z-10">
                 <QueryInput onSubmit={handleQuery} isProcessing={isProcessing} />
               </div>
             </motion.div>
