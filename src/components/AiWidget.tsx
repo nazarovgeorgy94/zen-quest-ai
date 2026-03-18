@@ -224,7 +224,7 @@ const AiWidget = () => {
 
                 {/* Scroll to bottom button */}
                 <AnimatePresence>
-                  {!isAtBottom && !isEmpty && (
+                  {showScrollBtn && !isEmpty && (
                     <motion.button
                       initial={{ opacity: 0, scale: 0.8, y: 8 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
