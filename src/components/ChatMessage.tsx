@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Check, ThumbsUp, ThumbsDown, Sparkles, ChevronDown, Layers, Lightbulb } from "lucide-react";
+import { Copy, Check, ThumbsUp, ThumbsDown, Bot, ChevronDown, Layers, Lightbulb } from "lucide-react";
 import SourceCard from "./SourceCard";
 
 interface ChatMessageProps {
