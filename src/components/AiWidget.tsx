@@ -199,18 +199,15 @@ const AiWidget = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className={`fixed z-50 bg-background border border-border/80 shadow-2xl flex flex-col overflow-hidden ${
+              className={`fixed z-50 bg-background/80 backdrop-blur-2xl border border-border/60 shadow-2xl flex flex-col overflow-hidden iridescent-border ${
                 isFullscreen
                   ? "inset-3 rounded-2xl transition-[inset] duration-300"
                   : "bottom-6 right-6 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl"
               }`}
             >
-              {/* Ambient background blobs */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="ambient-blob ambient-blob-1" />
-                <div className="ambient-blob ambient-blob-2" />
-                <div className="ambient-blob ambient-blob-3" />
-              </div>
+              {/* Aurora mesh background */}
+              <div className="aurora-mesh" />
+              <div className="aurora-mesh-extra" />
 
               {/* Noise texture */}
               <div className="absolute inset-0 noise-overlay pointer-events-none" />
@@ -219,7 +216,7 @@ const AiWidget = () => {
               <div className="h-[2px] w-full shimmer-line relative z-10" />
 
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/20 bg-surface-elevated/80 backdrop-blur-2xl relative z-10">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/15 bg-surface-elevated/60 backdrop-blur-2xl relative z-10 refraction-highlight">
                 <div className="flex items-center gap-3">
                   <div className="relative w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 ai-btn-ring opacity-30" />
