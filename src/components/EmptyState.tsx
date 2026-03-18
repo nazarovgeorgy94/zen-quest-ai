@@ -84,17 +84,17 @@ function useAnimatedDecimal(end: number, decimals = 1, duration = 1200) {
   return { value, ref };
 }
 
-/* ── Stat card component ── */
-const StatCard = ({ stat, index }: { stat: typeof liveStats[0]; index: number }) => {
+/* ── Compact stat row ── */
+const StatRow = ({ stat, index }: { stat: typeof liveStats[0]; index: number }) => {
   const isInteger = stat.numericValue % 1 === 0;
   const intCounter = useAnimatedCounter(
     isInteger ? stat.numericValue : 0,
-    1200 + index * 200
+    1000 + index * 150
   );
   const decCounter = useAnimatedDecimal(
     !isInteger ? stat.numericValue : 0,
     1,
-    1200 + index * 200
+    1000 + index * 150
   );
 
   const displayRef = isInteger ? intCounter.ref : decCounter.ref;
@@ -102,47 +102,28 @@ const StatCard = ({ stat, index }: { stat: typeof liveStats[0]; index: number })
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: 0.3 + index * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="relative rounded-xl bg-secondary/30 border border-border/40 p-3 overflow-hidden group hover:bg-secondary/50 hover:border-border/60 transition-all duration-300"
+      initial={{ opacity: 0, x: -8 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.25 + index * 0.06, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className="flex items-center gap-2.5 px-3 py-1.5 group"
     >
-      {/* Top accent line */}
-      <div className={`absolute top-0 left-0 right-0 h-[2px] ${stat.up ? 'bg-gradient-to-r from-transparent via-primary/40 to-transparent' : 'bg-gradient-to-r from-transparent via-destructive/40 to-transparent'}`} />
-      
-      {/* Background glow */}
-      <div className={`absolute -bottom-4 -right-4 w-16 h-16 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${stat.up ? 'bg-primary/10' : 'bg-destructive/10'}`} />
-
-      <div className="relative z-10">
-        {/* Header row: icon + delta */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center">
-            <stat.icon className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary/70 transition-colors duration-300" />
-          </div>
-          <div className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
-            stat.up 
-              ? 'bg-primary/10 text-primary' 
-              : 'bg-destructive/10 text-destructive'
-          }`}>
-            {stat.up ? <ArrowUp className="w-2.5 h-2.5" /> : <ArrowDown className="w-2.5 h-2.5" />}
-            {stat.delta}
-          </div>
-        </div>
-
-        {/* Value */}
-        <span
-          ref={displayRef}
-          className="block text-[18px] font-bold text-foreground leading-none tabular-nums tracking-tight"
-        >
-          {displayValue}{stat.suffix}
-        </span>
-
-        {/* Label */}
-        <p className="text-[10px] text-muted-foreground mt-1.5 leading-tight font-medium">
-          {stat.label}
-        </p>
-      </div>
+      <stat.icon className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+      <span className="text-[11px] text-muted-foreground flex-1 truncate">{stat.label}</span>
+      <span
+        ref={displayRef}
+        className="text-[13px] font-semibold text-foreground tabular-nums tracking-tight"
+      >
+        {displayValue}{stat.suffix}
+      </span>
+      <span className={`text-[10px] font-medium flex items-center gap-0.5 min-w-[40px] justify-end ${
+        stat.up ? 'text-primary' : 'text-destructive'
+      }`}>
+        {stat.up ? <ArrowUp className="w-2.5 h-2.5" /> : <ArrowDown className="w-2.5 h-2.5" />}
+        {stat.delta}
+      </span>
     </motion.div>
+  );
+};
   );
 };
 
