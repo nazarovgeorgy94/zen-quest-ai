@@ -35,13 +35,40 @@ const AiWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const prevMsgCountRef = useRef(0);
 
-  useEffect(() => {
+  const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     }
-  }, [messages]);
+  }, []);
+
+  // Track scroll position
+  const handleScroll = useCallback(() => {
+    if (!scrollRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+    const atBottom = scrollHeight - scrollTop - clientHeight < 60;
+    setIsAtBottom(atBottom);
+    if (atBottom) setUnreadCount(0);
+  }, []);
+
+  // Auto-scroll when new messages arrive and user is at bottom
+  useEffect(() => {
+    const newCount = messages.length;
+    const added = newCount - prevMsgCountRef.current;
+    prevMsgCountRef.current = newCount;
+
+    if (added > 0) {
+      if (isAtBottom) {
+        scrollToBottom();
+      } else {
+        setUnreadCount((prev) => prev + added);
+      }
+    }
+  }, [messages, isAtBottom, scrollToBottom]);
 
   const handleQuery = (query: string) => {
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: query };
