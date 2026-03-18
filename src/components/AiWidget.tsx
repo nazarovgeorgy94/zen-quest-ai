@@ -134,29 +134,30 @@ const AiWidget = () => {
               className="relative w-[60px] h-[60px] group cursor-pointer"
               onClick={() => setIsOpen(true)}
               whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
+              whileTap={{ scale: 0.88 }}
               transition={{ type: "spring", stiffness: 500, damping: 15 }}
             >
               {/* Rotating conic gradient border */}
               <div className="absolute inset-0 rounded-full ai-btn-ring opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
 
-              {/* Multi-layer glow */}
+              {/* Multi-layer glow — enhanced */}
               <motion.div
-                className="absolute inset-[-6px] rounded-full bg-primary/25 blur-2xl pointer-events-none"
-                animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.15, 1] }}
+                className="absolute inset-[-8px] rounded-full pointer-events-none"
+                style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.3), hsl(var(--teal-accent) / 0.15), transparent 70%)" }}
+                animate={{ opacity: [0.4, 0.8, 0.4], scale: [1, 1.2, 1] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               />
               <motion.div
-                className="absolute inset-[-3px] rounded-full pointer-events-none"
-                style={{ background: "radial-gradient(circle, hsl(var(--accent) / 0.2), transparent 70%)" }}
-                animate={{ opacity: [0.3, 0.6, 0.3] }}
+                className="absolute inset-[-4px] rounded-full pointer-events-none blur-xl"
+                style={{ background: "radial-gradient(circle, hsl(var(--cyan-pop) / 0.2), transparent 60%)" }}
+                animate={{ opacity: [0.2, 0.5, 0.2], scale: [0.9, 1.1, 0.9] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               />
 
               {/* Inner button */}
-              <button className="absolute inset-[2.5px] rounded-full bg-card flex items-center justify-center transition-all duration-300 group-hover:bg-card/90">
+              <button className="absolute inset-[2.5px] rounded-full bg-card/90 flex items-center justify-center transition-all duration-300 group-hover:bg-card/80 backdrop-blur-sm">
                 <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
+                  animate={{ rotate: [0, 12, -12, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <Sparkles className="w-[22px] h-[22px] text-primary transition-all duration-500 group-hover:rotate-90 group-hover:scale-110" />
