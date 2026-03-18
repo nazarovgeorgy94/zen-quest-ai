@@ -125,9 +125,9 @@ const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestam
           {isCollapsible && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-1.5 ml-9 mt-1 text-[11px] text-primary/70 hover:text-primary transition-colors duration-200"
+              className="flex items-center gap-1.5 ml-9 mt-2 px-3 py-1.5 rounded-lg text-[12px] font-medium text-primary bg-primary/10 hover:bg-primary/20 transition-all duration-200 border border-primary/15"
             >
-              <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
               {isExpanded ? "Свернуть" : "Показать полностью"}
             </button>
           )}
