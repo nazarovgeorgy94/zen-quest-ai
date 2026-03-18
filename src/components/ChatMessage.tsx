@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Check, ThumbsUp, ThumbsDown, Sparkles, ChevronDown, Layers, Lightbulb } from "lucide-react";
+import { Copy, Check, ThumbsUp, ThumbsDown, Bot, ChevronDown, Layers, Lightbulb } from "lucide-react";
 import SourceCard from "./SourceCard";
 
 interface ChatMessageProps {
@@ -31,7 +31,7 @@ const AiOrb = () => (
   <div className="relative w-7 h-7 shrink-0">
     <div className="absolute inset-0 rounded-full ai-btn-ring opacity-40" />
     <div className="absolute inset-[1.5px] rounded-full bg-card flex items-center justify-center">
-      <Sparkles className="w-3 h-3 text-primary" />
+      <Bot className="w-3.5 h-3.5 text-primary" />
     </div>
     <div className="absolute inset-[-2px] rounded-full bg-primary/15 blur-md opacity-60" />
   </div>
