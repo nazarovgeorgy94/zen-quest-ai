@@ -184,7 +184,7 @@
       hsl(180 50% 50%) 75%,
       hsl(160 60% 45% / 0.1) 100%
     );
-    animation: border-spin 3s linear infinite;
+    animation: border-spin 8s linear infinite;
   }
 
   @keyframes border-spin {
