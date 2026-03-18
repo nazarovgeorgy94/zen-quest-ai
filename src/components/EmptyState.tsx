@@ -219,14 +219,14 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
           {/* Orb */}
           <motion.div
             className="relative w-16 h-16 rounded-full flex items-center justify-center overflow-hidden"
-            animate={{ scale: [1, 1.04, 1] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ scale: [1, 1.06, 1] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
           >
             <div className="absolute inset-0 ai-btn-ring opacity-50" />
             <div className="absolute inset-[2px] rounded-full bg-card flex items-center justify-center">
               <motion.div
-                animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.1, 1] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.2, 0.9, 1] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
                 <Sparkles className="w-6 h-6 text-primary" />
               </motion.div>
