@@ -208,9 +208,9 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
         </div>
       </motion.div>
 
-      {/* ── Live Stats Grid ── */}
-      <motion.div variants={item}>
-        <div className="flex items-center justify-between px-0.5 mb-2">
+      {/* ── Live Stats ── */}
+      <motion.div variants={item} className="rounded-xl bg-secondary/25 border border-border/40 overflow-hidden divide-y divide-border/30">
+        <div className="flex items-center justify-between px-3 py-2">
           <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
             Live-метрики
           </p>
@@ -219,11 +219,9 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
             <span className="text-[10px] text-primary/70 font-medium">Realtime</span>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          {liveStats.map((stat, i) => (
-            <StatCard key={stat.label} stat={stat} index={i} />
-          ))}
-        </div>
+        {liveStats.map((stat, i) => (
+          <StatRow key={stat.label} stat={stat} index={i} />
+        ))}
       </motion.div>
 
       {/* ── Prompt Cards 2×2 Grid ── */}
