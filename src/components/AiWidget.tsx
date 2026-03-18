@@ -130,16 +130,9 @@ const AiWidget = () => {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="fixed bottom-6 right-6 z-50"
           >
-            {/* Rotating conic gradient border — outside motion to avoid transition conflicts */}
-            <div className="absolute inset-0 rounded-full ai-btn-ring opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
-
-            <motion.div
-              className="relative w-[60px] h-[60px] group cursor-pointer"
-              onClick={() => setIsOpen(true)}
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
-              transition={{ type: "spring", stiffness: 500, damping: 15 }}
-            >
+            <div className="relative w-[60px] h-[60px] group cursor-pointer" onClick={() => setIsOpen(true)}>
+              {/* Rotating conic gradient border — plain div, no framer-motion interference */}
+              <div className="absolute inset-0 rounded-full ai-btn-ring opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
 
               {/* Multi-layer glow */}
               <motion.div
@@ -155,7 +148,7 @@ const AiWidget = () => {
               />
 
               {/* Inner button */}
-              <button className="absolute inset-[2.5px] rounded-full bg-card flex items-center justify-center transition-all duration-300 group-hover:bg-card/90">
+              <button className="absolute inset-[2.5px] rounded-full bg-card flex items-center justify-center transition-all duration-300 group-hover:bg-card/90 group-hover:scale-110 group-active:scale-95">
                 <motion.div
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -175,7 +168,7 @@ const AiWidget = () => {
                 animate={{ scale: [1, 1.7], opacity: [0.3, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeOut", delay: 1.2 }}
               />
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
