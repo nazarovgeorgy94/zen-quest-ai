@@ -12,6 +12,7 @@ interface Message {
   sources?: { id: number; title: string; relevance: number; lastUpdated: string; type: string }[];
   isStreaming?: boolean;
   statusText?: string;
+  timestamp: Date;
 }
 
 const mockSources = [
