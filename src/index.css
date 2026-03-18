@@ -120,6 +120,18 @@
 }
 
 @layer components {
+  /* User message gradient bubble */
+  .user-bubble {
+    background: linear-gradient(
+      135deg,
+      hsl(160 50% 30% / 0.35) 0%,
+      hsl(160 60% 45% / 0.2) 50%,
+      hsl(140 50% 35% / 0.25) 100%
+    );
+    border: 1px solid hsl(160 60% 45% / 0.15);
+    backdrop-filter: blur(8px);
+  }
+
   .border-glow {
     border-top: 1px solid hsl(160 60% 45% / 0.2);
     box-shadow: 0 -1px 0 hsl(160 60% 45% / 0.1);

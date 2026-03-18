@@ -12,6 +12,7 @@ interface Message {
   sources?: { id: number; title: string; relevance: number; lastUpdated: string; type: string }[];
   isStreaming?: boolean;
   statusText?: string;
+  timestamp: Date;
 }
 
 const mockSources = [
@@ -74,7 +75,8 @@ const AiWidget = () => {
   }, [messages, showScrollBtn, scrollToBottom, checkScrollState]);
 
   const handleQuery = (query: string) => {
-    const userMsg: Message = { id: Date.now().toString(), role: "user", content: query };
+    const now = new Date();
+    const userMsg: Message = { id: Date.now().toString(), role: "user", content: query, timestamp: now };
     const assistantId = (Date.now() + 1).toString();
     const assistantMsg: Message = {
       id: assistantId,
@@ -83,6 +85,7 @@ const AiWidget = () => {
       sources: undefined,
       isStreaming: true,
       statusText: "Думаю...",
+      timestamp: new Date(now.getTime() + 1000),
     };
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setIsProcessing(true);
@@ -174,7 +177,7 @@ const AiWidget = () => {
               <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60 bg-card/40 backdrop-blur-xl">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/10 bg-card/60 backdrop-blur-2xl">
                 <div className="flex items-center gap-3">
                   <div className="relative w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 ai-btn-ring opacity-30" />
@@ -230,6 +233,8 @@ const AiWidget = () => {
                           sources={msg.sources}
                           isStreaming={msg.isStreaming}
                           statusText={msg.statusText}
+                          timestamp={msg.timestamp}
+                          onAction={handleQuery}
                         />
                       ))}
                     </div>
@@ -259,7 +264,7 @@ const AiWidget = () => {
               </div>
 
               {/* Input */}
-              <div className="px-4 pb-4 pt-2 border-t border-border/50 bg-gradient-to-t from-card/60 to-transparent backdrop-blur-xl">
+              <div className="px-4 pb-4 pt-2 border-t border-primary/10 bg-card/40 backdrop-blur-2xl">
                 <QueryInput onSubmit={handleQuery} isProcessing={isProcessing} />
               </div>
             </motion.div>
