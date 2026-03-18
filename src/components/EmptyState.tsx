@@ -218,7 +218,7 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       </motion.div>
 
       {/* ── Live Stats ── */}
-      <motion.div variants={item} className="rounded-xl bg-secondary/25 border border-border/40 overflow-hidden divide-y divide-border/30">
+      <motion.div variants={item} className="rounded-xl bg-secondary/30 border border-primary/10 overflow-hidden divide-y divide-border/30">
         <div className="flex items-center justify-between px-3 py-2">
           <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
             Live-метрики
