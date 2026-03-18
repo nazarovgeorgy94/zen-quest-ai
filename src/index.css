@@ -183,21 +183,22 @@
 
   /* Shimmer animation for accent lines */
   .shimmer-line {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      hsl(160 60% 45% / 0.08) 30%,
-      hsl(160 70% 55% / 0.5) 50%,
-      hsl(160 60% 45% / 0.08) 70%,
-      transparent 100%
-    );
-    background-size: 300% 100%;
-    animation: shimmer 6s linear infinite;
+    background: 
+      linear-gradient(90deg, hsl(160 60% 45% / 0.15), hsl(160 60% 45% / 0.15)),
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        hsl(160 70% 55% / 0.45) 50%,
+        transparent 100%
+      );
+    background-size: 100% 100%, 50% 100%;
+    background-repeat: no-repeat;
+    animation: shimmer 8s linear infinite;
   }
 
   @keyframes shimmer {
-    0% { background-position: 300% 0; }
-    100% { background-position: -300% 0; }
+    0% { background-position: 0 0, -50% 0; }
+    100% { background-position: 0 0, 150% 0; }
   }
 
   /* Ambient floating blobs */
