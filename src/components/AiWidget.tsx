@@ -110,7 +110,6 @@ const AiWidget = () => {
       setIsProcessing(false);
     }, 2000);
   };
-  };
 
   const isEmpty = messages.length === 0;
 
