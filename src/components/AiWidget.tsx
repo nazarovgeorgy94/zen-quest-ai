@@ -177,7 +177,7 @@ const AiWidget = () => {
               <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-border/60 bg-card/40 backdrop-blur-xl">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/10 bg-card/60 backdrop-blur-2xl">
                 <div className="flex items-center gap-3">
                   <div className="relative w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 ai-btn-ring opacity-30" />
