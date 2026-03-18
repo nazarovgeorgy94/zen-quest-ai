@@ -233,6 +233,8 @@ const AiWidget = () => {
                           sources={msg.sources}
                           isStreaming={msg.isStreaming}
                           statusText={msg.statusText}
+                          timestamp={msg.timestamp}
+                          onAction={handleQuery}
                         />
                       ))}
                     </div>
