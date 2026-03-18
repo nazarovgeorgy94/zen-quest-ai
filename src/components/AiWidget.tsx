@@ -198,25 +198,48 @@ const AiWidget = () => {
               </div>
 
               {/* Messages area */}
-              <div ref={scrollRef} className="flex-1 overflow-y-auto widget-scrollbar">
-                {isEmpty ? (
-                  <div className="flex items-center justify-center px-5 py-6 min-h-full">
-                    <EmptyState onQuerySelect={handleQuery} />
-                  </div>
-                ) : (
-                  <div className="space-y-5 px-5 py-5 pb-4">
-                    {messages.map((msg) => (
-                      <ChatMessage
-                        key={msg.id}
-                        role={msg.role}
-                        content={msg.content}
-                        sources={msg.sources}
-                        isStreaming={msg.isStreaming}
-                        statusText={msg.statusText}
-                      />
-                    ))}
-                  </div>
-                )}
+              <div className="relative flex-1">
+                <div ref={scrollRef} onScroll={handleScroll} className="absolute inset-0 overflow-y-auto widget-scrollbar">
+                  {isEmpty ? (
+                    <div className="flex items-center justify-center px-5 py-6 min-h-full">
+                      <EmptyState onQuerySelect={handleQuery} />
+                    </div>
+                  ) : (
+                    <div className="space-y-5 px-5 py-5 pb-4">
+                      {messages.map((msg) => (
+                        <ChatMessage
+                          key={msg.id}
+                          role={msg.role}
+                          content={msg.content}
+                          sources={msg.sources}
+                          isStreaming={msg.isStreaming}
+                          statusText={msg.statusText}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Scroll to bottom button */}
+                <AnimatePresence>
+                  {!isAtBottom && !isEmpty && (
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.8, y: 8 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.8, y: 8 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={() => { scrollToBottom(); setUnreadCount(0); }}
+                      className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-card border border-border/60 shadow-lg hover:bg-secondary/80 transition-colors duration-200 group"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      {unreadCount > 0 && (
+                        <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </motion.button>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Input */}
