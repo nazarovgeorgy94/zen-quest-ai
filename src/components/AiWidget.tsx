@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Minimize2, RotateCcw } from "lucide-react";
+import { Sparkles, X, Minimize2, RotateCcw, ArrowDown } from "lucide-react";
 import QueryInput from "./QueryInput";
 import EmptyState from "./EmptyState";
 import ChatMessage from "./ChatMessage";
