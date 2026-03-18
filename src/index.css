@@ -359,7 +359,6 @@
 
   @keyframes border-spin {
     0% { --border-angle: 0deg; }
-    50% { --border-angle: 200deg; }
     100% { --border-angle: 360deg; }
   }
 }
