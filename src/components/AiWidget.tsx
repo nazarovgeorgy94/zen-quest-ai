@@ -201,7 +201,7 @@ const AiWidget = () => {
 
               {/* Messages area */}
               <div className="relative flex-1">
-                <div ref={scrollRef} onScroll={handleScroll} className="absolute inset-0 overflow-y-auto widget-scrollbar">
+                <div ref={scrollRef} onScroll={checkScrollState} className="absolute inset-0 overflow-y-auto widget-scrollbar">
                   {isEmpty ? (
                     <div className="flex items-center justify-center px-5 py-6 min-h-full">
                       <EmptyState onQuerySelect={handleQuery} />
