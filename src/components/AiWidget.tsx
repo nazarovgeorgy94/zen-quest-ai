@@ -130,6 +130,9 @@ const AiWidget = () => {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="fixed bottom-6 right-6 z-50"
           >
+            {/* Rotating conic gradient border — outside motion to avoid transition conflicts */}
+            <div className="absolute inset-0 rounded-full ai-btn-ring opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
+
             <motion.div
               className="relative w-[60px] h-[60px] group cursor-pointer"
               onClick={() => setIsOpen(true)}
@@ -137,8 +140,6 @@ const AiWidget = () => {
               whileTap={{ scale: 0.92 }}
               transition={{ type: "spring", stiffness: 500, damping: 15 }}
             >
-              {/* Rotating conic gradient border */}
-              <div className="absolute inset-0 rounded-full ai-btn-ring opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
 
               {/* Multi-layer glow */}
               <motion.div
