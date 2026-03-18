@@ -55,20 +55,22 @@ const AiWidget = () => {
     if (atBottom) setUnreadCount(0);
   }, []);
 
-  // Auto-scroll when new messages arrive and user is at bottom
+  // Auto-scroll when new messages arrive
   useEffect(() => {
     const newCount = messages.length;
     const added = newCount - prevMsgCountRef.current;
     prevMsgCountRef.current = newCount;
 
     if (added > 0) {
-      if (isAtBottom) {
+      if (!showScrollBtn) {
         scrollToBottom();
       } else {
         setUnreadCount((prev) => prev + added);
       }
     }
-  }, [messages, isAtBottom, scrollToBottom]);
+    // Re-check after DOM update
+    requestAnimationFrame(checkScrollState);
+  }, [messages, showScrollBtn, scrollToBottom, checkScrollState]);
 
   const handleQuery = (query: string) => {
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: query };
