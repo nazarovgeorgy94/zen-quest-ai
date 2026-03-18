@@ -123,9 +123,6 @@ const StatRow = ({ stat, index }: { stat: typeof liveStats[0]; index: number }) 
       </span>
     </motion.div>
   );
-};
-  );
-};
 
 /* ── mock live stats ── */
 const liveStats = [
