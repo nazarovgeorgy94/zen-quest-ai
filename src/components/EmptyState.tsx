@@ -192,11 +192,18 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
     >
       {/* ── Hero ── */}
       <motion.div variants={item} className="text-center space-y-3 pt-1">
-        <div className="relative w-14 h-14 mx-auto">
-          <div className="absolute inset-[-8px] rounded-full bg-primary/20 blur-xl animate-pulse" />
-          <div className="relative w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <div className="absolute inset-0 rounded-2xl ai-btn-ring opacity-25" />
-            <Sparkles className="w-6 h-6 text-primary relative z-10" />
+        <div className="relative w-16 h-16 mx-auto">
+          {/* Pulsing rings */}
+          <div className="absolute inset-[-12px] rounded-full border border-primary/10 animate-ping" style={{ animationDuration: "4s" }} />
+          <div className="absolute inset-[-6px] rounded-full border border-primary/8 animate-ping" style={{ animationDuration: "3s", animationDelay: "0.5s" }} />
+          {/* Glow */}
+          <div className="absolute inset-[-12px] rounded-full bg-primary/15 blur-2xl animate-pulse" />
+          {/* Orb */}
+          <div className="relative w-16 h-16 rounded-full flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 ai-btn-ring opacity-40" />
+            <div className="absolute inset-[2px] rounded-full bg-card flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-primary" />
+            </div>
           </div>
         </div>
         <div>

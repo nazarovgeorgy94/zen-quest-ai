@@ -47,11 +47,9 @@ const QueryInput = ({ onSubmit, isProcessing }: QueryInputProps) => {
     >
       <form onSubmit={handleSubmit} className="relative">
         <div
-          className={`rounded-xl border transition-all duration-300 ${
-            focused
-              ? "border-primary/40 shadow-[0_0_0_3px_hsl(160_60%_45%/0.08)]"
-              : "border-border/60 hover:border-border"
-          } bg-secondary/30 backdrop-blur-sm`}
+          className={`rounded-xl frosted-input ${
+            focused ? "!border-primary/30 !shadow-[0_0_0_3px_hsl(160_60%_45%/0.08),0_0_20px_-5px_hsl(160_60%_45%/0.15)]" : ""
+          }`}
         >
           <div className="flex items-end gap-2 px-3.5 py-2.5">
             <textarea
