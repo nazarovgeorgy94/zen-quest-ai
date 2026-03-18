@@ -231,24 +231,41 @@
     z-index: 1;
   }
 
-  /* Shimmer animation for accent lines */
+  /* Shimmer animation for accent lines — Google AI Mode style */
   .shimmer-line {
-    background: 
-      linear-gradient(90deg, hsl(var(--primary) / 0.15), hsl(var(--primary) / 0.15)),
-      linear-gradient(
-        90deg,
-        transparent 0%,
-        hsl(var(--primary) / 0.45) 50%,
-        transparent 100%
-      );
-    background-size: 100% 100%, 50% 100%;
-    background-repeat: no-repeat;
-    animation: shimmer 5s linear infinite;
+    height: 2px;
+    position: relative;
+    background: linear-gradient(
+      90deg,
+      hsl(160 70% 45% / 0.05) 0%,
+      hsl(160 80% 50%) 10%,
+      hsl(140 70% 50%) 20%,
+      hsl(60 80% 55%) 35%,
+      hsl(30 85% 55%) 45%,
+      hsl(350 75% 55%) 55%,
+      hsl(280 60% 55%) 65%,
+      hsl(220 75% 55%) 78%,
+      hsl(190 80% 50%) 90%,
+      hsl(160 70% 45% / 0.05) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer-slide 6s linear infinite;
   }
 
-  @keyframes shimmer {
-    0% { background-position: 0 0, -50% 0; }
-    100% { background-position: 0 0, 150% 0; }
+  .shimmer-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    background-size: inherit;
+    animation: inherit;
+    filter: blur(6px);
+    opacity: 0.6;
+  }
+
+  @keyframes shimmer-slide {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
   }
 
   /* Ambient floating blobs */
