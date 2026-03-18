@@ -177,20 +177,24 @@ const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestam
           {/* Context actions */}
           {onAction && (
             <div className="flex items-center gap-1">
-              <button
+              <motion.button
                 onClick={() => onAction("Углуби предыдущий ответ, дай больше деталей")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/15"
               >
                 <Layers className="w-3 h-3" />
                 Углубить
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={() => onAction("Упрости предыдущий ответ, объясни проще")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 border border-transparent hover:border-primary/15"
               >
                 <Lightbulb className="w-3 h-3" />
                 Упростить
-              </button>
+              </motion.button>
             </div>
           )}
         </motion.div>
