@@ -155,9 +155,9 @@ const AiWidget = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className={`fixed z-50 bg-background border border-border/80 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+              className={`fixed z-50 bg-background border border-border/80 shadow-2xl flex flex-col overflow-hidden ${
                 isFullscreen
-                  ? "inset-3 rounded-2xl"
+                  ? "inset-3 rounded-2xl transition-[inset] duration-300"
                   : "bottom-6 right-6 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl"
               }`}
             >
