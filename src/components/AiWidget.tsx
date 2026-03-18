@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Maximize2, Minimize2, ArrowDown } from "lucide-react";
+import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus } from "lucide-react";
 import QueryInput from "./QueryInput";
 import EmptyState from "./EmptyState";
 import ChatMessage from "./ChatMessage";
@@ -180,6 +180,13 @@ const AiWidget = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setMessages([])}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
+                    title="Новый чат"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
                   <button
                     onClick={() => setIsFullscreen((f) => !f)}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
