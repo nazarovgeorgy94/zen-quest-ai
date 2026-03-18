@@ -35,7 +35,7 @@ const AiWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isAtBottom, setIsAtBottom] = useState(true);
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevMsgCountRef = useRef(0);
@@ -46,12 +46,12 @@ const AiWidget = () => {
     }
   }, []);
 
-  // Track scroll position
-  const handleScroll = useCallback(() => {
+  const checkScrollState = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+    const hasOverflow = scrollHeight > clientHeight + 10;
     const atBottom = scrollHeight - scrollTop - clientHeight < 60;
-    setIsAtBottom(atBottom);
+    setShowScrollBtn(hasOverflow && !atBottom);
     if (atBottom) setUnreadCount(0);
   }, []);
 
