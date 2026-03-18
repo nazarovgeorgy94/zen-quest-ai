@@ -1,47 +1,33 @@
 import { motion } from "framer-motion";
-import { Sparkles, TrendingUp, Zap } from "lucide-react";
+import { Sparkles, Shield, Search, Activity } from "lucide-react";
 
 interface EmptyStateProps {
   onQuerySelect: (query: string) => void;
 }
 
-const recentQueries = [
-  "velocity_check_24h",
-  "Порог скоринга для блокировки",
-  "Правила CNP-фрода",
+const suggestions = [
+  { icon: Shield, text: "Что делает velocity_check_24h?", color: "text-primary" },
+  { icon: Search, text: "Правила CNP-фрод детекции", color: "text-primary" },
+  { icon: Activity, text: "Пороги скоринга для блокировки", color: "text-primary" },
+];
+
+const quickTags = [
   "Device fingerprinting",
-];
-
-const trendingQueries = [
-  { num: 1, text: "Новые правила AML-мониторинга" },
-  { num: 2, text: "Калибровка score-модели Q1 2026" },
-  { num: 3, text: "Chargeback dispute workflow" },
-  { num: 4, text: "Гео-аномалии транзакций" },
-];
-
-const forYouCards = [
-  {
-    icon: "🛡️",
-    title: "Policy Rule: multi_device_login",
-    subtitle: "Связано с вашими недавними кейсами",
-  },
-  {
-    icon: "📊",
-    title: "False Positive Report — март 2026",
-    subtitle: "Обновлено недавно",
-  },
+  "AML-мониторинг",
+  "Chargeback workflow",
+  "Score-модель Q1",
 ];
 
 const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.06, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.07, delayChildren: 0.15 },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 10, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 8, filter: "blur(3px)" },
   show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const } },
 };
 
@@ -51,73 +37,53 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       variants={container}
       initial="hidden"
       animate="show"
-      className="w-full max-w-[800px] mx-auto space-y-8"
+      className="w-full space-y-6"
     >
-      {/* Header */}
+      {/* Hero */}
+      <motion.div variants={item} className="text-center space-y-3">
+        <div className="w-12 h-12 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center relative">
+          <div className="absolute inset-0 rounded-2xl ai-btn-ring opacity-20" />
+          <Sparkles className="w-5 h-5 text-primary relative z-10" />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-foreground tracking-tight-custom">
+            Antifraud Assistant
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            Поиск по базе знаний • Правила • Политики
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Suggestion cards */}
       <motion.div variants={item} className="space-y-2">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium tracking-tight-custom">Antifraud Knowledge Assistant</span>
-        </div>
-        <h1 className="text-2xl font-semibold tracking-tight-custom text-foreground text-balance">
-          Что хотите узнать о правилах и политиках?
-        </h1>
+        {suggestions.map((s) => (
+          <button
+            key={s.text}
+            onClick={() => onQuerySelect(s.text)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary/50 border border-border/50 hover:border-primary/20 hover:bg-secondary transition-all duration-200 group text-left"
+          >
+            <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors duration-200">
+              <s.icon className="w-4 h-4 text-primary/70 group-hover:text-primary transition-colors duration-200" />
+            </div>
+            <span className="text-[13px] text-foreground/80 group-hover:text-foreground transition-colors duration-200">
+              {s.text}
+            </span>
+          </button>
+        ))}
       </motion.div>
 
-      {/* Recent */}
-      <motion.div variants={item} className="space-y-3">
-        <h2 className="text-sm font-medium text-primary/80 uppercase tracking-wider">Недавние</h2>
-        <div className="flex flex-wrap gap-2">
-          {recentQueries.map((q) => (
+      {/* Quick tags */}
+      <motion.div variants={item} className="space-y-2.5">
+        <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-1">Популярные темы</p>
+        <div className="flex flex-wrap gap-1.5">
+          {quickTags.map((tag) => (
             <button
-              key={q}
-              onClick={() => onQuerySelect(q)}
-              className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-sm hover:bg-muted transition-colors duration-200"
+              key={tag}
+              onClick={() => onQuerySelect(tag)}
+              className="px-3 py-1.5 rounded-lg bg-secondary/40 text-[12px] text-secondary-foreground hover:bg-secondary hover:text-foreground transition-all duration-200 border border-transparent hover:border-border/50"
             >
-              {q}
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Trending */}
-      <motion.div variants={item} className="space-y-3">
-        <div className="flex items-center gap-2">
-          <TrendingUp className="w-3.5 h-3.5 text-primary/70" />
-          <h2 className="text-sm font-medium text-primary/80 uppercase tracking-wider">Популярные</h2>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {trendingQueries.map((q) => (
-            <button
-              key={q.num}
-              onClick={() => onQuerySelect(q.text)}
-              className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-sm hover:bg-muted transition-colors duration-200"
-            >
-              <span className="text-primary/70 mr-1.5">{q.num}.</span>
-              {q.text}
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* For You */}
-      <motion.div variants={item} className="space-y-3">
-        <div className="flex items-center gap-2">
-          <Zap className="w-3.5 h-3.5 text-primary/70" />
-          <h2 className="text-sm font-medium text-primary/80 uppercase tracking-wider">Для вас</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {forYouCards.map((card) => (
-            <button
-              key={card.title}
-              onClick={() => onQuerySelect(card.title)}
-              className="text-left p-5 rounded-xl bg-card border border-border hover:border-primary/20 transition-all duration-300 group"
-            >
-              <span className="text-2xl mb-3 block">{card.icon}</span>
-              <h3 className="font-semibold text-card-foreground text-sm tracking-tight-custom group-hover:text-primary transition-colors duration-200">
-                {card.title}
-              </h3>
-              <p className="text-xs text-muted-foreground mt-1">{card.subtitle}</p>
+              {tag}
             </button>
           ))}
         </div>

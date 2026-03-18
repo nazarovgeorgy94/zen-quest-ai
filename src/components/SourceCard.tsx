@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileText, Clock, ExternalLink } from "lucide-react";
+import { FileText, Clock, ChevronRight } from "lucide-react";
 
 interface Source {
   id: number;
@@ -14,40 +14,50 @@ interface SourceCardProps {
   onSourceClick?: (source: Source) => void;
 }
 
+const typeColors: Record<string, string> = {
+  Rule: "bg-primary/15 text-primary",
+  Wiki: "bg-accent/15 text-accent-foreground",
+  Report: "bg-muted text-muted-foreground",
+};
+
 const SourceCard = ({ sources, onSourceClick }: SourceCardProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="border-glow rounded-xl bg-card p-4 space-y-3"
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      className="pl-8"
     >
-      <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-        <FileText className="w-3.5 h-3.5" />
-        <span>Источники ({sources.length})</span>
+      <div className="flex items-center gap-1.5 mb-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+        <FileText className="w-3 h-3" />
+        <span>{sources.length} источника</span>
       </div>
-      <div className="space-y-2">
-        {sources.map((source) => (
-          <button
+      
+      {/* Horizontal scrollable source chips */}
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
+        {sources.map((source, i) => (
+          <motion.button
             key={source.id}
+            initial={{ opacity: 0, x: -8 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.08, duration: 0.3 }}
             onClick={() => onSourceClick?.(source)}
-            className="w-full text-left flex items-center gap-3 p-3 rounded-lg hover:bg-secondary/50 transition-colors duration-200 group"
+            className="shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-card border border-border/60 hover:border-primary/25 transition-all duration-200 group max-w-[200px]"
           >
-            <span className="citation-tag shrink-0">{source.id}</span>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
+            <span className="citation-tag shrink-0 text-[10px] w-5 h-5 flex items-center justify-center">{source.id}</span>
+            <div className="text-left min-w-0">
+              <p className="text-[12px] font-medium text-foreground/90 truncate group-hover:text-primary transition-colors duration-200">
                 {source.title}
               </p>
-              <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {source.lastUpdated}
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-medium ${typeColors[source.type] || typeColors.Report}`}>
+                  {source.type}
                 </span>
-                <span className="text-primary/70">{source.relevance}% релевантность</span>
+                <span className="text-[10px] text-primary/60 font-medium">{source.relevance}%</span>
               </div>
             </div>
-            <ExternalLink className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-          </button>
+            <ChevronRight className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary/60 transition-colors shrink-0" />
+          </motion.button>
         ))}
       </div>
     </motion.div>

@@ -68,14 +68,17 @@
   /* AI response prose styling */
   .prose-ai {
     font-family: 'IBM Plex Serif', Georgia, serif;
-    font-size: 17px;
-    line-height: 1.7;
-    color: hsl(160 10% 88%);
-    max-width: 65ch;
+    font-size: 14px;
+    line-height: 1.75;
+    color: hsl(160 10% 85%);
   }
 
   .prose-ai p {
-    margin-bottom: 1em;
+    margin-bottom: 0.85em;
+  }
+
+  .prose-ai p:last-child {
+    margin-bottom: 0;
   }
 
   .prose-ai strong {
@@ -86,10 +89,33 @@
   .prose-ai h3 {
     font-family: 'Geist', sans-serif;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     letter-spacing: -0.02em;
     color: hsl(160 10% 95%);
-    margin: 1.5em 0 0.5em;
+    margin: 1.2em 0 0.4em;
+  }
+
+  /* Custom scrollbar for widget */
+  .widget-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .widget-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .widget-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(160 10% 20%);
+    border-radius: 4px;
+  }
+  .widget-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(160 10% 28%);
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
