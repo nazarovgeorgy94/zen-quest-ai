@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Minimize2, RotateCcw, ArrowDown } from "lucide-react";
+import { Sparkles, X, Maximize2, Minimize2, ArrowDown } from "lucide-react";
 import QueryInput from "./QueryInput";
 import EmptyState from "./EmptyState";
 import ChatMessage from "./ChatMessage";
@@ -33,6 +33,7 @@ const mockResponse = `<p>Правило <strong>velocity_check_24h</strong> <spa
 
 const AiWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
@@ -154,7 +155,11 @@ const AiWidget = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className="fixed bottom-6 right-6 z-50 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl bg-background border border-border/80 shadow-2xl flex flex-col overflow-hidden"
+              className={`fixed z-50 bg-background border border-border/80 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+                isFullscreen
+                  ? "inset-3 rounded-2xl"
+                  : "bottom-6 right-6 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl"
+              }`}
             >
               {/* Gradient top accent line */}
               <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
@@ -174,23 +179,16 @@ const AiWidget = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-1">
                   <button
-                    onClick={() => { setMessages([]); }}
+                    onClick={() => setIsFullscreen((f) => !f)}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
-                    title="Новый чат"
+                    title={isFullscreen ? "Свернуть" : "На весь экран"}
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
+                    {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
                   </button>
                   <button
-                    onClick={() => setIsOpen(false)}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
-                    title="Свернуть"
-                  >
-                    <Minimize2 className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => { setIsOpen(false); setMessages([]); }}
+                    onClick={() => { setIsOpen(false); setIsFullscreen(false); }}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200"
                     title="Закрыть"
                   >
