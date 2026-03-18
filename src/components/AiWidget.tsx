@@ -79,20 +79,26 @@ const AiWidget = () => {
       {/* Floating trigger button */}
       <AnimatePresence>
         {!isOpen && (
-          <motion.button
+          <motion.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 pl-5 pr-6 py-3.5 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+            className="fixed bottom-6 right-6 z-50"
           >
-            <Sparkles className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
-            <span className="text-sm font-semibold tracking-tight-custom">AI Intelligence</span>
-            
-            {/* Pulse ring */}
-            <span className="absolute inset-0 rounded-full border-2 border-primary/40 animate-ping pointer-events-none" style={{ animationDuration: "2.5s" }} />
-          </motion.button>
+            {/* Rotating gradient border ring */}
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full ai-btn-ring" />
+              <button
+                onClick={() => setIsOpen(true)}
+                className="absolute inset-[2px] rounded-full bg-card flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 group"
+              >
+                <Sparkles className="w-6 h-6 text-primary transition-transform duration-500 group-hover:rotate-90 group-hover:scale-110" />
+              </button>
+              {/* Pulse ring */}
+              <span className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping pointer-events-none" style={{ animationDuration: "2.5s" }} />
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
