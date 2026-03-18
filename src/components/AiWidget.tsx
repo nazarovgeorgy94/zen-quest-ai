@@ -75,31 +75,40 @@ const AiWidget = () => {
 
   const handleQuery = (query: string) => {
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: query };
-    setMessages((prev) => [...prev, userMsg]);
+    const assistantId = (Date.now() + 1).toString();
+    const assistantMsg: Message = {
+      id: assistantId,
+      role: "assistant",
+      content: "",
+      sources: undefined,
+      isStreaming: true,
+      statusText: "Думаю...",
+    };
+    setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setIsProcessing(true);
 
+    // Simulate sources appearing
     setTimeout(() => {
-      const assistantMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: "",
-        sources: mockSources,
-        isStreaming: true,
-        statusText: "Анализ 3 источников...",
-      };
-      setMessages((prev) => [...prev, assistantMsg]);
-
-      setTimeout(() => {
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantMsg.id
-              ? { ...m, content: mockResponse, isStreaming: false, statusText: undefined }
-              : m
-          )
-        );
-        setIsProcessing(false);
-      }, 1500);
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantId
+            ? { ...m, sources: mockSources, statusText: "Анализ 3 источников..." }
+            : m
+        )
+      );
     }, 800);
+
+    // Simulate response
+    setTimeout(() => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantId
+            ? { ...m, content: mockResponse, isStreaming: false, statusText: undefined }
+            : m
+        )
+      );
+      setIsProcessing(false);
+    }, 2000);
   };
 
   const isEmpty = messages.length === 0;
