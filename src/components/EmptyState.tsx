@@ -225,8 +225,6 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
         ))}
       </motion.div>
 
-      {/* ── Prompt Cards 2×2 Grid ── */}
-      <motion.div variants={item} className="space-y-2">
       {/* ── Quick Prompts ── */}
       <motion.div variants={item} className="rounded-xl bg-secondary/25 border border-border/40 overflow-hidden">
         <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-3 py-2">
