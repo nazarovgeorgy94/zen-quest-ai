@@ -310,7 +310,7 @@ const AiWidget = () => {
               </div>
 
               {/* Input */}
-              <div className="px-4 pb-4 pt-2 border-t border-primary/20 bg-surface-elevated/80 backdrop-blur-2xl relative z-10">
+              <div className="px-4 pb-4 pt-2 border-t border-primary/15 bg-surface-elevated/60 backdrop-blur-2xl relative z-10">
                 <QueryInput onSubmit={handleQuery} isProcessing={isProcessing} />
               </div>
             </motion.div>
