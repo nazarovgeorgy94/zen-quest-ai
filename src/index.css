@@ -149,11 +149,11 @@
     background: transparent;
   }
   .widget-scrollbar::-webkit-scrollbar-thumb {
-    background: hsl(160 10% 20%);
+    background: hsl(var(--muted));
     border-radius: 4px;
   }
   .widget-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(160 10% 28%);
+    background: hsl(var(--muted-foreground) / 0.4);
   }
 
   .scrollbar-none::-webkit-scrollbar {
