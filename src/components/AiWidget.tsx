@@ -33,6 +33,7 @@ const mockResponse = `<p>Правило <strong>velocity_check_24h</strong> <spa
 
 const AiWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
