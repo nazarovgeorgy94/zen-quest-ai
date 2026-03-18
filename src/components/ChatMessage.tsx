@@ -118,9 +118,6 @@ const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestam
             dangerouslySetInnerHTML={{ __html: content }}
           />
           {/* Collapse gradient overlay */}
-          {isCollapsible && !isExpanded && (
-            <div className="absolute bottom-0 left-9 right-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none" />
-          )}
           {/* Expand/collapse toggle */}
           {isCollapsible && (
             <button
