@@ -225,31 +225,23 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
         ))}
       </motion.div>
 
-      {/* ── Prompt Cards 2×2 Grid ── */}
-      <motion.div variants={item} className="space-y-2">
-        <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-0.5">
+      {/* ── Quick Prompts ── */}
+      <motion.div variants={item} className="rounded-xl bg-secondary/25 border border-border/40 overflow-hidden">
+        <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-3 py-2">
           Быстрые запросы
         </p>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="divide-y divide-border/30">
           {promptCards.map((card) => (
             <button
               key={card.title}
               onClick={() => onQuerySelect(card.text)}
-              className="group relative text-left rounded-xl bg-secondary/30 border border-border/40 hover:border-primary/25 p-3.5 transition-all duration-250 hover:bg-secondary/60"
+              className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-secondary/40 transition-colors duration-200 group text-left"
             >
-              <div className="absolute inset-0 rounded-xl bg-primary/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative z-10">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mb-2.5 group-hover:bg-primary/15 transition-colors duration-200">
-                  <card.icon className="w-4 h-4 text-primary/70 group-hover:text-primary transition-colors duration-200" />
-                </div>
-                <p className="text-[12px] font-medium text-foreground/90 leading-snug group-hover:text-foreground transition-colors duration-200">
-                  {card.title}
-                </p>
-                <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed line-clamp-2">
-                  {card.text}
-                </p>
-              </div>
-              <ArrowUpRight className="absolute top-3 right-3 w-3 h-3 text-muted-foreground/40 opacity-0 group-hover:opacity-100 group-hover:text-primary/60 transition-all duration-200" />
+              <card.icon className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors duration-200" />
+              <span className="text-[12px] text-foreground/80 group-hover:text-foreground flex-1 truncate transition-colors duration-200">
+                {card.text}
+              </span>
+              <ArrowUpRight className="w-3 h-3 text-muted-foreground/30 group-hover:text-primary/60 shrink-0 transition-colors duration-200" />
             </button>
           ))}
         </div>
