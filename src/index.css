@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* Deep Forest System */
+    /* Deep Forest System — Dark (default) */
     --background: 160 15% 7%;
     --foreground: 160 10% 92%;
 
@@ -52,6 +52,52 @@
     --sidebar-accent-foreground: 160 10% 80%;
     --sidebar-border: 160 10% 12%;
     --sidebar-ring: 160 60% 45%;
+  }
+
+  .light {
+    --background: 150 20% 97%;
+    --foreground: 160 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 160 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 20% 12%;
+
+    --primary: 160 65% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 160 12% 92%;
+    --secondary-foreground: 160 15% 30%;
+
+    --muted: 160 10% 94%;
+    --muted-foreground: 160 8% 45%;
+
+    --accent: 160 50% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 160 15% 88%;
+    --input: 160 15% 88%;
+    --ring: 160 65% 38%;
+
+    /* Custom tokens */
+    --surface: 160 10% 96%;
+    --surface-elevated: 0 0% 100%;
+    --emerald-glow: 160 65% 38%;
+    --emerald-dim: 160 30% 60%;
+    --emerald-subtle: 160 20% 88%;
+
+    --sidebar-background: 160 15% 95%;
+    --sidebar-foreground: 160 10% 40%;
+    --sidebar-primary: 160 65% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 12% 92%;
+    --sidebar-accent-foreground: 160 15% 25%;
+    --sidebar-border: 160 15% 88%;
+    --sidebar-ring: 160 65% 38%;
   }
 }
 
