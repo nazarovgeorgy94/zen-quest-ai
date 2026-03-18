@@ -294,21 +294,24 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
         </div>
         <div className="space-y-1.5">
           {recommendations.map((rec) => (
-            <button
+            <motion.button
               key={rec.text}
               onClick={() => onQuerySelect(rec.text)}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-primary/[0.04] border border-primary/10 hover:border-primary/20 hover:bg-primary/[0.08] transition-all duration-200 group text-left"
+              whileHover={{ scale: 1.015, y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl glass-card group text-left"
             >
-              <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors duration-300">
                 <rec.icon className="w-3.5 h-3.5 text-primary/60 group-hover:text-primary transition-colors duration-200" />
               </div>
               <span className="text-[12px] text-foreground/75 group-hover:text-foreground flex-1 transition-colors duration-200 leading-snug">
                 {rec.text}
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary/70 font-medium shrink-0">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary/70 font-medium shrink-0 group-hover:bg-primary/20 transition-colors duration-300">
                 {rec.tag}
               </span>
-            </button>
+            </motion.button>
           ))}
         </div>
       </motion.div>
