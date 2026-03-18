@@ -35,7 +35,7 @@ const AiWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isAtBottom, setIsAtBottom] = useState(true);
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevMsgCountRef = useRef(0);
@@ -46,29 +46,31 @@ const AiWidget = () => {
     }
   }, []);
 
-  // Track scroll position
-  const handleScroll = useCallback(() => {
+  const checkScrollState = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+    const hasOverflow = scrollHeight > clientHeight + 10;
     const atBottom = scrollHeight - scrollTop - clientHeight < 60;
-    setIsAtBottom(atBottom);
+    setShowScrollBtn(hasOverflow && !atBottom);
     if (atBottom) setUnreadCount(0);
   }, []);
 
-  // Auto-scroll when new messages arrive and user is at bottom
+  // Auto-scroll when new messages arrive
   useEffect(() => {
     const newCount = messages.length;
     const added = newCount - prevMsgCountRef.current;
     prevMsgCountRef.current = newCount;
 
     if (added > 0) {
-      if (isAtBottom) {
+      if (!showScrollBtn) {
         scrollToBottom();
       } else {
         setUnreadCount((prev) => prev + added);
       }
     }
-  }, [messages, isAtBottom, scrollToBottom]);
+    // Re-check after DOM update
+    requestAnimationFrame(checkScrollState);
+  }, [messages, showScrollBtn, scrollToBottom, checkScrollState]);
 
   const handleQuery = (query: string) => {
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: query };
@@ -199,7 +201,7 @@ const AiWidget = () => {
 
               {/* Messages area */}
               <div className="relative flex-1">
-                <div ref={scrollRef} onScroll={handleScroll} className="absolute inset-0 overflow-y-auto widget-scrollbar">
+                <div ref={scrollRef} onScroll={checkScrollState} className="absolute inset-0 overflow-y-auto widget-scrollbar">
                   {isEmpty ? (
                     <div className="flex items-center justify-center px-5 py-6 min-h-full">
                       <EmptyState onQuerySelect={handleQuery} />
@@ -222,7 +224,7 @@ const AiWidget = () => {
 
                 {/* Scroll to bottom button */}
                 <AnimatePresence>
-                  {!isAtBottom && !isEmpty && (
+                  {showScrollBtn && !isEmpty && (
                     <motion.button
                       initial={{ opacity: 0, scale: 0.8, y: 8 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
