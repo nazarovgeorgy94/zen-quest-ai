@@ -170,27 +170,27 @@
   .user-bubble {
     background: linear-gradient(
       135deg,
-      hsl(160 50% 30% / 0.35) 0%,
-      hsl(160 60% 45% / 0.2) 50%,
-      hsl(140 50% 35% / 0.25) 100%
+      hsl(var(--primary) / 0.15) 0%,
+      hsl(var(--primary) / 0.08) 50%,
+      hsl(var(--accent) / 0.12) 100%
     );
-    border: 1px solid hsl(160 60% 45% / 0.15);
+    border: 1px solid hsl(var(--primary) / 0.15);
     backdrop-filter: blur(8px);
   }
 
   .border-glow {
-    border-top: 1px solid hsl(160 60% 45% / 0.2);
-    box-shadow: 0 -1px 0 hsl(160 60% 45% / 0.1);
+    border-top: 1px solid hsl(var(--primary) / 0.2);
+    box-shadow: 0 -1px 0 hsl(var(--primary) / 0.1);
   }
 
   .shadow-forest {
-    box-shadow: 0 10px 30px -10px hsl(160 15% 5% / 0.5);
+    box-shadow: 0 10px 30px -10px hsl(var(--background) / 0.5);
   }
 
   .input-glow {
     border: 1px solid transparent;
-    background-image: linear-gradient(hsl(160 12% 10%), hsl(160 12% 10%)),
-                      linear-gradient(135deg, hsl(160 60% 45% / 0.3), transparent 60%);
+    background-image: linear-gradient(hsl(var(--card)), hsl(var(--card))),
+                      linear-gradient(135deg, hsl(var(--primary) / 0.3), transparent 60%);
     background-origin: border-box;
     background-clip: padding-box, border-box;
   }
