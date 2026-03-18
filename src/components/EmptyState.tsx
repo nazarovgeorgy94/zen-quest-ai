@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import {
   Sparkles,
   Shield,
@@ -12,21 +13,148 @@ import {
   GitBranch,
   Filter,
   ArrowUpRight,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 
 interface EmptyStateProps {
   onQuerySelect: (query: string) => void;
 }
 
+/* ── Animated counter hook ── */
+function useAnimatedCounter(end: number, duration = 1200, startOnView = true) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!startOnView || !inView) return;
+
+    let startTime: number | null = null;
+    let frame: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * end));
+      if (progress < 1) {
+        frame = requestAnimationFrame(animate);
+      } else {
+        setCount(end);
+      }
+    };
+
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [end, duration, inView, startOnView]);
+
+  return { count, ref };
+}
+
+/* ── Animated decimal counter ── */
+function useAnimatedDecimal(end: number, decimals = 1, duration = 1200) {
+  const [value, setValue] = useState("0");
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!inView) return;
+
+    let startTime: number | null = null;
+    let frame: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue((eased * end).toFixed(decimals));
+      if (progress < 1) {
+        frame = requestAnimationFrame(animate);
+      } else {
+        setValue(end.toFixed(decimals));
+      }
+    };
+
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [end, decimals, duration, inView]);
+
+  return { value, ref };
+}
+
+/* ── Stat card component ── */
+const StatCard = ({ stat, index }: { stat: typeof liveStats[0]; index: number }) => {
+  const isInteger = stat.numericValue % 1 === 0;
+  const intCounter = useAnimatedCounter(
+    isInteger ? stat.numericValue : 0,
+    1200 + index * 200
+  );
+  const decCounter = useAnimatedDecimal(
+    !isInteger ? stat.numericValue : 0,
+    1,
+    1200 + index * 200
+  );
+
+  const displayRef = isInteger ? intCounter.ref : decCounter.ref;
+  const displayValue = isInteger ? intCounter.count.toLocaleString("ru-RU") : decCounter.value;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: 0.3 + index * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="relative rounded-xl bg-secondary/30 border border-border/40 p-3 overflow-hidden group hover:bg-secondary/50 hover:border-border/60 transition-all duration-300"
+    >
+      {/* Top accent line */}
+      <div className={`absolute top-0 left-0 right-0 h-[2px] ${stat.up ? 'bg-gradient-to-r from-transparent via-primary/40 to-transparent' : 'bg-gradient-to-r from-transparent via-destructive/40 to-transparent'}`} />
+      
+      {/* Background glow */}
+      <div className={`absolute -bottom-4 -right-4 w-16 h-16 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${stat.up ? 'bg-primary/10' : 'bg-destructive/10'}`} />
+
+      <div className="relative z-10">
+        {/* Header row: icon + delta */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center">
+            <stat.icon className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary/70 transition-colors duration-300" />
+          </div>
+          <div className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
+            stat.up 
+              ? 'bg-primary/10 text-primary' 
+              : 'bg-destructive/10 text-destructive'
+          }`}>
+            {stat.up ? <ArrowUp className="w-2.5 h-2.5" /> : <ArrowDown className="w-2.5 h-2.5" />}
+            {stat.delta}
+          </div>
+        </div>
+
+        {/* Value */}
+        <span
+          ref={displayRef}
+          className="block text-[18px] font-bold text-foreground leading-none tabular-nums tracking-tight"
+        >
+          {displayValue}{stat.suffix}
+        </span>
+
+        {/* Label */}
+        <p className="text-[10px] text-muted-foreground mt-1.5 leading-tight font-medium">
+          {stat.label}
+        </p>
+      </div>
+    </motion.div>
+  );
+};
+
 /* ── mock live stats ── */
 const liveStats = [
-  { label: "Сработки 24ч", value: "1 247", delta: "+12%", up: true, icon: AlertTriangle },
-  { label: "Detection rate", value: "94.3%", delta: "+2.1%", up: true, icon: TrendingUp },
-  { label: "False positive", value: "4.3%", delta: "−1.8%", up: false, icon: Activity },
-  { label: "Avg score", value: "67.2", delta: "+4.5", up: true, icon: BarChart3 },
+  { label: "Сработки 24ч", numericValue: 1247, suffix: "", delta: "12%", up: true, icon: AlertTriangle },
+  { label: "Detection rate", numericValue: 94.3, suffix: "%", delta: "2.1%", up: true, icon: TrendingUp },
+  { label: "False positive", numericValue: 4.3, suffix: "%", delta: "1.8%", up: false, icon: Activity },
+  { label: "Avg score", numericValue: 67.2, suffix: "", delta: "4.5", up: true, icon: BarChart3 },
 ];
 
-/* ── quick prompt cards (2x2 grid like reference) ── */
+/* ── quick prompt cards ── */
 const promptCards = [
   {
     icon: Shield,
@@ -50,7 +178,7 @@ const promptCards = [
   },
 ];
 
-/* ── recommendation chips ── */
+/* ── recommendations ── */
 const recommendations = [
   { icon: Zap, text: "Снизить порог velocity до 12 txn/24h", tag: "Порог" },
   { icon: Filter, text: "Добавить geo-condition в rule_cnp_03", tag: "Условие" },
@@ -86,7 +214,6 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       {/* ── Hero ── */}
       <motion.div variants={item} className="text-center space-y-3 pt-1">
         <div className="relative w-14 h-14 mx-auto">
-          {/* Glow */}
           <div className="absolute inset-[-8px] rounded-full bg-primary/20 blur-xl animate-pulse" />
           <div className="relative w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
             <div className="absolute inset-0 rounded-2xl ai-btn-ring opacity-25" />
@@ -103,29 +230,22 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
         </div>
       </motion.div>
 
-      {/* ── Live Stats Row ── */}
-      <motion.div variants={item} className="grid grid-cols-4 gap-1.5">
-        {liveStats.map((s) => (
-          <div
-            key={s.label}
-            className="relative rounded-xl bg-secondary/40 border border-border/40 px-2.5 py-2.5 text-center overflow-hidden group"
-          >
-            {/* Subtle top accent */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[1.5px] bg-primary/30 rounded-full" />
-            <s.icon className="w-3.5 h-3.5 text-muted-foreground mx-auto mb-1.5" />
-            <p className="text-[15px] font-semibold text-foreground leading-none tabular-nums">
-              {s.value}
-            </p>
-            <p className="text-[10px] text-muted-foreground mt-1 leading-tight">{s.label}</p>
-            <span
-              className={`text-[10px] font-medium mt-0.5 inline-block ${
-                s.up ? "text-primary" : "text-destructive"
-              }`}
-            >
-              {s.delta}
-            </span>
+      {/* ── Live Stats Grid ── */}
+      <motion.div variants={item}>
+        <div className="flex items-center justify-between px-0.5 mb-2">
+          <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
+            Live-метрики
+          </p>
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[10px] text-primary/70 font-medium">Realtime</span>
           </div>
-        ))}
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {liveStats.map((stat, i) => (
+            <StatCard key={stat.label} stat={stat} index={i} />
+          ))}
+        </div>
       </motion.div>
 
       {/* ── Prompt Cards 2×2 Grid ── */}
@@ -140,7 +260,6 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
               onClick={() => onQuerySelect(card.text)}
               className="group relative text-left rounded-xl bg-secondary/30 border border-border/40 hover:border-primary/25 p-3.5 transition-all duration-250 hover:bg-secondary/60"
             >
-              {/* Hover glow */}
               <div className="absolute inset-0 rounded-xl bg-primary/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative z-10">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mb-2.5 group-hover:bg-primary/15 transition-colors duration-200">
