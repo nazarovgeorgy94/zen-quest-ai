@@ -140,7 +140,7 @@ const AiWidget = () => {
                   <div>
                     <h2 className="text-sm font-semibold text-foreground tracking-tight-custom leading-tight">Antifraud Assistant</h2>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                       <p className="text-[11px] text-muted-foreground">Knowledge Base AI</p>
                     </div>
                   </div>
