@@ -23,9 +23,9 @@ const typeColors: Record<string, string> = {
 const SourceCard = ({ sources, onSourceClick }: SourceCardProps) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className="pl-8"
     >
       <div className="flex items-center gap-1.5 mb-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
@@ -35,12 +35,9 @@ const SourceCard = ({ sources, onSourceClick }: SourceCardProps) => {
       
       {/* Horizontal scrollable source chips */}
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
-        {sources.map((source, i) => (
-          <motion.button
+        {sources.map((source) => (
+          <button
             key={source.id}
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.08, duration: 0.3 }}
             onClick={() => onSourceClick?.(source)}
             className="shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-card border border-border/60 hover:border-primary/25 transition-all duration-200 group max-w-[200px]"
           >
@@ -57,7 +54,7 @@ const SourceCard = ({ sources, onSourceClick }: SourceCardProps) => {
               </div>
             </div>
             <ChevronRight className="w-3 h-3 text-muted-foreground/40 group-hover:text-primary/60 transition-colors shrink-0" />
-          </motion.button>
+          </button>
         ))}
       </div>
     </motion.div>
