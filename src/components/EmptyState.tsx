@@ -260,23 +260,26 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       </motion.div>
 
       {/* ── Quick Prompts ── */}
-      <motion.div variants={item} className="rounded-xl bg-secondary/30 border border-primary/10 overflow-hidden">
+      <motion.div variants={item} className="rounded-xl glass-card overflow-hidden">
         <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-3 py-2">
           Быстрые запросы
         </p>
-        <div className="divide-y divide-border/30">
+        <div className="divide-y divide-border/20">
           {promptCards.map((card) => (
-            <button
+            <motion.button
               key={card.title}
               onClick={() => onQuerySelect(card.text)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-secondary/40 transition-colors duration-200 group text-left"
+              whileHover={{ x: 3, backgroundColor: "hsl(var(--primary) / 0.06)" }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 transition-colors duration-200 group text-left"
             >
               <card.icon className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary shrink-0 transition-colors duration-200" />
               <span className="text-[12px] text-foreground/80 group-hover:text-foreground flex-1 truncate transition-colors duration-200">
                 {card.text}
               </span>
-              <ArrowUpRight className="w-3 h-3 text-muted-foreground/30 group-hover:text-primary/60 shrink-0 transition-colors duration-200" />
-            </button>
+              <ArrowUpRight className="w-3 h-3 text-muted-foreground/30 group-hover:text-primary/60 shrink-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </motion.button>
           ))}
         </div>
       </motion.div>
