@@ -194,13 +194,14 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       <motion.div variants={item} className="text-center space-y-3 pt-1">
         <div className="relative w-16 h-16 mx-auto">
           {/* Pulsing rings */}
-          <div className="absolute inset-[-12px] rounded-full border border-primary/10 animate-ping" style={{ animationDuration: "4s" }} />
-          <div className="absolute inset-[-6px] rounded-full border border-primary/8 animate-ping" style={{ animationDuration: "3s", animationDelay: "0.5s" }} />
+          <div className="absolute inset-[-12px] rounded-full border border-primary/15 animate-ping" style={{ animationDuration: "4s" }} />
+          <div className="absolute inset-[-6px] rounded-full border border-teal-accent/12 animate-ping" style={{ animationDuration: "3s", animationDelay: "0.5s" }} />
           {/* Glow */}
-          <div className="absolute inset-[-12px] rounded-full bg-primary/15 blur-2xl animate-pulse" />
+          <div className="absolute inset-[-16px] rounded-full bg-primary/20 blur-2xl animate-pulse" />
+          <div className="absolute inset-[-10px] rounded-full bg-teal-accent/10 blur-xl animate-pulse" style={{ animationDelay: "1s" }} />
           {/* Orb */}
           <div className="relative w-16 h-16 rounded-full flex items-center justify-center overflow-hidden">
-            <div className="absolute inset-0 ai-btn-ring opacity-40" />
+            <div className="absolute inset-0 ai-btn-ring opacity-50" />
             <div className="absolute inset-[2px] rounded-full bg-card flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-primary" />
             </div>
@@ -217,7 +218,7 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       </motion.div>
 
       {/* ── Live Stats ── */}
-      <motion.div variants={item} className="rounded-xl bg-secondary/25 border border-border/40 overflow-hidden divide-y divide-border/30">
+      <motion.div variants={item} className="rounded-xl bg-secondary/30 border border-primary/10 overflow-hidden divide-y divide-border/30">
         <div className="flex items-center justify-between px-3 py-2">
           <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
             Live-метрики
@@ -233,7 +234,7 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       </motion.div>
 
       {/* ── Quick Prompts ── */}
-      <motion.div variants={item} className="rounded-xl bg-secondary/25 border border-border/40 overflow-hidden">
+      <motion.div variants={item} className="rounded-xl bg-secondary/30 border border-primary/10 overflow-hidden">
         <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-3 py-2">
           Быстрые запросы
         </p>
