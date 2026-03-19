@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { findBestMatch } from "@/lib/mockKnowledgeBase";
 import QueryInput from "./QueryInput";
 import EmptyState from "./EmptyState";
 import ChatMessage from "./ChatMessage";
@@ -15,23 +16,6 @@ interface Message {
   statusText?: string;
   timestamp: Date;
 }
-
-const mockSources = [
-  { id: 1, title: "Policy Rule: velocity_check_24h", relevance: 96, lastUpdated: "10 марта 2026", type: "Rule" },
-  { id: 2, title: "Fraud Detection Playbook — Section 3.1", relevance: 89, lastUpdated: "2 февраля 2026", type: "Wiki" },
-  { id: 3, title: "Incident Report: Card-Not-Present Spike Q4", relevance: 74, lastUpdated: "15 января 2026", type: "Report" },
-];
-
-const mockResponse = `<p>Правило <strong>velocity_check_24h</strong> <span class="citation-tag">1</span> отслеживает количество транзакций с одного устройства или карты за скользящее окно в 24 часа. При превышении порога в 15 транзакций правило присваивает score +35 и генерирует алерт уровня <strong>HIGH</strong>.</p>
-
-<h3>Условия срабатывания</h3>
-
-<p>Согласно <strong>Fraud Detection Playbook</strong> <span class="citation-tag">2</span>, правило активируется при выполнении любого из условий:</p>
-<p>• Более 15 транзакций с одного device_fingerprint за 24ч<br/>
-• Более 5 уникальных получателей с одного аккаунта за 1ч<br/>
-• Сумма транзакций превышает 500 000 ₽ за 6ч</p>
-
-<p>По данным инцидент-репорта <span class="citation-tag">3</span>, после калибровки порогов в Q4 2025 false positive rate снизился с 12% до 4.3%, при этом detection rate вырос до 94%.</p>`;
 
 const AiWidget = () => {
   const { theme, toggleTheme } = useTheme();
@@ -78,6 +62,7 @@ const AiWidget = () => {
 
   const handleQuery = (query: string) => {
     const now = new Date();
+    const match = findBestMatch(query);
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: query, timestamp: now };
     const assistantId = (Date.now() + 1).toString();
     const assistantMsg: Message = {
@@ -86,7 +71,7 @@ const AiWidget = () => {
       content: "",
       sources: undefined,
       isStreaming: true,
-      statusText: "Думаю...",
+      statusText: match.thinkingText,
       timestamp: new Date(now.getTime() + 1000),
     };
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
@@ -97,23 +82,57 @@ const AiWidget = () => {
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantId
-            ? { ...m, sources: mockSources, statusText: "Анализ 3 источников..." }
+            ? { ...m, sources: match.sources, statusText: match.sourceText }
             : m
         )
       );
-    }, 800);
+    }, 600 + Math.random() * 400);
 
-    // Simulate response
+    // Simulate streaming: reveal HTML in chunks
+    const fullHtml = match.response;
+    const chunkSize = 12; // characters per tick
+    const totalChunks = Math.ceil(fullHtml.length / chunkSize);
+    const startDelay = 1200 + Math.random() * 600;
+
     setTimeout(() => {
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === assistantId
-            ? { ...m, content: mockResponse, isStreaming: false, statusText: undefined }
-            : m
-        )
-      );
-      setIsProcessing(false);
-    }, 2000);
+      let currentChunk = 0;
+
+      const interval = setInterval(() => {
+        currentChunk++;
+        // Make sure we don't break mid-tag
+        let endIdx = Math.min(currentChunk * chunkSize, fullHtml.length);
+        // If we're inside an HTML tag, extend to close it
+        const partial = fullHtml.slice(0, endIdx);
+        const openBrackets = (partial.match(/</g) || []).length;
+        const closeBrackets = (partial.match(/>/g) || []).length;
+        if (openBrackets > closeBrackets) {
+          const nextClose = fullHtml.indexOf(">", endIdx);
+          if (nextClose !== -1) endIdx = nextClose + 1;
+        }
+
+        const chunk = fullHtml.slice(0, endIdx);
+
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? { ...m, content: chunk, statusText: currentChunk >= totalChunks ? undefined : match.sourceText }
+              : m
+          )
+        );
+
+        if (endIdx >= fullHtml.length) {
+          clearInterval(interval);
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId
+                ? { ...m, content: fullHtml, isStreaming: false, statusText: undefined }
+                : m
+            )
+          );
+          setIsProcessing(false);
+        }
+      }, 30 + Math.random() * 20);
+    }, startDelay);
   };
 
   const isEmpty = messages.length === 0;
