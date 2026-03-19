@@ -62,6 +62,7 @@ const AiWidget = () => {
 
   const handleQuery = (query: string) => {
     const now = new Date();
+    const match = findBestMatch(query);
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: query, timestamp: now };
     const assistantId = (Date.now() + 1).toString();
     const assistantMsg: Message = {
@@ -70,7 +71,7 @@ const AiWidget = () => {
       content: "",
       sources: undefined,
       isStreaming: true,
-      statusText: "Думаю...",
+      statusText: match.thinkingText,
       timestamp: new Date(now.getTime() + 1000),
     };
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
@@ -81,23 +82,57 @@ const AiWidget = () => {
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantId
-            ? { ...m, sources: mockSources, statusText: "Анализ 3 источников..." }
+            ? { ...m, sources: match.sources, statusText: match.sourceText }
             : m
         )
       );
-    }, 800);
+    }, 600 + Math.random() * 400);
 
-    // Simulate response
+    // Simulate streaming: reveal HTML in chunks
+    const fullHtml = match.response;
+    const chunkSize = 12; // characters per tick
+    const totalChunks = Math.ceil(fullHtml.length / chunkSize);
+    const startDelay = 1200 + Math.random() * 600;
+
     setTimeout(() => {
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === assistantId
-            ? { ...m, content: mockResponse, isStreaming: false, statusText: undefined }
-            : m
-        )
-      );
-      setIsProcessing(false);
-    }, 2000);
+      let currentChunk = 0;
+
+      const interval = setInterval(() => {
+        currentChunk++;
+        // Make sure we don't break mid-tag
+        let endIdx = Math.min(currentChunk * chunkSize, fullHtml.length);
+        // If we're inside an HTML tag, extend to close it
+        const partial = fullHtml.slice(0, endIdx);
+        const openBrackets = (partial.match(/</g) || []).length;
+        const closeBrackets = (partial.match(/>/g) || []).length;
+        if (openBrackets > closeBrackets) {
+          const nextClose = fullHtml.indexOf(">", endIdx);
+          if (nextClose !== -1) endIdx = nextClose + 1;
+        }
+
+        const chunk = fullHtml.slice(0, endIdx);
+
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? { ...m, content: chunk, statusText: currentChunk >= totalChunks ? undefined : match.sourceText }
+              : m
+          )
+        );
+
+        if (endIdx >= fullHtml.length) {
+          clearInterval(interval);
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId
+                ? { ...m, content: fullHtml, isStreaming: false, statusText: undefined }
+                : m
+            )
+          );
+          setIsProcessing(false);
+        }
+      }, 30 + Math.random() * 20);
+    }, startDelay);
   };
 
   const isEmpty = messages.length === 0;
