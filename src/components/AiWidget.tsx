@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { findBestMatch } from "@/lib/mockKnowledgeBase";
 import QueryInput from "./QueryInput";
 import EmptyState from "./EmptyState";
 import ChatMessage from "./ChatMessage";
@@ -15,23 +16,6 @@ interface Message {
   statusText?: string;
   timestamp: Date;
 }
-
-const mockSources = [
-  { id: 1, title: "Policy Rule: velocity_check_24h", relevance: 96, lastUpdated: "10 марта 2026", type: "Rule" },
-  { id: 2, title: "Fraud Detection Playbook — Section 3.1", relevance: 89, lastUpdated: "2 февраля 2026", type: "Wiki" },
-  { id: 3, title: "Incident Report: Card-Not-Present Spike Q4", relevance: 74, lastUpdated: "15 января 2026", type: "Report" },
-];
-
-const mockResponse = `<p>Правило <strong>velocity_check_24h</strong> <span class="citation-tag">1</span> отслеживает количество транзакций с одного устройства или карты за скользящее окно в 24 часа. При превышении порога в 15 транзакций правило присваивает score +35 и генерирует алерт уровня <strong>HIGH</strong>.</p>
-
-<h3>Условия срабатывания</h3>
-
-<p>Согласно <strong>Fraud Detection Playbook</strong> <span class="citation-tag">2</span>, правило активируется при выполнении любого из условий:</p>
-<p>• Более 15 транзакций с одного device_fingerprint за 24ч<br/>
-• Более 5 уникальных получателей с одного аккаунта за 1ч<br/>
-• Сумма транзакций превышает 500 000 ₽ за 6ч</p>
-
-<p>По данным инцидент-репорта <span class="citation-tag">3</span>, после калибровки порогов в Q4 2025 false positive rate снизился с 12% до 4.3%, при этом detection rate вырос до 94%.</p>`;
 
 const AiWidget = () => {
   const { theme, toggleTheme } = useTheme();
