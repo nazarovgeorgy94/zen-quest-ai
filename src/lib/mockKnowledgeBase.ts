@@ -595,6 +595,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "graph-analysis",
     keywords: ["граф", "graph", "network analysis", "сетевой анализ", "связ", "кластер", "cluster", "ring", "кольц", "сообщник", "организованн", "группировк"],
     thinkingText: "Строю граф связей...",
+    thinkingSteps: [
+      "Инициализация FraudGraph v2 (Neo4j + GDS)",
+      "Маппинг типов узлов и рёбер",
+      "Применение алгоритмов community detection",
+      "Загрузка кейс-стади по fraud rings Q1",
+    ],
     sourceText: "Анализ 4 источников...",
     sources: [
       { id: 1, title: "Graph Analytics Engine: FraudGraph v2", relevance: 96, lastUpdated: "15 марта 2026", type: "System" },
