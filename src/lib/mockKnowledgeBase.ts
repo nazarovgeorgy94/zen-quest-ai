@@ -747,6 +747,11 @@ const fallbackEntry: KnowledgeEntry = {
   slug: "fallback",
   keywords: [],
   thinkingText: "Обрабатываю запрос...",
+  thinkingSteps: [
+    "Классификация запроса по темам базы знаний",
+    "Поиск релевантных источников",
+    "Формирование обзорного ответа",
+  ],
   sourceText: "Поиск по базе знаний...",
   sources: [
     { id: 1, title: "Antifraud Knowledge Base: General", relevance: 75, lastUpdated: "14 марта 2026", type: "Wiki" },
