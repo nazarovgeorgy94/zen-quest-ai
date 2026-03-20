@@ -106,12 +106,22 @@ const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestam
         )}
       </div>
 
+      {/* Thinking chain */}
+      {thinkingSteps && thinkingSteps.length > 0 && (
+        <ThinkingChain
+          steps={thinkingSteps}
+          revealedCount={thinkingRevealed ?? 0}
+          isComplete={thinkingComplete ?? false}
+          collapsible={!isStreaming && !!content}
+        />
+      )}
+
       {/* Sources */}
       {sources && sources.length > 0 && <SourceCard sources={sources} />}
 
       {/* Streaming dots or content */}
       {isStreaming && !content ? (
-        <TypingDots />
+        !thinkingSteps?.length ? <TypingDots /> : null
       ) : content ? (
         <div className="relative">
           <motion.div
