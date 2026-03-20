@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon, History, GripVertical } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { findBestMatch } from "@/lib/mockKnowledgeBase";
+import { streamRAGResponse, isRAGAvailable } from "@/lib/ragService";
 import QueryInput from "./QueryInput";
 import EmptyState from "./EmptyState";
 import ChatMessage from "./ChatMessage";
