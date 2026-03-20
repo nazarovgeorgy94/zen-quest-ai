@@ -340,6 +340,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "geo",
     keywords: ["geo", "геогр", "страна", "регион", "ip", "vpn", "proxy", "локац", "местоположен"],
     thinkingText: "Анализирую гео-правила...",
+    thinkingSteps: [
+      "Загрузка geo_risk_matrix_v2",
+      "Проверка 4 факторов гео-риска и scoring-весов",
+      "Подключение VPN/Proxy Detection Module",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Policy Rule: geo_risk_matrix_v2", relevance: 94, lastUpdated: "8 марта 2026", type: "Rule" },
