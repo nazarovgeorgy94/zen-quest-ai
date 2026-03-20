@@ -509,6 +509,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "geo-anomalies",
     keywords: ["impossible travel", "невозможное перемещен", "гео-аномал", "geo-anomal", "телепортац", "travel", "расстоян", "перемещен", "перелёт", "перелет"],
     thinkingText: "Анализирую гео-аномалии...",
+    thinkingSteps: [
+      "Загрузка impossible_travel_detector_v3",
+      "Расчёт параметров Haversine для пар транзакций",
+      "Классификация по уровням severity",
+      "Оценка точности IP-геолокации и ограничений",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Policy Rule: impossible_travel_detector_v3", relevance: 96, lastUpdated: "14 марта 2026", type: "Rule" },
