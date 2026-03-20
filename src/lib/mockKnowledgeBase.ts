@@ -61,6 +61,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "velocity",
     keywords: ["velocity", "скорость", "velocity_check", "частота", "количество транзакций", "24h", "24ч", "частот"],
     thinkingText: "Анализирую правила velocity...",
+    thinkingSteps: [
+      "Определяю тип запроса → контроль частоты операций",
+      "Поиск правила velocity_check_24h в каталоге",
+      "Загрузка конфигурации порогов и scoring-весов",
+      "Сопоставление с инцидент-репортами Q4 2025",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Policy Rule: velocity_check_24h", relevance: 96, lastUpdated: "10 марта 2026", type: "Rule" },
