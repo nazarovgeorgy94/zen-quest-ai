@@ -353,12 +353,26 @@ const AiWidget = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
+              style={!isFullscreen ? { width: widgetSize.w, height: widgetSize.h } : undefined}
               className={`fixed z-50 bg-background/80 backdrop-blur-2xl border border-border/60 shadow-2xl flex flex-col overflow-hidden iridescent-border ${
                 isFullscreen
                   ? "inset-3 rounded-2xl transition-[inset] duration-300"
-                  : "bottom-6 right-6 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl"
+                  : "bottom-6 right-6 max-h-[calc(100vh-3rem)] rounded-2xl"
               }`}
             >
+              {/* Resize handle — top-left corner */}
+              {!isFullscreen && (
+                <div
+                  onPointerDown={handleResizeStart}
+                  onPointerMove={handleResizeMove}
+                  onPointerUp={handleResizeEnd}
+                  onPointerCancel={handleResizeEnd}
+                  className="absolute top-0 left-0 z-[60] w-8 h-8 flex items-center justify-center cursor-nwse-resize group touch-none"
+                  title="Изменить размер"
+                >
+                  <GripVertical className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/70 transition-colors duration-200 -rotate-45" />
+                </div>
+              )}
               <div className="aurora-mesh" />
               <div className="aurora-mesh-extra" />
               <div className="absolute inset-0 noise-overlay pointer-events-none" />
