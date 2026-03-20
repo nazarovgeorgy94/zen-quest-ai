@@ -405,6 +405,10 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "simplify",
     keywords: ["упрости", "проще", "простыми словами", "explain simply", "для новичк"],
     thinkingText: "Упрощаю объяснение...",
+    thinkingSteps: [
+      "Адаптация терминологии для начинающих",
+      "Формирование аналогии для объяснения",
+    ],
     sourceText: "Подготовка упрощённого ответа...",
     sources: [
       { id: 1, title: "Fraud Detection: Beginner's Guide", relevance: 90, lastUpdated: "5 марта 2026", type: "Wiki" },
