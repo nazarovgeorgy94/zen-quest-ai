@@ -553,6 +553,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "behavioral-biometrics",
     keywords: ["behavioral", "поведенческ", "биометри", "biometric", "клавиатур", "typing", "keystroke", "mouse", "мышь", "жест", "gesture", "свайп"],
     thinkingText: "Анализирую поведенческую биометрию...",
+    thinkingSteps: [
+      "Подключение к модулю BioSense v2",
+      "Сбор типов сигналов: desktop + mobile",
+      "Загрузка метрик accuracy (EER, FRR)",
+      "Анализ scoring-влияния behavioral_anomaly_score",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Behavioral Biometrics Module: BioSense v2", relevance: 95, lastUpdated: "16 марта 2026", type: "System" },
