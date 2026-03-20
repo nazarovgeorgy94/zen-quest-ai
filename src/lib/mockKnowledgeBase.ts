@@ -44,6 +44,8 @@ export interface KnowledgeEntry {
   thinkingText: string;
   /** Status text while "reading sources" */
   sourceText: string;
+  /** Chain-of-thought reasoning steps shown before the answer */
+  thinkingSteps?: string[];
 }
 
 // ─── Knowledge entries ───────────────────────────────────────────
