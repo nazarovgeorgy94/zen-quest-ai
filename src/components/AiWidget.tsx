@@ -51,6 +51,9 @@ const AiWidget = () => {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showHistory, setShowHistory] = useState(false);
+  const [widgetSize, setWidgetSize] = useState({ w: 480, h: 700 });
+  const isResizing = useRef(false);
+  const resizeStart = useRef({ x: 0, y: 0, w: 480, h: 700 });
 
   // Session management
   const [sessions, setSessions] = useState<StoredSession[]>([]);
