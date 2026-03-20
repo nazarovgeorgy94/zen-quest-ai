@@ -337,7 +337,7 @@ const AiWidget = () => {
               <div className="aurora-mesh" />
               <div className="aurora-mesh-extra" />
               <div className="absolute inset-0 noise-overlay pointer-events-none" />
-              <div className="h-[2px] w-full shimmer-line relative z-10" />
+              <div className={`h-[2px] w-full shimmer-line relative z-10 ${isProcessing ? "shimmer-active" : ""}`} />
 
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/15 bg-surface-elevated/60 backdrop-blur-2xl relative z-10 refraction-highlight">

@@ -250,6 +250,14 @@
     );
     background-size: 200% 100%;
     animation: shimmer-slide 6s linear infinite;
+    animation-play-state: paused;
+    opacity: 0.35;
+    transition: opacity 0.6s ease;
+  }
+
+  .shimmer-line.shimmer-active {
+    animation-play-state: running;
+    opacity: 1;
   }
 
   .shimmer-line::after {
@@ -259,6 +267,7 @@
     background: inherit;
     background-size: inherit;
     animation: inherit;
+    animation-play-state: inherit;
     filter: blur(6px);
     opacity: 0.6;
   }
