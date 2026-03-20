@@ -44,6 +44,8 @@ export interface KnowledgeEntry {
   thinkingText: string;
   /** Status text while "reading sources" */
   sourceText: string;
+  /** Chain-of-thought reasoning steps shown before the answer */
+  thinkingSteps?: string[];
 }
 
 // ─── Knowledge entries ───────────────────────────────────────────
@@ -59,6 +61,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "velocity",
     keywords: ["velocity", "скорость", "velocity_check", "частота", "количество транзакций", "24h", "24ч", "частот"],
     thinkingText: "Анализирую правила velocity...",
+    thinkingSteps: [
+      "Определяю тип запроса → контроль частоты операций",
+      "Поиск правила velocity_check_24h в каталоге",
+      "Загрузка конфигурации порогов и scoring-весов",
+      "Сопоставление с инцидент-репортами Q4 2025",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Policy Rule: velocity_check_24h", relevance: 96, lastUpdated: "10 марта 2026", type: "Rule" },
@@ -84,6 +92,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "cnp-fraud",
     keywords: ["cnp", "card-not-present", "карта не предъявлена", "онлайн-фрод", "e-commerce", "паттерн", "электронная коммерция"],
     thinkingText: "Ищу паттерны CNP-фрода...",
+    thinkingSteps: [
+      "Классификация запроса → Card-Not-Present фрод",
+      "Анализ инцидент-репортов за Q4 2025 – Q1 2026",
+      "Выделение трёх основных паттернов атак",
+      "Проверка рекомендаций Playbook по митигации",
+    ],
     sourceText: "Анализ 4 источников...",
     sources: [
       { id: 1, title: "Incident Report: CNP Spike Q4 2025", relevance: 97, lastUpdated: "15 января 2026", type: "Report" },
@@ -112,6 +126,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "false-positive",
     keywords: ["false positive", "fp", "порог", "threshold", "оптимизация", "калибровка", "снижение", "точность", "корректировка"],
     thinkingText: "Анализирую метрики false positive...",
+    thinkingSteps: [
+      "Загрузка текущих метрик FP rate из калибровочного отчёта",
+      "Моделирование корректировок порогов по трём правилам",
+      "Сравнение с результатами ML-модели fraud_scorer_v4",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Threshold Calibration Report Q1 2026", relevance: 95, lastUpdated: "5 марта 2026", type: "Report" },
@@ -139,6 +158,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "aml",
     keywords: ["aml", "отмывание", "laundering", "подозрительн", "мониторинг", "финансирование", "терроризм", "комплаенс", "compliance", "kyc"],
     thinkingText: "Запрашиваю AML-правила...",
+    thinkingSteps: [
+      "Определяю контекст → AML/противодействие отмыванию",
+      "Загрузка Rule Set v2.8 (47 правил, 6 категорий)",
+      "Анализ SAR-отчётов по structuring за Q1 2026",
+      "Проверка процедур ФЗ-115 и EDD-требований",
+    ],
     sourceText: "Анализ 4 источников...",
     sources: [
       { id: 1, title: "AML Monitoring: Rule Set v2.8", relevance: 94, lastUpdated: "8 марта 2026", type: "Rule" },
@@ -167,6 +192,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "device-fingerprint",
     keywords: ["device", "fingerprint", "устройств", "девайс", "отпечаток", "browser", "браузер", "мобильн", "pos", "канал", "тиражирован"],
     thinkingText: "Анализирую device fingerprinting...",
+    thinkingSteps: [
+      "Определяю модуль → Device Intelligence v3",
+      "Сбор списка 42 параметров fingerprint",
+      "Проверка покрытия по каналам: Web, Mobile, POS",
+      "Оценка scoring-влияния device_anomaly_score",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Device Intelligence: Fingerprint Module v3", relevance: 93, lastUpdated: "12 марта 2026", type: "System" },
@@ -201,6 +232,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "ml-scoring",
     keywords: ["score", "скоринг", "модель", "ml", "machine learning", "нейросет", "модел", "fraud_scorer", "предикт", "predict", "xgboost", "gradient"],
     thinkingText: "Загружаю данные по скоринг-моделям...",
+    thinkingSteps: [
+      "Идентификация актуальной модели → fraud_scorer_v4",
+      "Загрузка метрик AUC-ROC, precision, latency",
+      "Анализ feature importance из спецификации v4",
+      "Сравнение с результатами A/B теста v3 vs v4",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "ML Model: fraud_scorer_v4 — Performance Report", relevance: 96, lastUpdated: "12 марта 2026", type: "Model" },
@@ -232,6 +269,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "alerts",
     keywords: ["алерт", "alert", "инцидент", "incident", "срабатыван", "сработк", "уведомлен", "escalat", "эскалац", "кейс", "тикет"],
     thinkingText: "Собираю данные по алертам...",
+    thinkingSteps: [
+      "Загрузка конфигурации Alert Management v2",
+      "Получение статистики за март 2026",
+      "Расчёт confirmation rate по уровням severity",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Alert Management: Routing Rules v2", relevance: 92, lastUpdated: "10 марта 2026", type: "System" },
@@ -262,6 +304,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "rules",
     keywords: ["правил", "rule", "policy", "политик", "логик", "условие", "condition", "настройк"],
     thinkingText: "Загружаю каталог правил...",
+    thinkingSteps: [
+      "Подключение к Active Rules Registry",
+      "Группировка 73 правил по 8 категориям",
+      "Анализ governance lifecycle и performance dashboard",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Rule Catalog: Active Rules Registry", relevance: 95, lastUpdated: "14 марта 2026", type: "Registry" },
@@ -293,6 +340,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "geo",
     keywords: ["geo", "геогр", "страна", "регион", "ip", "vpn", "proxy", "локац", "местоположен"],
     thinkingText: "Анализирую гео-правила...",
+    thinkingSteps: [
+      "Загрузка geo_risk_matrix_v2",
+      "Проверка 4 факторов гео-риска и scoring-весов",
+      "Подключение VPN/Proxy Detection Module",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Policy Rule: geo_risk_matrix_v2", relevance: 94, lastUpdated: "8 марта 2026", type: "Rule" },
@@ -324,6 +376,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "deepening",
     keywords: ["углуби", "подробн", "детал", "расскажи больше", "expand", "elaborate"],
     thinkingText: "Углубляю анализ...",
+    thinkingSteps: [
+      "Определяю контекст предыдущего ответа",
+      "Расширенный поиск в технической документации",
+      "Добавление экспертных комментариев аналитика",
+    ],
     sourceText: "Расширенный поиск по 5 источникам...",
     sources: [
       { id: 1, title: "Knowledge Base: Deep Dive Analysis", relevance: 92, lastUpdated: "14 марта 2026", type: "Wiki" },
@@ -348,6 +405,10 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "simplify",
     keywords: ["упрости", "проще", "простыми словами", "explain simply", "для новичк"],
     thinkingText: "Упрощаю объяснение...",
+    thinkingSteps: [
+      "Адаптация терминологии для начинающих",
+      "Формирование аналогии для объяснения",
+    ],
     sourceText: "Подготовка упрощённого ответа...",
     sources: [
       { id: 1, title: "Fraud Detection: Beginner's Guide", relevance: 90, lastUpdated: "5 марта 2026", type: "Wiki" },
@@ -371,6 +432,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "chargebacks",
     keywords: ["chargeback", "чарджбэк", "диспут", "dispute", "возврат", "оспариван", "refund"],
     thinkingText: "Загружаю статистику чарджбэков...",
+    thinkingSteps: [
+      "Агрегация данных по чарджбэкам за Q1 2026",
+      "Маппинг reason codes Visa/MC",
+      "Расчёт win rate по representment",
+      "Сравнение chargeback ratio с порогом VISA",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Chargeback Analytics: Q1 2026", relevance: 95, lastUpdated: "13 марта 2026", type: "Report" },
@@ -400,6 +467,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "3ds",
     keywords: ["3ds", "3d secure", "3д секьюр", "3-d secure", "аутентификац", "sca", "strong customer", "emv 3ds", "challenge", "frictionless"],
     thinkingText: "Загружаю данные по 3D Secure...",
+    thinkingSteps: [
+      "Определяю версию протокола → EMV 3DS 2.2",
+      "Загрузка метрик frictionless/challenge rate",
+      "Анализ decision engine и exemption-логики",
+      "Проверка SCA/PSD2 compliance checklist",
+    ],
     sourceText: "Анализ 4 источников...",
     sources: [
       { id: 1, title: "3DS 2.2 Implementation Guide", relevance: 97, lastUpdated: "15 марта 2026", type: "Spec" },
@@ -436,6 +509,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "geo-anomalies",
     keywords: ["impossible travel", "невозможное перемещен", "гео-аномал", "geo-anomal", "телепортац", "travel", "расстоян", "перемещен", "перелёт", "перелет"],
     thinkingText: "Анализирую гео-аномалии...",
+    thinkingSteps: [
+      "Загрузка impossible_travel_detector_v3",
+      "Расчёт параметров Haversine для пар транзакций",
+      "Классификация по уровням severity",
+      "Оценка точности IP-геолокации и ограничений",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Policy Rule: impossible_travel_detector_v3", relevance: 96, lastUpdated: "14 марта 2026", type: "Rule" },
@@ -474,6 +553,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "behavioral-biometrics",
     keywords: ["behavioral", "поведенческ", "биометри", "biometric", "клавиатур", "typing", "keystroke", "mouse", "мышь", "жест", "gesture", "свайп"],
     thinkingText: "Анализирую поведенческую биометрию...",
+    thinkingSteps: [
+      "Подключение к модулю BioSense v2",
+      "Сбор типов сигналов: desktop + mobile",
+      "Загрузка метрик accuracy (EER, FRR)",
+      "Анализ scoring-влияния behavioral_anomaly_score",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Behavioral Biometrics Module: BioSense v2", relevance: 95, lastUpdated: "16 марта 2026", type: "System" },
@@ -510,6 +595,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "graph-analysis",
     keywords: ["граф", "graph", "network analysis", "сетевой анализ", "связ", "кластер", "cluster", "ring", "кольц", "сообщник", "организованн", "группировк"],
     thinkingText: "Строю граф связей...",
+    thinkingSteps: [
+      "Инициализация FraudGraph v2 (Neo4j + GDS)",
+      "Маппинг типов узлов и рёбер",
+      "Применение алгоритмов community detection",
+      "Загрузка кейс-стади по fraud rings Q1",
+    ],
     sourceText: "Анализ 4 источников...",
     sources: [
       { id: 1, title: "Graph Analytics Engine: FraudGraph v2", relevance: 96, lastUpdated: "15 марта 2026", type: "System" },
@@ -546,6 +637,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "synthetic-identity",
     keywords: ["synthetic", "синтетическ", "поддельн", "фейков", "fake", "identity", "идентичност", "мул", "mule", "дроп", "drop", "номинал"],
     thinkingText: "Анализирую синтетические идентичности...",
+    thinkingSteps: [
+      "Загрузка модели Synthetic Identity Detection v1.4",
+      "Выделение признаков синтетических документов",
+      "Анализ паттернов мул-аккаунтов за Q1",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Synthetic Identity Detection Model v1.4", relevance: 95, lastUpdated: "14 марта 2026", type: "Model" },
@@ -577,6 +673,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "tokenization",
     keywords: ["token", "токенизац", "шифрован", "encrypt", "pci", "dss", "vault", "хранен", "карточн", "маскир", "mask", "pan"],
     thinkingText: "Загружаю данные по токенизации...",
+    thinkingSteps: [
+      "Подключение к CardVault v3",
+      "Проверка PCI DSS 4.0 compliance status",
+      "Анализ интеграции Visa VTS / MC MDES",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Tokenization Service: CardVault v3", relevance: 94, lastUpdated: "12 марта 2026", type: "System" },
@@ -608,6 +709,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "monitoring",
     keywords: ["мониторинг", "monitoring", "дашборд", "dashboard", "реальном времен", "real-time", "realtime", "метрик", "metric", "отчёт", "отчет", "report", "статистик", "kpi"],
     thinkingText: "Подключаюсь к мониторингу...",
+    thinkingSteps: [
+      "Подключение к FraudWatch Dashboard (real-time)",
+      "Загрузка KPI-фреймворка по 4 уровням метрик",
+      "Проверка конфигурации alerting pipeline",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Real-Time Monitoring: FraudWatch Dashboard", relevance: 95, lastUpdated: "16 марта 2026", type: "Dashboard" },
@@ -641,6 +747,11 @@ const fallbackEntry: KnowledgeEntry = {
   slug: "fallback",
   keywords: [],
   thinkingText: "Обрабатываю запрос...",
+  thinkingSteps: [
+    "Классификация запроса по темам базы знаний",
+    "Поиск релевантных источников",
+    "Формирование обзорного ответа",
+  ],
   sourceText: "Поиск по базе знаний...",
   sources: [
     { id: 1, title: "Antifraud Knowledge Base: General", relevance: 75, lastUpdated: "14 марта 2026", type: "Wiki" },

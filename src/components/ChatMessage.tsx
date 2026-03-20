@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Check, ThumbsUp, ThumbsDown, Bot, ChevronDown, Layers, Lightbulb } from "lucide-react";
 import SourceCard from "./SourceCard";
+import ThinkingChain from "./ThinkingChain";
 
 interface ChatMessageProps {
   role: "user" | "assistant";
@@ -11,6 +12,9 @@ interface ChatMessageProps {
   statusText?: string;
   timestamp?: Date;
   onAction?: (query: string) => void;
+  thinkingSteps?: string[];
+  thinkingRevealed?: number;
+  thinkingComplete?: boolean;
 }
 
 const TypingDots = () => (
@@ -44,7 +48,7 @@ const formatTime = (date?: Date) => {
 
 const COLLAPSE_THRESHOLD = 400; // characters
 
-const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestamp, onAction }: ChatMessageProps) => {
+const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestamp, onAction, thinkingSteps, thinkingRevealed, thinkingComplete }: ChatMessageProps) => {
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
@@ -102,12 +106,22 @@ const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestam
         )}
       </div>
 
+      {/* Thinking chain */}
+      {thinkingSteps && thinkingSteps.length > 0 && (
+        <ThinkingChain
+          steps={thinkingSteps}
+          revealedCount={thinkingRevealed ?? 0}
+          isComplete={thinkingComplete ?? false}
+          collapsible={!isStreaming && !!content}
+        />
+      )}
+
       {/* Sources */}
       {sources && sources.length > 0 && <SourceCard sources={sources} />}
 
       {/* Streaming dots or content */}
       {isStreaming && !content ? (
-        <TypingDots />
+        !thinkingSteps?.length ? <TypingDots /> : null
       ) : content ? (
         <div className="relative">
           <motion.div
