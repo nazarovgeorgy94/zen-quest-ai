@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Check, ThumbsUp, ThumbsDown, Bot, ChevronDown, Layers, Lightbulb } from "lucide-react";
 import SourceCard from "./SourceCard";
+import ThinkingChain from "./ThinkingChain";
 
 interface ChatMessageProps {
   role: "user" | "assistant";
@@ -11,6 +12,9 @@ interface ChatMessageProps {
   statusText?: string;
   timestamp?: Date;
   onAction?: (query: string) => void;
+  thinkingSteps?: string[];
+  thinkingRevealed?: number;
+  thinkingComplete?: boolean;
 }
 
 const TypingDots = () => (

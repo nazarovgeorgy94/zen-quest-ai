@@ -16,6 +16,9 @@ interface Message {
   isStreaming?: boolean;
   statusText?: string;
   timestamp: Date;
+  thinkingSteps?: string[];
+  thinkingRevealed?: number;
+  thinkingComplete?: boolean;
 }
 
 interface StoredSession {
