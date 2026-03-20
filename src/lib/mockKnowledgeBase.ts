@@ -673,6 +673,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "tokenization",
     keywords: ["token", "токенизац", "шифрован", "encrypt", "pci", "dss", "vault", "хранен", "карточн", "маскир", "mask", "pan"],
     thinkingText: "Загружаю данные по токенизации...",
+    thinkingSteps: [
+      "Подключение к CardVault v3",
+      "Проверка PCI DSS 4.0 compliance status",
+      "Анализ интеграции Visa VTS / MC MDES",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Tokenization Service: CardVault v3", relevance: 94, lastUpdated: "12 марта 2026", type: "System" },
