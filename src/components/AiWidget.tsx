@@ -199,10 +199,40 @@ const AiWidget = () => {
     }
   };
 
+  // Drip buffer for typing effect
+  const dripBuffer = useRef<string>("");
+  const dripTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startDrip = useCallback((assistantId: string) => {
+    if (dripTimer.current) return;
+    dripTimer.current = setInterval(() => {
+      if (dripBuffer.current.length === 0) return;
+      const chunkSize = 3 + Math.floor(Math.random() * 6);
+      const chunk = dripBuffer.current.slice(0, chunkSize);
+      dripBuffer.current = dripBuffer.current.slice(chunkSize);
+      setMessages((prev) =>
+        prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + chunk } : m))
+      );
+    }, 20);
+  }, []);
+
+  const stopDrip = useCallback((assistantId: string) => {
+    if (dripTimer.current) {
+      clearInterval(dripTimer.current);
+      dripTimer.current = null;
+    }
+    if (dripBuffer.current.length > 0) {
+      const remaining = dripBuffer.current;
+      dripBuffer.current = "";
+      setMessages((prev) =>
+        prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + remaining } : m))
+      );
+    }
+  }, []);
+
   const handleRAGQuery = (query: string, assistantId: string, thinkingDelay: number) => {
     const thinkingDuration = thinkingDelay * 4;
 
-    // Build conversation history for context
     const history = messages
       .filter((m) => m.content)
       .slice(-6)
@@ -213,6 +243,9 @@ const AiWidget = () => {
         prev.map((m) => (m.id === assistantId ? { ...m, thinkingComplete: true, statusText: "Генерирую ответ..." } : m))
       );
 
+      dripBuffer.current = "";
+      startDrip(assistantId);
+
       streamRAGResponse(query, history, {
         onSources: (sources) => {
           setMessages((prev) =>
@@ -220,19 +253,23 @@ const AiWidget = () => {
           );
         },
         onDelta: (text) => {
-          setMessages((prev) =>
-            prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + text } : m))
-          );
+          dripBuffer.current += text;
         },
         onDone: () => {
-          setMessages((prev) =>
-            prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false, statusText: undefined } : m))
-          );
-          setIsProcessing(false);
+          const checkDrain = setInterval(() => {
+            if (dripBuffer.current.length === 0) {
+              clearInterval(checkDrain);
+              stopDrip(assistantId);
+              setMessages((prev) =>
+                prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false, statusText: undefined } : m))
+              );
+              setIsProcessing(false);
+            }
+          }, 50);
         },
         onError: (error) => {
           console.warn("RAG failed, falling back to mock:", error);
-          // Fall back to mock on error
+          stopDrip(assistantId);
           handleMockQuery(query, assistantId, 0);
         },
       });
