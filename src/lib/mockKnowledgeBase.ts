@@ -376,6 +376,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "deepening",
     keywords: ["углуби", "подробн", "детал", "расскажи больше", "expand", "elaborate"],
     thinkingText: "Углубляю анализ...",
+    thinkingSteps: [
+      "Определяю контекст предыдущего ответа",
+      "Расширенный поиск в технической документации",
+      "Добавление экспертных комментариев аналитика",
+    ],
     sourceText: "Расширенный поиск по 5 источникам...",
     sources: [
       { id: 1, title: "Knowledge Base: Deep Dive Analysis", relevance: 92, lastUpdated: "14 марта 2026", type: "Wiki" },
