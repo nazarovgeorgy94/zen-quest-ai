@@ -18,9 +18,10 @@ export type Database = {
         Row: {
           content: string
           created_at: string
-          embedding: string | null
+          fts: unknown
           id: string
           metadata: Json | null
+          search_text: string | null
           slug: string
           source_type: string
           title: string
@@ -29,9 +30,10 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
-          embedding?: string | null
+          fts?: unknown
           id?: string
           metadata?: Json | null
+          search_text?: string | null
           slug: string
           source_type?: string
           title: string
@@ -40,9 +42,10 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
-          embedding?: string | null
+          fts?: unknown
           id?: string
           metadata?: Json | null
+          search_text?: string | null
           slug?: string
           source_type?: string
           title?: string
@@ -55,12 +58,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      match_knowledge_chunks: {
-        Args: {
-          match_count?: number
-          match_threshold?: number
-          query_embedding: string
-        }
+      search_knowledge_chunks: {
+        Args: { match_count?: number; query_text: string }
         Returns: {
           content: string
           id: string
