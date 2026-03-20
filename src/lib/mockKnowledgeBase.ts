@@ -432,6 +432,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "chargebacks",
     keywords: ["chargeback", "чарджбэк", "диспут", "dispute", "возврат", "оспариван", "refund"],
     thinkingText: "Загружаю статистику чарджбэков...",
+    thinkingSteps: [
+      "Агрегация данных по чарджбэкам за Q1 2026",
+      "Маппинг reason codes Visa/MC",
+      "Расчёт win rate по representment",
+      "Сравнение chargeback ratio с порогом VISA",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Chargeback Analytics: Q1 2026", relevance: 95, lastUpdated: "13 марта 2026", type: "Report" },
