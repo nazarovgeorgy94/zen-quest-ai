@@ -116,6 +116,30 @@ const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestam
         />
       )}
 
+      {/* Generating indicator — after thinking, before text appears */}
+      {isStreaming && thinkingComplete && !content && (
+        <motion.div
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="flex items-center gap-2.5 pl-9 py-2"
+        >
+          <div className="flex items-center gap-1.5">
+            {[0, 1, 2].map((i) => (
+              <motion.span
+                key={i}
+                className="w-1.5 h-1.5 rounded-full bg-primary/60"
+                animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.15, 0.8] }}
+                transition={{ duration: 1, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
+              />
+            ))}
+          </div>
+          <span className="text-[11px] text-muted-foreground/70 font-medium">
+            {statusText || "Формирую ответ…"}
+          </span>
+        </motion.div>
+      )}
+
       {/* Sources */}
       {sources && sources.length > 0 && <SourceCard sources={sources} />}
 
