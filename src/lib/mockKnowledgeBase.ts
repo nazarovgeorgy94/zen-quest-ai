@@ -192,6 +192,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "device-fingerprint",
     keywords: ["device", "fingerprint", "устройств", "девайс", "отпечаток", "browser", "браузер", "мобильн", "pos", "канал", "тиражирован"],
     thinkingText: "Анализирую device fingerprinting...",
+    thinkingSteps: [
+      "Определяю модуль → Device Intelligence v3",
+      "Сбор списка 42 параметров fingerprint",
+      "Проверка покрытия по каналам: Web, Mobile, POS",
+      "Оценка scoring-влияния device_anomaly_score",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Device Intelligence: Fingerprint Module v3", relevance: 93, lastUpdated: "12 марта 2026", type: "System" },
