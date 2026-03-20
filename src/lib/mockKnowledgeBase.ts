@@ -269,6 +269,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "alerts",
     keywords: ["алерт", "alert", "инцидент", "incident", "срабатыван", "сработк", "уведомлен", "escalat", "эскалац", "кейс", "тикет"],
     thinkingText: "Собираю данные по алертам...",
+    thinkingSteps: [
+      "Загрузка конфигурации Alert Management v2",
+      "Получение статистики за март 2026",
+      "Расчёт confirmation rate по уровням severity",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Alert Management: Routing Rules v2", relevance: 92, lastUpdated: "10 марта 2026", type: "System" },
