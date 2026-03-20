@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon, History } from "lucide-react";
+import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon, History, GripVertical } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { findBestMatch } from "@/lib/mockKnowledgeBase";
 import QueryInput from "./QueryInput";
@@ -51,6 +51,9 @@ const AiWidget = () => {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showHistory, setShowHistory] = useState(false);
+  const [widgetSize, setWidgetSize] = useState({ w: 480, h: 700 });
+  const isResizing = useRef(false);
+  const resizeStart = useRef({ x: 0, y: 0, w: 480, h: 700 });
 
   // Session management
   const [sessions, setSessions] = useState<StoredSession[]>([]);
@@ -237,6 +240,28 @@ const AiWidget = () => {
     }, startDelay);
   };
 
+  // ── Resize handlers ──
+  const handleResizeStart = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    isResizing.current = true;
+    resizeStart.current = { x: e.clientX, y: e.clientY, w: widgetSize.w, h: widgetSize.h };
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, [widgetSize]);
+
+  const handleResizeMove = useCallback((e: React.PointerEvent) => {
+    if (!isResizing.current) return;
+    const dx = resizeStart.current.x - e.clientX; // drag left = grow width
+    const dy = resizeStart.current.y - e.clientY; // drag up = grow height
+    setWidgetSize({
+      w: Math.min(Math.max(resizeStart.current.w + dx, 360), window.innerWidth - 48),
+      h: Math.min(Math.max(resizeStart.current.h + dy, 400), window.innerHeight - 48),
+    });
+  }, []);
+
+  const handleResizeEnd = useCallback(() => {
+    isResizing.current = false;
+  }, []);
+
   const isEmpty = messages.length === 0;
 
   // Build ChatSession list for the history panel
@@ -328,12 +353,26 @@ const AiWidget = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 30, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
+              style={!isFullscreen ? { width: widgetSize.w, height: widgetSize.h } : undefined}
               className={`fixed z-50 bg-background/80 backdrop-blur-2xl border border-border/60 shadow-2xl flex flex-col overflow-hidden iridescent-border ${
                 isFullscreen
                   ? "inset-3 rounded-2xl transition-[inset] duration-300"
-                  : "bottom-6 right-6 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl"
+                  : "bottom-6 right-6 max-h-[calc(100vh-3rem)] rounded-2xl"
               }`}
             >
+              {/* Resize handle — top-left corner */}
+              {!isFullscreen && (
+                <div
+                  onPointerDown={handleResizeStart}
+                  onPointerMove={handleResizeMove}
+                  onPointerUp={handleResizeEnd}
+                  onPointerCancel={handleResizeEnd}
+                  className="absolute top-0 left-0 z-[60] w-8 h-8 flex items-center justify-center cursor-nwse-resize group touch-none"
+                  title="Изменить размер"
+                >
+                  <GripVertical className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/70 transition-colors duration-200 -rotate-45" />
+                </div>
+              )}
               <div className="aurora-mesh" />
               <div className="aurora-mesh-extra" />
               <div className="absolute inset-0 noise-overlay pointer-events-none" />
