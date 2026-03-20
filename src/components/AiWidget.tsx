@@ -158,6 +158,7 @@ const AiWidget = () => {
     const match = findBestMatch(query);
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: query, timestamp: now };
     const assistantId = (Date.now() + 1).toString();
+    const thinkingSteps = match.thinkingSteps ?? [];
     const assistantMsg: Message = {
       id: assistantId,
       role: "assistant",
@@ -166,22 +167,40 @@ const AiWidget = () => {
       isStreaming: true,
       statusText: match.thinkingText,
       timestamp: new Date(now.getTime() + 1000),
+      thinkingSteps,
+      thinkingRevealed: 0,
+      thinkingComplete: false,
     };
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setIsProcessing(true);
 
+    // Phase 1: Reveal thinking steps one by one
+    const stepDelay = 500 + Math.random() * 300; // per step
+    thinkingSteps.forEach((_, i) => {
+      setTimeout(() => {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId ? { ...m, thinkingRevealed: i + 1 } : m
+          )
+        );
+      }, stepDelay * (i + 1));
+    });
+
+    // Phase 2: Mark thinking complete + show sources
+    const thinkingDuration = stepDelay * (thinkingSteps.length + 1);
     setTimeout(() => {
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === assistantId ? { ...m, sources: match.sources, statusText: match.sourceText } : m
+          m.id === assistantId ? { ...m, thinkingComplete: true, sources: match.sources, statusText: match.sourceText } : m
         )
       );
-    }, 600 + Math.random() * 400);
+    }, thinkingDuration);
 
+    // Phase 3: Start streaming text
     const fullHtml = match.response;
     const chunkSize = 12;
     const totalChunks = Math.ceil(fullHtml.length / chunkSize);
-    const startDelay = 1200 + Math.random() * 600;
+    const startDelay = thinkingDuration + 600 + Math.random() * 400;
 
     setTimeout(() => {
       let currentChunk = 0;
