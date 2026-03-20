@@ -126,6 +126,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "false-positive",
     keywords: ["false positive", "fp", "порог", "threshold", "оптимизация", "калибровка", "снижение", "точность", "корректировка"],
     thinkingText: "Анализирую метрики false positive...",
+    thinkingSteps: [
+      "Загрузка текущих метрик FP rate из калибровочного отчёта",
+      "Моделирование корректировок порогов по трём правилам",
+      "Сравнение с результатами ML-модели fraud_scorer_v4",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Threshold Calibration Report Q1 2026", relevance: 95, lastUpdated: "5 марта 2026", type: "Report" },
