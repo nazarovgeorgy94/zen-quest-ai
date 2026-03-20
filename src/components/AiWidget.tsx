@@ -240,6 +240,28 @@ const AiWidget = () => {
     }, startDelay);
   };
 
+  // ── Resize handlers ──
+  const handleResizeStart = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    isResizing.current = true;
+    resizeStart.current = { x: e.clientX, y: e.clientY, w: widgetSize.w, h: widgetSize.h };
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, [widgetSize]);
+
+  const handleResizeMove = useCallback((e: React.PointerEvent) => {
+    if (!isResizing.current) return;
+    const dx = resizeStart.current.x - e.clientX; // drag left = grow width
+    const dy = resizeStart.current.y - e.clientY; // drag up = grow height
+    setWidgetSize({
+      w: Math.min(Math.max(resizeStart.current.w + dx, 360), window.innerWidth - 48),
+      h: Math.min(Math.max(resizeStart.current.h + dy, 400), window.innerHeight - 48),
+    });
+  }, []);
+
+  const handleResizeEnd = useCallback(() => {
+    isResizing.current = false;
+  }, []);
+
   const isEmpty = messages.length === 0;
 
   // Build ChatSession list for the history panel
