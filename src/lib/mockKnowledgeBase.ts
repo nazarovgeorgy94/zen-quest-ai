@@ -158,6 +158,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "aml",
     keywords: ["aml", "отмывание", "laundering", "подозрительн", "мониторинг", "финансирование", "терроризм", "комплаенс", "compliance", "kyc"],
     thinkingText: "Запрашиваю AML-правила...",
+    thinkingSteps: [
+      "Определяю контекст → AML/противодействие отмыванию",
+      "Загрузка Rule Set v2.8 (47 правил, 6 категорий)",
+      "Анализ SAR-отчётов по structuring за Q1 2026",
+      "Проверка процедур ФЗ-115 и EDD-требований",
+    ],
     sourceText: "Анализ 4 источников...",
     sources: [
       { id: 1, title: "AML Monitoring: Rule Set v2.8", relevance: 94, lastUpdated: "8 марта 2026", type: "Rule" },
