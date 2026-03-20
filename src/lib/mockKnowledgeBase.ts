@@ -232,6 +232,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "ml-scoring",
     keywords: ["score", "скоринг", "модель", "ml", "machine learning", "нейросет", "модел", "fraud_scorer", "предикт", "predict", "xgboost", "gradient"],
     thinkingText: "Загружаю данные по скоринг-моделям...",
+    thinkingSteps: [
+      "Идентификация актуальной модели → fraud_scorer_v4",
+      "Загрузка метрик AUC-ROC, precision, latency",
+      "Анализ feature importance из спецификации v4",
+      "Сравнение с результатами A/B теста v3 vs v4",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "ML Model: fraud_scorer_v4 — Performance Report", relevance: 96, lastUpdated: "12 марта 2026", type: "Model" },
