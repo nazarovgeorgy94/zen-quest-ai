@@ -123,6 +123,8 @@ const AiWidget = () => {
   }, []);
 
   const isAtBottomRef = useRef(true);
+  const userScrolledAwayRef = useRef(false);
+  const programmaticScrollRef = useRef(false);
 
   const checkScrollState = useCallback(() => {
     if (!scrollRef.current) return;
@@ -131,7 +133,22 @@ const AiWidget = () => {
     const atBottom = scrollHeight - scrollTop - clientHeight < 60;
     isAtBottomRef.current = atBottom;
     setShowScrollBtn(hasOverflow && !atBottom);
-    if (atBottom) setUnreadCount(0);
+    if (atBottom) {
+      setUnreadCount(0);
+      userScrolledAwayRef.current = false;
+    }
+    // If not at bottom and this wasn't a programmatic scroll, user scrolled away
+    if (!atBottom && !programmaticScrollRef.current) {
+      userScrolledAwayRef.current = true;
+    }
+    programmaticScrollRef.current = false;
+  }, []);
+
+  const scrollToBottomAuto = useCallback(() => {
+    if (scrollRef.current) {
+      programmaticScrollRef.current = true;
+      scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "auto" });
+    }
   }, []);
 
   // Auto-scroll when new messages are added
@@ -140,21 +157,21 @@ const AiWidget = () => {
     const added = newCount - prevMsgCountRef.current;
     prevMsgCountRef.current = newCount;
     if (added > 0) {
-      if (isAtBottomRef.current) scrollToBottom();
-      else setUnreadCount((prev) => prev + added);
+      if (!userScrolledAwayRef.current) {
+        scrollToBottomAuto();
+      } else {
+        setUnreadCount((prev) => prev + added);
+      }
     }
     requestAnimationFrame(checkScrollState);
-  }, [messages.length, scrollToBottom, checkScrollState]);
+  }, [messages.length, scrollToBottomAuto, checkScrollState]);
 
-  // Auto-scroll during streaming when user is at bottom
+  // Auto-scroll during streaming when user hasn't scrolled away
   useEffect(() => {
-    const last = messages[messages.length - 1];
-    if (last && isAtBottomRef.current) {
-      requestAnimationFrame(() => {
-        scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "auto" });
-      });
+    if (!userScrolledAwayRef.current) {
+      requestAnimationFrame(scrollToBottomAuto);
     }
-  }, [messages]);
+  }, [messages, scrollToBottomAuto]);
 
   const handleQuery = (query: string) => {
     // Auto-create session if none active
