@@ -709,6 +709,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "monitoring",
     keywords: ["мониторинг", "monitoring", "дашборд", "dashboard", "реальном времен", "real-time", "realtime", "метрик", "metric", "отчёт", "отчет", "report", "статистик", "kpi"],
     thinkingText: "Подключаюсь к мониторингу...",
+    thinkingSteps: [
+      "Подключение к FraudWatch Dashboard (real-time)",
+      "Загрузка KPI-фреймворка по 4 уровням метрик",
+      "Проверка конфигурации alerting pipeline",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Real-Time Monitoring: FraudWatch Dashboard", relevance: 95, lastUpdated: "16 марта 2026", type: "Dashboard" },
