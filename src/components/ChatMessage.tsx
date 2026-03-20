@@ -47,7 +47,7 @@ const COLLAPSE_THRESHOLD = 400; // characters
 const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestamp, onAction }: ChatMessageProps) => {
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const handleCopy = () => {
     const text = content.replace(/<[^>]*>/g, "");
