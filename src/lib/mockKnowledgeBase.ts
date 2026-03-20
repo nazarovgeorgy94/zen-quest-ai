@@ -92,6 +92,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "cnp-fraud",
     keywords: ["cnp", "card-not-present", "карта не предъявлена", "онлайн-фрод", "e-commerce", "паттерн", "электронная коммерция"],
     thinkingText: "Ищу паттерны CNP-фрода...",
+    thinkingSteps: [
+      "Классификация запроса → Card-Not-Present фрод",
+      "Анализ инцидент-репортов за Q4 2025 – Q1 2026",
+      "Выделение трёх основных паттернов атак",
+      "Проверка рекомендаций Playbook по митигации",
+    ],
     sourceText: "Анализ 4 источников...",
     sources: [
       { id: 1, title: "Incident Report: CNP Spike Q4 2025", relevance: 97, lastUpdated: "15 января 2026", type: "Report" },
