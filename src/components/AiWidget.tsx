@@ -397,6 +397,9 @@ const AiWidget = () => {
                           statusText={msg.statusText}
                           timestamp={msg.timestamp}
                           onAction={handleQuery}
+                          thinkingSteps={msg.thinkingSteps}
+                          thinkingRevealed={msg.thinkingRevealed}
+                          thinkingComplete={msg.thinkingComplete}
                         />
                       ))}
                     </div>
