@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon, History } from "lucide-react";
+import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon, History, GripVertical } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { findBestMatch } from "@/lib/mockKnowledgeBase";
 import QueryInput from "./QueryInput";
