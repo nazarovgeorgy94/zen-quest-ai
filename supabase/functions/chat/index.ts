@@ -41,51 +41,15 @@ serve(async (req) => {
       throw new Error("Supabase credentials not configured");
     }
 
-    // Step 1: Generate embedding for the query
-    const embedResponse = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/text-embedding-004",
-        input: query,
-      }),
-    });
-
-    if (!embedResponse.ok) {
-      const status = embedResponse.status;
-      const errText = await embedResponse.text();
-      console.error("Embedding error:", status, errText);
-      if (status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
-          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (status === 402) {
-        return new Response(JSON.stringify({ error: "Credits exhausted" }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      throw new Error(`Embedding API error: ${status}`);
-    }
-
-    const embedData = await embedResponse.json();
-    const queryEmbedding = embedData.data?.[0]?.embedding;
-    if (!queryEmbedding) throw new Error("Failed to generate query embedding");
-
-    // Step 2: Vector search for relevant chunks
+    // Step 1: Text search for relevant chunks
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-    const { data: chunks, error: searchError } = await supabase.rpc("match_knowledge_chunks", {
-      query_embedding: queryEmbedding,
-      match_threshold: 0.3,
+    const { data: chunks, error: searchError } = await supabase.rpc("search_knowledge_chunks", {
+      query_text: query,
       match_count: 5,
     });
 
     if (searchError) {
-      console.error("Vector search error:", searchError);
-      throw new Error("Vector search failed");
+      console.error("Search error:", searchError);
     }
 
     // Step 3: Build context from retrieved chunks
