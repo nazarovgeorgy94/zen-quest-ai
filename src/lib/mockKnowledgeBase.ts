@@ -1,10 +1,29 @@
 /**
- * Smart mock knowledge base for antifraud assistant.
- * Matches user queries to relevant topics using keyword scoring
- * and returns contextually appropriate responses with sources.
+ * ═══════════════════════════════════════════════════════════════════
+ *  MOCK KNOWLEDGE BASE — Antifraud Assistant
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  HOW TO ADD A NEW TOPIC:
+ *  1. Create a new KnowledgeEntry object (copy any existing one as template).
+ *  2. Push it into `knowledgeBase` array below.
+ *  3. Fill in:
+ *       • keywords  — lowercase stems/phrases the matcher will look for
+ *       • sources   — 2-4 mock references (id starts from 1 within each entry)
+ *       • response  — HTML string; use <span class="citation-tag">N</span> to
+ *                      reference sources by their `id`
+ *       • thinkingText / sourceText — status messages shown during "streaming"
+ *
+ *  The matcher scores every entry by summing the length of each matched keyword
+ *  found in the user query (longer keyword = higher weight). A bonus +5 is added
+ *  for an exact word match. Minimum score of 3 is required to beat the fallback.
+ *
+ *  TIP: Add both Russian and English keywords for bilingual coverage.
+ * ═══════════════════════════════════════════════════════════════════
  */
 
-interface Source {
+// ─── Types ───────────────────────────────────────────────────────
+
+export interface Source {
   id: number;
   title: string;
   relevance: number;
@@ -12,17 +31,32 @@ interface Source {
   type: string;
 }
 
-interface KnowledgeEntry {
+export interface KnowledgeEntry {
+  /** Unique slug for the topic (optional, for debugging/logging) */
+  slug?: string;
+  /** Keywords / stems used by the matcher — lowercase recommended */
   keywords: string[];
+  /** Mock data sources shown as citation cards */
   sources: Source[];
+  /** HTML response body — supports <h3>, <p>, <strong>, <span class="citation-tag"> */
   response: string;
+  /** Status text while "thinking" */
   thinkingText: string;
+  /** Status text while "reading sources" */
   sourceText: string;
 }
 
+// ─── Knowledge entries ───────────────────────────────────────────
+//  Each entry is a self-contained topic. Order does not matter —
+//  the matcher picks the highest-scoring one.
+
 const knowledgeBase: KnowledgeEntry[] = [
-  // ── velocity / speed rules ──
+
+  // ══════════════════════════════════════════════════════════════
+  //  1. VELOCITY / SPEED RULES
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "velocity",
     keywords: ["velocity", "скорость", "velocity_check", "частота", "количество транзакций", "24h", "24ч", "частот"],
     thinkingText: "Анализирую правила velocity...",
     sourceText: "Анализ 3 источников...",
@@ -43,8 +77,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>По данным инцидент-репорта <span class="citation-tag">3</span>, после калибровки порогов в Q4 2025 false positive rate снизился с 12% до 4.3%, при этом detection rate вырос до 94%.</p>`,
   },
 
-  // ── CNP fraud ──
+  // ══════════════════════════════════════════════════════════════
+  //  2. CNP FRAUD
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "cnp-fraud",
     keywords: ["cnp", "card-not-present", "карта не предъявлена", "онлайн-фрод", "e-commerce", "паттерн", "электронная коммерция"],
     thinkingText: "Ищу паттерны CNP-фрода...",
     sourceText: "Анализ 4 источников...",
@@ -68,8 +105,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>Playbook <span class="citation-tag">4</span> рекомендует комбинировать 3DS 2.0 с device intelligence для снижения CNP-фрода на 40–60%.</p>`,
   },
 
-  // ── FP rate / thresholds optimization ──
+  // ══════════════════════════════════════════════════════════════
+  //  3. FALSE POSITIVE / THRESHOLDS
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "false-positive",
     keywords: ["false positive", "fp", "порог", "threshold", "оптимизация", "калибровка", "снижение", "точность", "корректировка"],
     thinkingText: "Анализирую метрики false positive...",
     sourceText: "Анализ 3 источников...",
@@ -92,8 +132,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>Комплексное применение корректировок прогнозирует снижение FP rate до <strong>2.5–3.0%</strong> при detection rate не ниже 90%.</p>`,
   },
 
-  // ── AML / money laundering ──
+  // ══════════════════════════════════════════════════════════════
+  //  4. AML / MONEY LAUNDERING
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "aml",
     keywords: ["aml", "отмывание", "laundering", "подозрительн", "мониторинг", "финансирование", "терроризм", "комплаенс", "compliance", "kyc"],
     thinkingText: "Запрашиваю AML-правила...",
     sourceText: "Анализ 4 источников...",
@@ -117,8 +160,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>Согласно <strong>ФЗ-115</strong> <span class="citation-tag">2</span>, при совокупном score ≥ 80 автоматически инициируется EDD (Enhanced Due Diligence) <span class="citation-tag">4</span> и блокировка исходящих переводов до завершения проверки.</p>`,
   },
 
-  // ── device fingerprint ──
+  // ══════════════════════════════════════════════════════════════
+  //  5. DEVICE FINGERPRINT
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "device-fingerprint",
     keywords: ["device", "fingerprint", "устройств", "девайс", "отпечаток", "browser", "браузер", "мобильн", "pos", "канал", "тиражирован"],
     thinkingText: "Анализирую device fingerprinting...",
     sourceText: "Анализ 3 источников...",
@@ -148,8 +194,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>Тиражирование SDK-модуля device_fp на POS-канал позволит унифицировать scoring и снизить fraud rate в offline-канале на ~18%.</p>`,
   },
 
-  // ── scoring / model ──
+  // ══════════════════════════════════════════════════════════════
+  //  6. ML SCORING / MODELS
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "ml-scoring",
     keywords: ["score", "скоринг", "модель", "ml", "machine learning", "нейросет", "модел", "fraud_scorer", "предикт", "predict", "xgboost", "gradient"],
     thinkingText: "Загружаю данные по скоринг-моделям...",
     sourceText: "Анализ 3 источников...",
@@ -176,8 +225,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>По результатам A/B теста <span class="citation-tag">3</span>, v4 показал снижение FP rate на <strong>2.1 п.п.</strong> при идентичном recall. Рекомендуется полный roll-out до конца марта 2026.</p>`,
   },
 
-  // ── alerts / incidents ──
+  // ══════════════════════════════════════════════════════════════
+  //  7. ALERTS / INCIDENTS
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "alerts",
     keywords: ["алерт", "alert", "инцидент", "incident", "срабатыван", "сработк", "уведомлен", "escalat", "эскалац", "кейс", "тикет"],
     thinkingText: "Собираю данные по алертам...",
     sourceText: "Анализ 3 источников...",
@@ -203,8 +255,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>Playbook <span class="citation-tag">2</span> определяет workflow эскалации: L1 → L2 → Fraud Manager → CISO при неразрешении в рамках SLA.</p>`,
   },
 
-  // ── rules general / правила ──
+  // ══════════════════════════════════════════════════════════════
+  //  8. RULES / POLICIES (general)
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "rules",
     keywords: ["правил", "rule", "policy", "политик", "логик", "условие", "condition", "настройк"],
     thinkingText: "Загружаю каталог правил...",
     sourceText: "Анализ 3 источников...",
@@ -231,8 +286,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>По дашборду Q1 <span class="citation-tag">3</span>, топ-5 правил по detection volume покрывают <strong>68%</strong> всех подтверждённых фрод-кейсов.</p>`,
   },
 
-  // ── geo / geography ──
+  // ══════════════════════════════════════════════════════════════
+  //  9. GEO / GEOGRAPHY
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "geo",
     keywords: ["geo", "геогр", "страна", "регион", "ip", "vpn", "proxy", "локац", "местоположен"],
     thinkingText: "Анализирую гео-правила...",
     sourceText: "Анализ 3 источников...",
@@ -259,8 +317,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>При обнаружении VPN/Proxy к score добавляется +25, а при TOR — +45.</p>`,
   },
 
-  // ── deepening / углубление ──
+  // ══════════════════════════════════════════════════════════════
+  //  10. DEEPENING
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "deepening",
     keywords: ["углуби", "подробн", "детал", "расскажи больше", "expand", "elaborate"],
     thinkingText: "Углубляю анализ...",
     sourceText: "Расширенный поиск по 5 источникам...",
@@ -280,8 +341,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>Также отмечается, что комбинирование rule-based подхода с ML-моделями даёт <strong>синергетический эффект</strong>: правила ловят известные паттерны, модель — аномалии, не покрытые правилами.</p>`,
   },
 
-  // ── simplification ──
+  // ══════════════════════════════════════════════════════════════
+  //  11. SIMPLIFICATION
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "simplify",
     keywords: ["упрости", "проще", "простыми словами", "explain simply", "для новичк"],
     thinkingText: "Упрощаю объяснение...",
     sourceText: "Подготовка упрощённого ответа...",
@@ -300,8 +364,11 @@ const knowledgeBase: KnowledgeEntry[] = [
 <p>Система смотрит на разные признаки: как часто человек покупает, с какого устройства, из какой страны, на какую сумму. Чем больше подозрительных признаков — тем выше оценка.</p>`,
   },
 
-  // ── chargeback / disputes ──
+  // ══════════════════════════════════════════════════════════════
+  //  12. CHARGEBACKS / DISPUTES
+  // ══════════════════════════════════════════════════════════════
   {
+    slug: "chargebacks",
     keywords: ["chargeback", "чарджбэк", "диспут", "dispute", "возврат", "оспариван", "refund"],
     thinkingText: "Загружаю статистику чарджбэков...",
     sourceText: "Анализ 3 источников...",
@@ -325,12 +392,253 @@ const knowledgeBase: KnowledgeEntry[] = [
 
 <p>Для снижения chargeback ratio (текущий 0.87%, порог VISA — 0.9%) рекомендуется внедрение <strong>Verifi CDRN</strong> и <strong>Ethoca alerts</strong>.</p>`,
   },
+
+  // ══════════════════════════════════════════════════════════════
+  //  13. 3DS / 3D SECURE  ★ NEW
+  // ══════════════════════════════════════════════════════════════
+  {
+    slug: "3ds",
+    keywords: ["3ds", "3d secure", "3д секьюр", "3-d secure", "аутентификац", "sca", "strong customer", "emv 3ds", "challenge", "frictionless"],
+    thinkingText: "Загружаю данные по 3D Secure...",
+    sourceText: "Анализ 4 источников...",
+    sources: [
+      { id: 1, title: "3DS 2.2 Implementation Guide", relevance: 97, lastUpdated: "15 марта 2026", type: "Spec" },
+      { id: 2, title: "3DS Performance Dashboard Q1 2026", relevance: 92, lastUpdated: "12 марта 2026", type: "Dashboard" },
+      { id: 3, title: "Policy Rule: 3ds_decision_engine_v2", relevance: 88, lastUpdated: "8 марта 2026", type: "Rule" },
+      { id: 4, title: "PSD2/SCA Compliance Checklist", relevance: 82, lastUpdated: "1 февраля 2026", type: "Wiki" },
+    ],
+    response: `<p>Платформа использует <strong>EMV 3DS 2.2</strong> <span class="citation-tag">1</span> для аутентификации CNP-транзакций с двумя потоками:</p>
+
+<h3>Frictionless vs Challenge</h3>
+<p><strong>Frictionless flow</strong> — банк-эмитент одобряет транзакцию без участия клиента на основе risk-based анализа (device, поведенческие данные, история). Целевая доля: <strong>≥ 85%</strong> всех 3DS-запросов.</p>
+<p><strong>Challenge flow</strong> — клиент проходит дополнительную верификацию (OTP, biometric, in-app confirm). Применяется для высокорисковых транзакций.</p>
+
+<h3>Текущие метрики</h3>
+<p>По дашборду Q1 <span class="citation-tag">2</span>:</p>
+<p>• Frictionless rate: <strong>87.4%</strong> (цель — 85%)<br/>
+• Challenge success rate: <strong>76.2%</strong><br/>
+• Abandonment rate (challenge): <strong>18.3%</strong> — основная зона потерь конверсии<br/>
+• Liability shift coverage: <strong>94.1%</strong></p>
+
+<h3>Decision Engine</h3>
+<p>Правило <strong>3ds_decision_engine_v2</strong> <span class="citation-tag">3</span> определяет, когда запрашивать 3DS:</p>
+<p>• Score ≥ 60 → обязательный 3DS challenge<br/>
+• Score 30–59 → 3DS с preference: frictionless<br/>
+• Score &lt; 30 + доверенное устройство → exemption (без 3DS)</p>
+
+<p>Согласно SCA-требованиям <span class="citation-tag">4</span>, исключения (exemptions) доступны для: низкорисковых транзакций (TRA), recurring-платежей, и сумм до €30 (кумулятивный лимит €100).</p>`,
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  //  14. GEO-ANOMALIES / IMPOSSIBLE TRAVEL  ★ NEW
+  // ══════════════════════════════════════════════════════════════
+  {
+    slug: "geo-anomalies",
+    keywords: ["impossible travel", "невозможное перемещен", "гео-аномал", "geo-anomal", "телепортац", "travel", "расстоян", "перемещен", "перелёт", "перелет"],
+    thinkingText: "Анализирую гео-аномалии...",
+    sourceText: "Анализ 3 источников...",
+    sources: [
+      { id: 1, title: "Policy Rule: impossible_travel_detector_v3", relevance: 96, lastUpdated: "14 марта 2026", type: "Rule" },
+      { id: 2, title: "Geo-Anomaly Investigation Report Q1 2026", relevance: 91, lastUpdated: "10 марта 2026", type: "Report" },
+      { id: 3, title: "IP Geolocation Accuracy Benchmark", relevance: 84, lastUpdated: "25 февраля 2026", type: "Benchmark" },
+    ],
+    response: `<p>Модуль <strong>impossible_travel_detector_v3</strong> <span class="citation-tag">1</span> выявляет физически невозможные перемещения пользователей между транзакциями.</p>
+
+<h3>Алгоритм детекции</h3>
+<p>Для каждой пары последовательных транзакций рассчитывается:</p>
+<p>• <strong>Географическое расстояние</strong> между точками (Haversine formula)<br/>
+• <strong>Минимальное время перемещения</strong> с учётом: авиа (850 км/ч), авто (120 км/ч), ж/д (250 км/ч)<br/>
+• <strong>Фактический интервал</strong> между транзакциями</p>
+
+<p>Если фактический интервал < минимального времени перемещения, генерируется алерт.</p>
+
+<h3>Уровни severity</h3>
+<p>По данным расследований Q1 <span class="citation-tag">2</span>:</p>
+<p>• <strong>Teleportation</strong> (интервал &lt; 30 мин, расстояние &gt; 500 км) → score +50, блокировка<br/>
+• <strong>Suspicious travel</strong> (интервал 30 мин – 3ч, нереалистичная скорость) → score +30<br/>
+• <strong>Unusual geography</strong> (новый регион + device change) → score +20</p>
+
+<h3>Ограничения</h3>
+<p>Точность IP-геолокации <span class="citation-tag">3</span> на уровне города — <strong>82%</strong>, на уровне страны — <strong>99.1%</strong>. Ложные срабатывания чаще возникают при:</p>
+<p>• Использовании мобильного интернета (IP привязан к другому городу)<br/>
+• Корпоративных VPN с выходной точкой в другой стране<br/>
+• Shared-устройствах (семейный аккаунт)</p>
+
+<p>Рекомендация: комбинировать IP-гео с GPS-данными из мобильного SDK для повышения accuracy до <strong>96%</strong>.</p>`,
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  //  15. BEHAVIORAL BIOMETRICS  ★ NEW
+  // ══════════════════════════════════════════════════════════════
+  {
+    slug: "behavioral-biometrics",
+    keywords: ["behavioral", "поведенческ", "биометри", "biometric", "клавиатур", "typing", "keystroke", "mouse", "мышь", "жест", "gesture", "свайп"],
+    thinkingText: "Анализирую поведенческую биометрию...",
+    sourceText: "Анализ 3 источников...",
+    sources: [
+      { id: 1, title: "Behavioral Biometrics Module: BioSense v2", relevance: 95, lastUpdated: "16 марта 2026", type: "System" },
+      { id: 2, title: "Keystroke Dynamics: Accuracy Report", relevance: 89, lastUpdated: "8 марта 2026", type: "Report" },
+      { id: 3, title: "Policy Rule: behavioral_anomaly_score", relevance: 85, lastUpdated: "1 марта 2026", type: "Rule" },
+    ],
+    response: `<p>Модуль <strong>BioSense v2</strong> <span class="citation-tag">1</span> анализирует паттерны взаимодействия пользователя с устройством для пассивной аутентификации.</p>
+
+<h3>Собираемые сигналы</h3>
+<p><strong>Desktop (Web):</strong></p>
+<p>• Динамика набора текста — скорость, flight time между клавишами, dwell time<br/>
+• Движения мыши — траектория, скорость, кривизна, overshooting<br/>
+• Scroll-паттерны — частота, инерция, направление</p>
+
+<p><strong>Mobile:</strong></p>
+<p>• Touch pressure + area (на поддерживаемых устройствах)<br/>
+• Swipe velocity и угол наклона<br/>
+• Гироскоп / акселерометр — как пользователь держит телефон<br/>
+• Typing rhythm на виртуальной клавиатуре</p>
+
+<h3>Результаты</h3>
+<p>По отчёту accuracy <span class="citation-tag">2</span>:</p>
+<p>• EER (Equal Error Rate): <strong>3.2%</strong> при 10+ сессиях обучения<br/>
+• Среднее время до формирования профиля: <strong>5 сессий</strong><br/>
+• False rejection rate (легитимный пользователь отклонён): <strong>1.8%</strong></p>
+
+<p>Правило <strong>behavioral_anomaly_score</strong> <span class="citation-tag">3</span> добавляет до +30 к fraud score при значительном отклонении от поведенческого профиля (z-score &gt; 2.5). При совпадении device fingerprint + behavioral match — score снижается на −10 (доверенный контекст).</p>`,
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  //  16. GRAPH / NETWORK ANALYSIS  ★ NEW
+  // ══════════════════════════════════════════════════════════════
+  {
+    slug: "graph-analysis",
+    keywords: ["граф", "graph", "network analysis", "сетевой анализ", "связ", "кластер", "cluster", "ring", "кольц", "сообщник", "организованн", "группировк"],
+    thinkingText: "Строю граф связей...",
+    sourceText: "Анализ 4 источников...",
+    sources: [
+      { id: 1, title: "Graph Analytics Engine: FraudGraph v2", relevance: 96, lastUpdated: "15 марта 2026", type: "System" },
+      { id: 2, title: "Fraud Ring Detection: Case Studies Q1", relevance: 91, lastUpdated: "12 марта 2026", type: "Report" },
+      { id: 3, title: "Policy Rule: network_risk_propagation", relevance: 87, lastUpdated: "5 марта 2026", type: "Rule" },
+      { id: 4, title: "Neo4j + GDS Integration Spec", relevance: 80, lastUpdated: "20 февраля 2026", type: "Spec" },
+    ],
+    response: `<p>Движок <strong>FraudGraph v2</strong> <span class="citation-tag">1</span> строит граф связей между сущностями для выявления организованного фрода.</p>
+
+<h3>Узлы и рёбра графа</h3>
+<p><strong>Узлы:</strong> пользователи, устройства, IP-адреса, карты, email, телефоны, адреса доставки</p>
+<p><strong>Рёбра:</strong> транзакция, логин, смена данных, refund-запрос, chargeback</p>
+
+<p>Граф хранится в <strong>Neo4j</strong> с расширением GDS <span class="citation-tag">4</span> для алгоритмов community detection.</p>
+
+<h3>Алгоритмы</h3>
+<p>• <strong>Louvain community detection</strong> — выявление кластеров связанных аккаунтов<br/>
+• <strong>PageRank</strong> — определение "центральных" узлов в мошеннических сетях<br/>
+• <strong>Shortest path</strong> — поиск неочевидных связей (2–3 hop distance)<br/>
+• <strong>Temporal pattern matching</strong> — синхронные действия группы аккаунтов</p>
+
+<h3>Результаты Q1</h3>
+<p>По кейс-стади <span class="citation-tag">2</span> выявлено <strong>7 fraud rings</strong> общей стоимостью 12.4 млн ₽:</p>
+<p>• Крупнейшее кольцо: 43 аккаунта, 3 общих устройства, 891 транзакция<br/>
+• Среднее время обнаружения: <strong>4.2 часа</strong> (vs 18 дней до внедрения графа)</p>
+
+<p>Правило <strong>network_risk_propagation</strong> <span class="citation-tag">3</span>: при подтверждении фрода на одном узле score всех связанных узлов в 2-hop radius повышается на +15…+40 в зависимости от силы связи.</p>`,
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  //  17. SYNTHETIC IDENTITY / ACCOUNT FRAUD  ★ NEW
+  // ══════════════════════════════════════════════════════════════
+  {
+    slug: "synthetic-identity",
+    keywords: ["synthetic", "синтетическ", "поддельн", "фейков", "fake", "identity", "идентичност", "мул", "mule", "дроп", "drop", "номинал"],
+    thinkingText: "Анализирую синтетические идентичности...",
+    sourceText: "Анализ 3 источников...",
+    sources: [
+      { id: 1, title: "Synthetic Identity Detection Model v1.4", relevance: 95, lastUpdated: "14 марта 2026", type: "Model" },
+      { id: 2, title: "Mule Account Patterns: Q1 2026 Analysis", relevance: 90, lastUpdated: "10 марта 2026", type: "Report" },
+      { id: 3, title: "KYC Enrichment: Document Verification API", relevance: 84, lastUpdated: "1 марта 2026", type: "System" },
+    ],
+    response: `<p>Модель <strong>Synthetic Identity Detection v1.4</strong> <span class="citation-tag">1</span> выявляет аккаунты, созданные с использованием скомпилированных или украденных данных.</p>
+
+<h3>Признаки синтетической идентичности</h3>
+<p>• ФИО + дата рождения не соответствуют ни одной записи в бюро кредитных историй<br/>
+• SSN/ИНН зарегистрирован недавно или принадлежит умершему/несовершеннолетнему<br/>
+• Email создан менее 30 дней назад + одноразовый домен<br/>
+• Телефон — виртуальный номер (VoIP) без истории</p>
+
+<h3>Паттерны мул-аккаунтов</h3>
+<p>По анализу Q1 <span class="citation-tag">2</span>:</p>
+<p>• <strong>Sleeper pattern</strong> — аккаунт активен 60–90 дней с легитимными микро-транзакциями, затем резкий всплеск (bust-out)<br/>
+• <strong>Funnel pattern</strong> — множество входящих переводов с разных источников → единый вывод на крипто/электронный кошелёк<br/>
+• <strong>Round-trip</strong> — P2P-переводы внутри замкнутой группы аккаунтов</p>
+
+<h3>Верификация</h3>
+<p>API документарной верификации <span class="citation-tag">3</span> проверяет: подлинность документа (MRZ, голограммы, шрифты), liveness-check (anti-spoofing), и match score лица на документе vs selfie. Текущий accuracy: <strong>99.2%</strong> при FRR 0.8%.</p>`,
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  //  18. PAYMENT TOKENIZATION & ENCRYPTION  ★ NEW
+  // ══════════════════════════════════════════════════════════════
+  {
+    slug: "tokenization",
+    keywords: ["token", "токенизац", "шифрован", "encrypt", "pci", "dss", "vault", "хранен", "карточн", "маскир", "mask", "pan"],
+    thinkingText: "Загружаю данные по токенизации...",
+    sourceText: "Анализ 3 источников...",
+    sources: [
+      { id: 1, title: "Tokenization Service: CardVault v3", relevance: 94, lastUpdated: "12 марта 2026", type: "System" },
+      { id: 2, title: "PCI DSS 4.0 Compliance Status", relevance: 91, lastUpdated: "1 марта 2026", type: "Audit" },
+      { id: 3, title: "Network Tokenization: Visa/MC Integration", relevance: 86, lastUpdated: "15 февраля 2026", type: "Spec" },
+    ],
+    response: `<p>Сервис <strong>CardVault v3</strong> <span class="citation-tag">1</span> обеспечивает токенизацию и безопасное хранение платёжных данных.</p>
+
+<h3>Архитектура</h3>
+<p>• <strong>Vault-level tokenization</strong> — PAN заменяется на format-preserving token (FPE, FF3-1) при первом вводе<br/>
+• <strong>Encryption at rest</strong> — AES-256-GCM с ротацией ключей каждые 90 дней<br/>
+• <strong>Encryption in transit</strong> — TLS 1.3, certificate pinning для мобильных SDK<br/>
+• <strong>HSM</strong> — мастер-ключи хранятся в аппаратных модулях (Thales Luna)</p>
+
+<h3>Network Tokenization</h3>
+<p>Интеграция с Visa VTS и MC MDES <span class="citation-tag">3</span> позволяет:</p>
+<p>• Заменять PAN на network-level token → снижение scope PCI DSS<br/>
+• Автоматическое обновление при перевыпуске карты (lifecycle management)<br/>
+• Улучшение approval rate на <strong>2.4%</strong> за счёт криптограммы</p>
+
+<h3>Статус PCI DSS 4.0</h3>
+<p>По результатам аудита <span class="citation-tag">2</span>: 11 из 12 requirements — <strong>compliant</strong>. Requirement 6.4 (client-side script management) — в процессе внедрения CSP и SRI. Дедлайн: <strong>31 марта 2026</strong>.</p>`,
+  },
+
+  // ══════════════════════════════════════════════════════════════
+  //  19. REAL-TIME MONITORING / DASHBOARD  ★ NEW
+  // ══════════════════════════════════════════════════════════════
+  {
+    slug: "monitoring",
+    keywords: ["мониторинг", "monitoring", "дашборд", "dashboard", "реальном времен", "real-time", "realtime", "метрик", "metric", "отчёт", "отчет", "report", "статистик", "kpi"],
+    thinkingText: "Подключаюсь к мониторингу...",
+    sourceText: "Анализ 3 источников...",
+    sources: [
+      { id: 1, title: "Real-Time Monitoring: FraudWatch Dashboard", relevance: 95, lastUpdated: "16 марта 2026", type: "Dashboard" },
+      { id: 2, title: "KPI Framework: Antifraud Metrics v3", relevance: 90, lastUpdated: "10 марта 2026", type: "Wiki" },
+      { id: 3, title: "Alerting & Notification Pipeline", relevance: 84, lastUpdated: "5 марта 2026", type: "System" },
+    ],
+    response: `<p>Дашборд <strong>FraudWatch</strong> <span class="citation-tag">1</span> обеспечивает real-time мониторинг с обновлением каждые <strong>5 секунд</strong>.</p>
+
+<h3>Ключевые виджеты</h3>
+<p>• <strong>Transaction heatmap</strong> — карта транзакций по регионам с цветовой кодировкой риска<br/>
+• <strong>Fraud rate trend</strong> — скользящий график fraud rate за 24ч / 7д / 30д<br/>
+• <strong>Alert queue</strong> — live-очередь алертов с фильтрами по severity и типу<br/>
+• <strong>Model drift monitor</strong> — отслеживание PSI (Population Stability Index) модели</p>
+
+<h3>KPI-метрики</h3>
+<p>Фреймворк метрик <span class="citation-tag">2</span> определяет 4 уровня:</p>
+<p>• <strong>L1 (Executive)</strong>: Fraud rate (bps), Loss amount, Chargeback ratio<br/>
+• <strong>L2 (Operations)</strong>: Detection rate, FP rate, Alert-to-SAR conversion<br/>
+• <strong>L3 (Technical)</strong>: Model AUC, Latency p99, Rule hit rates<br/>
+• <strong>L4 (Granular)</strong>: Per-rule performance, Feature drift, Data freshness</p>
+
+<h3>Алертинг</h3>
+<p>Pipeline уведомлений <span class="citation-tag">3</span> поддерживает: Slack, PagerDuty, email, SMS. Приоритет каналов настраивается per-severity. Среднее время от детекции до уведомления: <strong>800ms</strong>.</p>`,
+  },
+
 ];
 
-/**
- * Default fallback response when no topic matches well enough
- */
+// ─── Fallback ────────────────────────────────────────────────────
+
 const fallbackEntry: KnowledgeEntry = {
+  slug: "fallback",
   keywords: [],
   thinkingText: "Обрабатываю запрос...",
   sourceText: "Поиск по базе знаний...",
@@ -351,6 +659,8 @@ const fallbackEntry: KnowledgeEntry = {
 
 <p>Могу детально разобрать любой из этих компонентов — уточните, что вас интересует.</p>`,
 };
+
+// ─── Matching engine ─────────────────────────────────────────────
 
 /**
  * Score a query against an entry's keywords.
@@ -397,5 +707,3 @@ export function findBestMatch(query: string): KnowledgeEntry {
 
   return bestEntry;
 }
-
-export type { KnowledgeEntry, Source };
