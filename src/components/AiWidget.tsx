@@ -122,25 +122,39 @@ const AiWidget = () => {
     }
   }, []);
 
+  const isAtBottomRef = useRef(true);
+
   const checkScrollState = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
     const hasOverflow = scrollHeight > clientHeight + 10;
     const atBottom = scrollHeight - scrollTop - clientHeight < 60;
+    isAtBottomRef.current = atBottom;
     setShowScrollBtn(hasOverflow && !atBottom);
     if (atBottom) setUnreadCount(0);
   }, []);
 
+  // Auto-scroll when new messages are added
   useEffect(() => {
     const newCount = messages.length;
     const added = newCount - prevMsgCountRef.current;
     prevMsgCountRef.current = newCount;
     if (added > 0) {
-      if (!showScrollBtn) scrollToBottom();
+      if (isAtBottomRef.current) scrollToBottom();
       else setUnreadCount((prev) => prev + added);
     }
     requestAnimationFrame(checkScrollState);
-  }, [messages, showScrollBtn, scrollToBottom, checkScrollState]);
+  }, [messages.length, scrollToBottom, checkScrollState]);
+
+  // Auto-scroll during streaming when user is at bottom
+  useEffect(() => {
+    const last = messages[messages.length - 1];
+    if (last && isAtBottomRef.current) {
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "auto" });
+      });
+    }
+  }, [messages]);
 
   const handleQuery = (query: string) => {
     // Auto-create session if none active
