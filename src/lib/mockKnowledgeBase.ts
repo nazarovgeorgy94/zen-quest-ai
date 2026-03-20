@@ -304,6 +304,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "rules",
     keywords: ["правил", "rule", "policy", "политик", "логик", "условие", "condition", "настройк"],
     thinkingText: "Загружаю каталог правил...",
+    thinkingSteps: [
+      "Подключение к Active Rules Registry",
+      "Группировка 73 правил по 8 категориям",
+      "Анализ governance lifecycle и performance dashboard",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Rule Catalog: Active Rules Registry", relevance: 95, lastUpdated: "14 марта 2026", type: "Registry" },
