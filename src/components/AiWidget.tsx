@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon, History, GripVertical } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { findBestMatch } from "@/lib/mockKnowledgeBase";
+import { streamRAGResponse, isRAGAvailable } from "@/lib/ragService";
 import QueryInput from "./QueryInput";
 import EmptyState from "./EmptyState";
 import ChatMessage from "./ChatMessage";
@@ -158,48 +159,101 @@ const AiWidget = () => {
     }
 
     const now = new Date();
-    const match = findBestMatch(query);
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: query, timestamp: now };
     const assistantId = (Date.now() + 1).toString();
-    const thinkingSteps = match.thinkingSteps ?? [];
+
     const assistantMsg: Message = {
       id: assistantId,
       role: "assistant",
       content: "",
       sources: undefined,
       isStreaming: true,
-      statusText: match.thinkingText,
+      statusText: "Анализирую запрос...",
       timestamp: new Date(now.getTime() + 1000),
-      thinkingSteps,
+      thinkingSteps: [
+        "Генерация эмбеддинга запроса",
+        "Поиск релевантных документов в базе знаний",
+        "Формирование контекста для LLM",
+      ],
       thinkingRevealed: 0,
       thinkingComplete: false,
     };
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setIsProcessing(true);
 
-    // Phase 1: Reveal thinking steps one by one
-    const stepDelay = 500 + Math.random() * 300; // per step
-    thinkingSteps.forEach((_, i) => {
+    // Animate thinking steps
+    const stepDelay = 600;
+    [1, 2, 3].forEach((i) => {
       setTimeout(() => {
         setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantId ? { ...m, thinkingRevealed: i + 1 } : m
-          )
+          prev.map((m) => (m.id === assistantId ? { ...m, thinkingRevealed: i } : m))
         );
-      }, stepDelay * (i + 1));
+      }, stepDelay * i);
     });
 
-    // Phase 2: Mark thinking complete + show sources
-    const thinkingDuration = stepDelay * (thinkingSteps.length + 1);
+    // Try RAG, fallback to mock
+    if (isRAGAvailable()) {
+      handleRAGQuery(query, assistantId, stepDelay);
+    } else {
+      handleMockQuery(query, assistantId, stepDelay);
+    }
+  };
+
+  const handleRAGQuery = (query: string, assistantId: string, thinkingDelay: number) => {
+    const thinkingDuration = thinkingDelay * 4;
+
+    // Build conversation history for context
+    const history = messages
+      .filter((m) => m.content)
+      .slice(-6)
+      .map((m) => ({ role: m.role, content: m.content.replace(/<[^>]*>/g, "") }));
+
+    setTimeout(() => {
+      setMessages((prev) =>
+        prev.map((m) => (m.id === assistantId ? { ...m, thinkingComplete: true, statusText: "Генерирую ответ..." } : m))
+      );
+
+      streamRAGResponse(query, history, {
+        onSources: (sources) => {
+          setMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? { ...m, sources } : m))
+          );
+        },
+        onDelta: (text) => {
+          setMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + text } : m))
+          );
+        },
+        onDone: () => {
+          setMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false, statusText: undefined } : m))
+          );
+          setIsProcessing(false);
+        },
+        onError: (error) => {
+          console.warn("RAG failed, falling back to mock:", error);
+          // Fall back to mock on error
+          handleMockQuery(query, assistantId, 0);
+        },
+      });
+    }, thinkingDuration);
+  };
+
+  const handleMockQuery = (query: string, assistantId: string, thinkingDelay: number) => {
+    const match = findBestMatch(query);
+    const thinkingDuration = thinkingDelay * 4;
+
     setTimeout(() => {
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === assistantId ? { ...m, thinkingComplete: true, sources: match.sources, statusText: match.sourceText } : m
+          m.id === assistantId
+            ? { ...m, thinkingComplete: true, sources: match.sources, statusText: match.sourceText }
+            : m
         )
       );
     }, thinkingDuration);
 
-    // Phase 3: Start streaming text
+    // Simulate streaming
     const fullHtml = match.response;
     const chunkSize = 12;
     const totalChunks = Math.ceil(fullHtml.length / chunkSize);
