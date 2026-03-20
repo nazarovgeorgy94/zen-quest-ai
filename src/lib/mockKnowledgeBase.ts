@@ -467,6 +467,12 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "3ds",
     keywords: ["3ds", "3d secure", "3д секьюр", "3-d secure", "аутентификац", "sca", "strong customer", "emv 3ds", "challenge", "frictionless"],
     thinkingText: "Загружаю данные по 3D Secure...",
+    thinkingSteps: [
+      "Определяю версию протокола → EMV 3DS 2.2",
+      "Загрузка метрик frictionless/challenge rate",
+      "Анализ decision engine и exemption-логики",
+      "Проверка SCA/PSD2 compliance checklist",
+    ],
     sourceText: "Анализ 4 источников...",
     sources: [
       { id: 1, title: "3DS 2.2 Implementation Guide", relevance: 97, lastUpdated: "15 марта 2026", type: "Spec" },
