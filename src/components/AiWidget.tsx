@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon } from "lucide-react";
+import { Sparkles, X, Maximize2, Minimize2, ArrowDown, Plus, Sun, Moon, History } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { findBestMatch } from "@/lib/mockKnowledgeBase";
 import QueryInput from "./QueryInput";
 import EmptyState from "./EmptyState";
 import ChatMessage from "./ChatMessage";
+import ChatHistory, { type ChatSession } from "./ChatHistory";
 
 interface Message {
   id: string;
@@ -17,6 +18,27 @@ interface Message {
   timestamp: Date;
 }
 
+interface StoredSession {
+  id: string;
+  messages: Message[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const generateSessionTitle = (messages: Message[]): string => {
+  const firstUser = messages.find((m) => m.role === "user");
+  if (!firstUser) return "Новый чат";
+  const text = firstUser.content;
+  return text.length > 40 ? text.slice(0, 40) + "…" : text;
+};
+
+const generateSessionPreview = (messages: Message[]): string => {
+  const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant" && m.content);
+  if (!lastAssistant) return "Нет ответа";
+  const stripped = lastAssistant.content.replace(/<[^>]*>/g, "").trim();
+  return stripped.length > 60 ? stripped.slice(0, 60) + "…" : stripped;
+};
+
 const AiWidget = () => {
   const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
@@ -25,8 +47,67 @@ const AiWidget = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Session management
+  const [sessions, setSessions] = useState<StoredSession[]>([]);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevMsgCountRef = useRef(0);
+
+  // Save current messages into the active session
+  const saveCurrentSession = useCallback(() => {
+    if (!activeSessionId || messages.length === 0) return;
+    setSessions((prev) =>
+      prev.map((s) =>
+        s.id === activeSessionId
+          ? { ...s, messages: [...messages], updatedAt: new Date() }
+          : s
+      )
+    );
+  }, [activeSessionId, messages]);
+
+  // Auto-save when messages change
+  useEffect(() => {
+    if (activeSessionId && messages.length > 0) {
+      saveCurrentSession();
+    }
+  }, [messages, activeSessionId, saveCurrentSession]);
+
+  const startNewChat = useCallback(() => {
+    // Save current before starting new
+    saveCurrentSession();
+    const newId = Date.now().toString();
+    const newSession: StoredSession = {
+      id: newId,
+      messages: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    setSessions((prev) => [newSession, ...prev]);
+    setActiveSessionId(newId);
+    setMessages([]);
+    setShowHistory(false);
+  }, [saveCurrentSession]);
+
+  const selectSession = useCallback((id: string) => {
+    saveCurrentSession();
+    const session = sessions.find((s) => s.id === id);
+    if (session) {
+      setActiveSessionId(id);
+      setMessages([...session.messages]);
+      setShowHistory(false);
+    }
+  }, [sessions, saveCurrentSession]);
+
+  const deleteSession = useCallback((id: string) => {
+    setSessions((prev) => prev.filter((s) => s.id !== id));
+    if (activeSessionId === id) {
+      setActiveSessionId(null);
+      setMessages([]);
+    }
+  }, [activeSessionId]);
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -43,24 +124,33 @@ const AiWidget = () => {
     if (atBottom) setUnreadCount(0);
   }, []);
 
-  // Auto-scroll when new messages arrive
   useEffect(() => {
     const newCount = messages.length;
     const added = newCount - prevMsgCountRef.current;
     prevMsgCountRef.current = newCount;
-
     if (added > 0) {
-      if (!showScrollBtn) {
-        scrollToBottom();
-      } else {
-        setUnreadCount((prev) => prev + added);
-      }
+      if (!showScrollBtn) scrollToBottom();
+      else setUnreadCount((prev) => prev + added);
     }
-    // Re-check after DOM update
     requestAnimationFrame(checkScrollState);
   }, [messages, showScrollBtn, scrollToBottom, checkScrollState]);
 
   const handleQuery = (query: string) => {
+    // Auto-create session if none active
+    let currentSessionId = activeSessionId;
+    if (!currentSessionId) {
+      const newId = Date.now().toString();
+      const newSession: StoredSession = {
+        id: newId,
+        messages: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      setSessions((prev) => [newSession, ...prev]);
+      setActiveSessionId(newId);
+      currentSessionId = newId;
+    }
+
     const now = new Date();
     const match = findBestMatch(query);
     const userMsg: Message = { id: Date.now().toString(), role: "user", content: query, timestamp: now };
@@ -77,31 +167,24 @@ const AiWidget = () => {
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setIsProcessing(true);
 
-    // Simulate sources appearing
     setTimeout(() => {
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === assistantId
-            ? { ...m, sources: match.sources, statusText: match.sourceText }
-            : m
+          m.id === assistantId ? { ...m, sources: match.sources, statusText: match.sourceText } : m
         )
       );
     }, 600 + Math.random() * 400);
 
-    // Simulate streaming: reveal HTML in chunks
     const fullHtml = match.response;
-    const chunkSize = 12; // characters per tick
+    const chunkSize = 12;
     const totalChunks = Math.ceil(fullHtml.length / chunkSize);
     const startDelay = 1200 + Math.random() * 600;
 
     setTimeout(() => {
       let currentChunk = 0;
-
       const interval = setInterval(() => {
         currentChunk++;
-        // Make sure we don't break mid-tag
         let endIdx = Math.min(currentChunk * chunkSize, fullHtml.length);
-        // If we're inside an HTML tag, extend to close it
         const partial = fullHtml.slice(0, endIdx);
         const openBrackets = (partial.match(/</g) || []).length;
         const closeBrackets = (partial.match(/>/g) || []).length;
@@ -109,9 +192,7 @@ const AiWidget = () => {
           const nextClose = fullHtml.indexOf(">", endIdx);
           if (nextClose !== -1) endIdx = nextClose + 1;
         }
-
         const chunk = fullHtml.slice(0, endIdx);
-
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId
@@ -119,7 +200,6 @@ const AiWidget = () => {
               : m
           )
         );
-
         if (endIdx >= fullHtml.length) {
           clearInterval(interval);
           setMessages((prev) =>
@@ -136,6 +216,22 @@ const AiWidget = () => {
   };
 
   const isEmpty = messages.length === 0;
+
+  // Build ChatSession list for the history panel
+  const chatSessions: ChatSession[] = sessions
+    .filter((s) => s.messages.length > 0 || s.id === activeSessionId)
+    .map((s) => {
+      const msgs = s.id === activeSessionId ? messages : s.messages;
+      return {
+        id: s.id,
+        title: generateSessionTitle(msgs),
+        preview: generateSessionPreview(msgs),
+        messageCount: msgs.length,
+        createdAt: s.createdAt,
+        updatedAt: s.updatedAt,
+      };
+    })
+    .filter((s) => s.messageCount > 0);
 
   return (
     <>
@@ -156,10 +252,7 @@ const AiWidget = () => {
               whileTap={{ scale: 0.88 }}
               transition={{ type: "spring", stiffness: 500, damping: 15 }}
             >
-              {/* Rotating conic gradient border */}
               <div className="absolute inset-0 rounded-full ai-btn-ring opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
-
-              {/* Multi-layer glow — enhanced */}
               <motion.div
                 className="absolute inset-[-8px] rounded-full pointer-events-none"
                 style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.3), hsl(var(--teal-accent) / 0.15), transparent 70%)" }}
@@ -172,8 +265,6 @@ const AiWidget = () => {
                 animate={{ opacity: [0.2, 0.5, 0.2], scale: [0.9, 1.1, 0.9] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               />
-
-              {/* Inner button */}
               <button className="absolute inset-[2.5px] rounded-full bg-card/90 flex items-center justify-center transition-all duration-300 group-hover:bg-card/80 backdrop-blur-sm">
                 <motion.div
                   animate={{ rotate: [0, 12, -12, 0] }}
@@ -182,8 +273,6 @@ const AiWidget = () => {
                   <Sparkles className="w-[22px] h-[22px] text-primary transition-all duration-500 group-hover:rotate-90 group-hover:scale-110" />
                 </motion.div>
               </button>
-
-              {/* Pulse rings */}
               <motion.span
                 className="absolute inset-[-4px] rounded-full border border-primary/20 pointer-events-none"
                 animate={{ scale: [1, 1.5], opacity: [0.4, 0] }}
@@ -203,7 +292,6 @@ const AiWidget = () => {
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -213,7 +301,6 @@ const AiWidget = () => {
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Panel */}
             <motion.div
               initial={{ opacity: 0, y: 30, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -225,14 +312,9 @@ const AiWidget = () => {
                   : "bottom-6 right-6 w-[480px] h-[700px] max-h-[calc(100vh-3rem)] rounded-2xl"
               }`}
             >
-              {/* Aurora mesh background */}
               <div className="aurora-mesh" />
               <div className="aurora-mesh-extra" />
-
-              {/* Noise texture */}
               <div className="absolute inset-0 noise-overlay pointer-events-none" />
-
-              {/* Shimmer top accent line */}
               <div className="h-[2px] w-full shimmer-line relative z-10" />
 
               {/* Header */}
@@ -252,6 +334,17 @@ const AiWidget = () => {
                 </div>
                 <div className="flex items-center gap-1">
                   <button
+                    onClick={() => setShowHistory((v) => !v)}
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-200 ${
+                      showHistory
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+                    }`}
+                    title="История чатов"
+                  >
+                    <History className="w-3.5 h-3.5" />
+                  </button>
+                  <button
                     onClick={toggleTheme}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
                     title={theme === "dark" ? "Светлая тема" : "Тёмная тема"}
@@ -259,7 +352,7 @@ const AiWidget = () => {
                     {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
                   </button>
                   <button
-                    onClick={() => setMessages([])}
+                    onClick={startNewChat}
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
                     title="Новый чат"
                   >
@@ -307,7 +400,6 @@ const AiWidget = () => {
                   )}
                 </div>
 
-                {/* Scroll to bottom button */}
                 <AnimatePresence>
                   {showScrollBtn && !isEmpty && (
                     <motion.button
@@ -327,6 +419,16 @@ const AiWidget = () => {
                     </motion.button>
                   )}
                 </AnimatePresence>
+
+                {/* Chat history overlay */}
+                <ChatHistory
+                  sessions={chatSessions}
+                  activeSessionId={activeSessionId}
+                  isOpen={showHistory}
+                  onSelect={selectSession}
+                  onDelete={deleteSession}
+                  onClose={() => setShowHistory(false)}
+                />
               </div>
 
               {/* Input */}
