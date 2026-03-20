@@ -637,6 +637,11 @@ const knowledgeBase: KnowledgeEntry[] = [
     slug: "synthetic-identity",
     keywords: ["synthetic", "синтетическ", "поддельн", "фейков", "fake", "identity", "идентичност", "мул", "mule", "дроп", "drop", "номинал"],
     thinkingText: "Анализирую синтетические идентичности...",
+    thinkingSteps: [
+      "Загрузка модели Synthetic Identity Detection v1.4",
+      "Выделение признаков синтетических документов",
+      "Анализ паттернов мул-аккаунтов за Q1",
+    ],
     sourceText: "Анализ 3 источников...",
     sources: [
       { id: 1, title: "Synthetic Identity Detection Model v1.4", relevance: 95, lastUpdated: "14 марта 2026", type: "Model" },
