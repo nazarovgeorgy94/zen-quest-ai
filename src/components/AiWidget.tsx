@@ -494,6 +494,7 @@ const AiWidget = ({ embedded = false }: AiWidgetProps) => {
             >
               {/* Resize handle — top-left corner */}
               {!embedded && !isFullscreen && (
+                <div
                   onPointerDown={handleResizeStart}
                   onPointerMove={handleResizeMove}
                   onPointerUp={handleResizeEnd}
