@@ -175,6 +175,11 @@ const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestam
         <span className="inline-block w-0.5 h-4 bg-primary/60 animate-pulse-emerald ml-9 align-text-bottom rounded-full" />
       )}
 
+      {/* Confidence indicator */}
+      {!isStreaming && content && sources && sources.length > 0 && (
+        <ConfidenceIndicator score={Math.max(...sources.map(s => s.relevance))} />
+      )}
+
       {/* Actions bar */}
       {!isStreaming && content && (
         <motion.div
