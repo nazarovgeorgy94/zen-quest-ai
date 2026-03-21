@@ -527,7 +527,7 @@ const AiWidget = ({ embedded = false }: AiWidgetProps) => {
                         <Sparkles className="w-[18px] h-[18px] text-primary relative z-10" />
                       </div>
                       <div>
-                        <h2 className="text-sm font-semibold text-foreground tracking-tight-custom leading-tight">
+                        <h2 className="text-sm font-bold tracking-tight-custom leading-tight bg-gradient-to-r from-primary via-teal-accent to-cyan-pop bg-clip-text text-transparent">
                           Antifraud Assistant
                         </h2>
                         <div className="flex items-center gap-1.5 mt-0.5">
