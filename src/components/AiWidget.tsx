@@ -43,9 +43,14 @@ const generateSessionPreview = (messages: Message[]): string => {
   return stripped.length > 60 ? stripped.slice(0, 60) + "…" : stripped;
 };
 
-const AiWidget = () => {
+interface AiWidgetProps {
+  /** When true, widget fills its container — no FAB, no backdrop, no close button */
+  embedded?: boolean;
+}
+
+const AiWidget = ({ embedded = false }: AiWidgetProps) => {
   const { theme, toggleTheme } = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(embedded);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
