@@ -526,18 +526,13 @@ const AiWidget = ({ embedded = false }: AiWidgetProps) => {
                         <div className="absolute inset-[1px] rounded-[10px] bg-surface-1/90 backdrop-blur-sm" />
                         <Sparkles className="w-[18px] h-[18px] text-primary relative z-10" />
                       </div>
-                      <div>
+                      <div className="flex items-center gap-2">
                         <h2 className="text-sm font-bold tracking-tight-custom leading-tight bg-gradient-to-r from-primary via-teal-accent to-cyan-pop bg-clip-text text-transparent">
                           Antifraud Assistant
                         </h2>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${
-                            isProcessing ? "bg-primary animate-pulse" : "bg-primary/60"
-                          }`} />
-                          <p className="text-[11px] text-muted-foreground font-medium">
-                            {isProcessing ? "Обрабатываю…" : "Knowledge Base AI"}
-                          </p>
-                        </div>
+                        <span className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${
+                          isProcessing ? "bg-primary animate-pulse" : "bg-primary/60"
+                        }`} />
                       </div>
                     </div>
 
