@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Check, ThumbsUp, ThumbsDown, Bot, ChevronDown, Layers, Lightbulb } from "lucide-react";
+import { Copy, Check, ThumbsUp, ThumbsDown, Bot, ChevronDown, Layers, Lightbulb, ShieldCheck, ShieldAlert, ShieldQuestion } from "lucide-react";
 import SourceCard from "./SourceCard";
 import ThinkingChain from "./ThinkingChain";
+import ConfidenceIndicator from "./ConfidenceIndicator";
 
 interface ChatMessageProps {
   role: "user" | "assistant";
@@ -172,6 +173,11 @@ const ChatMessage = ({ role, content, sources, isStreaming, statusText, timestam
       {/* Streaming cursor */}
       {isStreaming && content && (
         <span className="inline-block w-0.5 h-4 bg-primary/60 animate-pulse-emerald ml-9 align-text-bottom rounded-full" />
+      )}
+
+      {/* Confidence indicator */}
+      {!isStreaming && content && sources && sources.length > 0 && (
+        <ConfidenceIndicator score={Math.max(...sources.map(s => s.relevance))} />
       )}
 
       {/* Actions bar */}
