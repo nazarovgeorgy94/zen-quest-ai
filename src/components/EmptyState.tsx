@@ -233,14 +233,9 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
             </div>
           </motion.div>
         </div>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground tracking-tight-custom">
-            Antifraud Assistant
-          </h2>
-          <p className="text-xs text-muted-foreground mt-1">
-            Аналитика • Правила • Рекомендации
-          </p>
-        </div>
+        <h2 className="text-lg font-bold tracking-tight-custom bg-gradient-to-r from-primary via-teal-accent to-cyan-pop bg-clip-text text-transparent">
+          Чем могу помочь?
+        </h2>
       </motion.div>
 
       {/* ── Live Stats ── */}
