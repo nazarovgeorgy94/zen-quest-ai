@@ -594,7 +594,7 @@ const AiWidget = () => {
                       exit={{ opacity: 0, scale: 0.8, y: 8 }}
                       transition={{ duration: 0.2 }}
                       onClick={() => { scrollToBottom(); setUnreadCount(0); }}
-                      className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-card border border-border/60 shadow-lg hover:bg-secondary/80 transition-colors duration-200 group"
+                      className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-card/90 border border-primary/20 shadow-lg shadow-primary/10 hover:bg-primary/20 hover:border-primary/40 hover:shadow-primary/20 transition-all duration-200 group"
                     >
                       <ArrowDown className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
                       {unreadCount > 0 && (
