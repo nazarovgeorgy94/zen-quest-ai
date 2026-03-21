@@ -511,64 +511,85 @@ const AiWidget = ({ embedded = false }: AiWidgetProps) => {
               <div className={`h-[2px] w-full shimmer-line relative z-10 ${isProcessing ? "shimmer-active" : ""}`} />
 
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-primary/15 bg-surface-elevated/60 backdrop-blur-2xl relative z-10 refraction-highlight">
-                <div className="flex items-center gap-3">
-                  <div className="relative w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
-                    <div className="absolute inset-0 ai-btn-ring opacity-30" />
-                    <Sparkles className="w-[18px] h-[18px] text-primary relative z-10" />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-semibold text-foreground tracking-tight-custom leading-tight">Antifraud Assistant</h2>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                      <p className="text-[11px] text-muted-foreground">Knowledge Base AI</p>
+              <div className="relative z-10 border-b border-primary/10">
+                {/* Glass background layer */}
+                <div className="absolute inset-0 bg-surface-2/70 backdrop-blur-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.03] via-transparent to-cyan-pop/[0.03]" />
+                
+                <div className="relative px-5 py-3">
+                  <div className="flex items-center justify-between">
+                    {/* Left: Brand */}
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
+                        {/* Animated ring behind icon */}
+                        <div className="absolute inset-0 ai-btn-ring opacity-40 rounded-xl" />
+                        <div className="absolute inset-[1px] rounded-[10px] bg-surface-1/90 backdrop-blur-sm" />
+                        <Sparkles className="w-[18px] h-[18px] text-primary relative z-10" />
+                      </div>
+                      <div>
+                        <h2 className="text-sm font-semibold text-foreground tracking-tight-custom leading-tight">
+                          Antifraud Assistant
+                        </h2>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${
+                            isProcessing ? "bg-primary animate-pulse" : "bg-primary/60"
+                          }`} />
+                          <p className="text-[11px] text-muted-foreground font-medium">
+                            {isProcessing ? "Обрабатываю…" : "Knowledge Base AI"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Actions */}
+                    <div className="flex items-center gap-0.5">
+                      {[
+                        {
+                          icon: <History className="w-3.5 h-3.5" />,
+                          onClick: () => setShowHistory((v) => !v),
+                          active: showHistory,
+                          title: "История чатов",
+                        },
+                        {
+                          icon: theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />,
+                          onClick: toggleTheme,
+                          title: theme === "dark" ? "Светлая тема" : "Тёмная тема",
+                        },
+                        {
+                          icon: <Plus className="w-3.5 h-3.5" />,
+                          onClick: startNewChat,
+                          title: "Новый чат",
+                        },
+                        ...(!embedded ? [{
+                          icon: isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />,
+                          onClick: () => setIsFullscreen((f) => !f),
+                          title: isFullscreen ? "Свернуть" : "На весь экран",
+                        }] : []),
+                      ].map((btn, i) => (
+                        <button
+                          key={i}
+                          onClick={btn.onClick}
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                            btn.active
+                              ? "text-primary bg-primary/15 shadow-[0_0_8px_-2px_hsl(var(--primary)/0.3)]"
+                              : "text-muted-foreground hover:text-foreground hover:bg-surface-3/80"
+                          }`}
+                          title={btn.title}
+                        >
+                          {btn.icon}
+                        </button>
+                      ))}
+                      {!embedded && (
+                        <button
+                          onClick={() => { setIsOpen(false); setIsFullscreen(false); }}
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 ml-0.5"
+                          title="Закрыть"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setShowHistory((v) => !v)}
-                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-200 ${
-                      showHistory
-                        ? "text-primary bg-primary/10"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/80"
-                    }`}
-                    title="История чатов"
-                  >
-                    <History className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={toggleTheme}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
-                    title={theme === "dark" ? "Светлая тема" : "Тёмная тема"}
-                  >
-                    {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-                  </button>
-                  <button
-                    onClick={startNewChat}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
-                    title="Новый чат"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                  </button>
-                  {!embedded && (
-                    <button
-                      onClick={() => setIsFullscreen((f) => !f)}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
-                      title={isFullscreen ? "Свернуть" : "На весь экран"}
-                    >
-                      {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-                    </button>
-                  )}
-                  {!embedded && (
-                    <button
-                      onClick={() => { setIsOpen(false); setIsFullscreen(false); }}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200"
-                      title="Закрыть"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  )}
                 </div>
               </div>
 
