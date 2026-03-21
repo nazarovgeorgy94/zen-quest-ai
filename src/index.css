@@ -6,46 +6,118 @@
 
 @layer base {
   :root {
-    /* Deep Forest System — Dark (default) */
-    --background: 160 18% 6%;
-    --foreground: 155 12% 93%;
+    /* ═══════════════════════════════════════════════════════════
+       🎨 DARK THEME — Deep Forest
+       ═══════════════════════════════════════════════════════════
+       Формат: HSL без скобок → "hue saturation% lightness%"
+       Пример: 158 72% 42%  →  hsl(158, 72%, 42%)
+       
+       🔧 БЫСТРАЯ НАСТРОЙКА:
+       1. Поменяй --primary — основной акцент (кнопки, ссылки, фокус)
+       2. Поменяй --accent — вторичный акцент (бейджи, подсветки)
+       3. Поменяй --teal-accent и --cyan-pop — цветовые "всплески"
+       4. Градиенты ниже автоматически подхватят эти цвета
+       ═══════════════════════════════════════════════════════════ */
 
-    --card: 160 14% 9%;
+    /* ── Основные поверхности ── */
+    --background: 160 18% 6%;       /* Самый глубокий фон */
+    --foreground: 155 12% 93%;      /* Основной текст */
+
+    --card: 160 14% 9%;             /* Фон карточек */
     --card-foreground: 155 12% 93%;
 
-    --popover: 160 14% 9%;
+    --popover: 160 14% 9%;          /* Фон поповеров/дропдаунов */
     --popover-foreground: 155 12% 93%;
 
-    --primary: 158 72% 42%;
+    /* ── Акцентные цвета (меняй в первую очередь!) ── */
+    --primary: 158 72% 42%;         /* Главный акцент: кнопки, ссылки */
     --primary-foreground: 160 20% 5%;
 
-    --secondary: 160 12% 13%;
-    --secondary-foreground: 155 12% 82%;
-
-    --muted: 160 10% 17%;
-    --muted-foreground: 160 10% 52%;
-
-    --accent: 175 65% 38%;
+    --accent: 175 65% 38%;          /* Вторичный акцент: бейджи, теги */
     --accent-foreground: 155 12% 93%;
 
-    --destructive: 0 68% 52%;
+    --secondary: 160 12% 13%;       /* Нейтральный вторичный */
+    --secondary-foreground: 155 12% 82%;
+
+    --muted: 160 10% 17%;           /* Приглушённые элементы */
+    --muted-foreground: 160 10% 52%;
+
+    --destructive: 0 68% 52%;       /* Ошибки, удаление */
     --destructive-foreground: 0 0% 98%;
 
+    /* ── Границы и формы ── */
     --border: 160 12% 15%;
     --input: 160 12% 15%;
-    --ring: 158 72% 42%;
-
+    --ring: 158 72% 42%;            /* Кольцо фокуса — обычно = primary */
     --radius: 0.75rem;
 
-    /* Custom tokens */
-    --surface: 160 14% 9%;
-    --surface-elevated: 160 12% 12%;
-    --emerald-glow: 158 72% 42%;
-    --emerald-dim: 160 45% 28%;
-    --emerald-subtle: 160 35% 14%;
-    --teal-accent: 175 65% 38%;
-    --cyan-pop: 185 70% 45%;
+    /* ── Цветовые "всплески" для эффектов ── */
+    --teal-accent: 175 65% 38%;     /* Бирюзовый — aurora, shimmer */
+    --cyan-pop: 185 70% 45%;        /* Голубой — рефракция, подсветки */
+    --emerald-glow: 158 72% 42%;    /* Свечение — обычно = primary */
+    --emerald-dim: 160 45% 28%;     /* Приглушённый изумрудный */
+    --emerald-subtle: 160 35% 14%;  /* Еле заметный фон-акцент */
 
+    /* ── Поверхности с глубиной ── */
+    --surface: 160 14% 9%;          /* Уровень 1 (= card) */
+    --surface-elevated: 160 12% 12%;/* Уровень 2 (приподнятый) */
+
+    /* ══════════════════════════════════════════════════════════
+       🌈 GRADIENT TOKENS
+       ══════════════════════════════════════════════════════════
+       Готовые градиенты, собранные из цветов выше.
+       Используй в CSS: background: var(--gradient-primary);
+       В Tailwind: className="bg-[image:var(--gradient-primary)]"
+       ══════════════════════════════════════════════════════════ */
+
+    /* Основной градиент: primary → accent */
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--accent)) 100%
+    );
+
+    /* Мягкий градиент для фонов карточек */
+    --gradient-surface: linear-gradient(
+      145deg,
+      hsl(var(--card)) 0%,
+      hsl(var(--surface-elevated)) 100%
+    );
+
+    /* Спектральный градиент для hero-элементов */
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--teal-accent)) 40%,
+      hsl(var(--cyan-pop)) 100%
+    );
+
+    /* Свечение — для box-shadow и glow-эффектов */
+    --gradient-glow: radial-gradient(
+      circle,
+      hsl(var(--primary) / 0.4) 0%,
+      hsl(var(--teal-accent) / 0.1) 50%,
+      transparent 80%
+    );
+
+    /* Бордер-градиент для iridescent-эффектов */
+    --gradient-border: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.5) 0%,
+      hsl(var(--teal-accent) / 0.3) 50%,
+      hsl(var(--cyan-pop) / 0.4) 100%
+    );
+
+    /* ══════════════════════════════════════════════════════════
+       🔲 SHADOW TOKENS
+       ══════════════════════════════════════════════════════════ */
+
+    --shadow-sm: 0 2px 8px -2px hsl(var(--background) / 0.5);
+    --shadow-md: 0 8px 24px -8px hsl(var(--background) / 0.6);
+    --shadow-lg: 0 16px 48px -12px hsl(var(--background) / 0.7);
+    --shadow-glow: 0 0 20px -5px hsl(var(--primary) / 0.3);
+
+    /* ── Sidebar ── */
     --sidebar-background: 160 18% 4%;
     --sidebar-foreground: 160 12% 72%;
     --sidebar-primary: 158 72% 42%;
