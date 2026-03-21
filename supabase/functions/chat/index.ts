@@ -61,7 +61,7 @@ ${c.content}`)
     const sources = (chunks || []).map((c: any, i: number) => ({
       id: i + 1,
       title: c.title,
-      relevance: Math.round(c.similarity * 100),
+      relevance: Math.min(Math.round(c.similarity * 100), 100),
       lastUpdated: new Date().toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" }),
       type: c.source_type,
     }));
