@@ -43,9 +43,14 @@ const generateSessionPreview = (messages: Message[]): string => {
   return stripped.length > 60 ? stripped.slice(0, 60) + "…" : stripped;
 };
 
-const AiWidget = () => {
+interface AiWidgetProps {
+  /** When true, widget fills its container — no FAB, no backdrop, no close button */
+  embedded?: boolean;
+}
+
+const AiWidget = ({ embedded = false }: AiWidgetProps) => {
   const { theme, toggleTheme } = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(embedded);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -404,9 +409,9 @@ const AiWidget = () => {
 
   return (
     <>
-      {/* Floating trigger button */}
+      {/* Floating trigger button — hidden in embedded mode */}
       <AnimatePresence>
-        {!isOpen && (
+        {!isOpen && !embedded && (
           <motion.div
             initial={{ scale: 0, opacity: 0, rotate: -180 }}
             animate={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -461,29 +466,34 @@ const AiWidget = () => {
       <AnimatePresence>
         {isOpen && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-              onClick={() => setIsOpen(false)}
-            />
+            {/* Backdrop — hidden in embedded mode */}
+            {!embedded && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+                onClick={() => setIsOpen(false)}
+              />
+            )}
 
             <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.96 }}
+              initial={embedded ? false : { opacity: 0, y: 30, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 30, scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              style={!isFullscreen ? { width: widgetSize.w, height: widgetSize.h } : undefined}
-              className={`fixed z-50 bg-background/80 backdrop-blur-2xl border border-border/60 shadow-2xl flex flex-col overflow-hidden iridescent-border ${
-                isFullscreen
-                  ? "inset-3 rounded-2xl transition-[inset] duration-300"
-                  : "bottom-6 right-6 max-h-[calc(100vh-3rem)] rounded-2xl"
+              exit={embedded ? { opacity: 0 } : { opacity: 0, y: 30, scale: 0.96 }}
+              transition={embedded ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
+              style={!embedded && !isFullscreen ? { width: widgetSize.w, height: widgetSize.h } : undefined}
+              className={`bg-background/80 backdrop-blur-2xl border border-border/60 shadow-2xl flex flex-col overflow-hidden iridescent-border ${
+                embedded
+                  ? "w-full h-full rounded-none border-0"
+                  : isFullscreen
+                    ? "fixed z-50 inset-3 rounded-2xl transition-[inset] duration-300"
+                    : "fixed z-50 bottom-6 right-6 max-h-[calc(100vh-3rem)] rounded-2xl"
               }`}
             >
               {/* Resize handle — top-left corner */}
-              {!isFullscreen && (
+              {!embedded && !isFullscreen && (
                 <div
                   onPointerDown={handleResizeStart}
                   onPointerMove={handleResizeMove}
@@ -541,20 +551,24 @@ const AiWidget = () => {
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
-                  <button
-                    onClick={() => setIsFullscreen((f) => !f)}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
-                    title={isFullscreen ? "Свернуть" : "На весь экран"}
-                  >
-                    {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-                  </button>
-                  <button
-                    onClick={() => { setIsOpen(false); setIsFullscreen(false); }}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200"
-                    title="Закрыть"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
+                  {!embedded && (
+                    <button
+                      onClick={() => setIsFullscreen((f) => !f)}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors duration-200"
+                      title={isFullscreen ? "Свернуть" : "На весь экран"}
+                    >
+                      {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+                    </button>
+                  )}
+                  {!embedded && (
+                    <button
+                      onClick={() => { setIsOpen(false); setIsFullscreen(false); }}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200"
+                      title="Закрыть"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
 
