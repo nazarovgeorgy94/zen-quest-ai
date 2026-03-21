@@ -466,25 +466,30 @@ const AiWidget = ({ embedded = false }: AiWidgetProps) => {
       <AnimatePresence>
         {isOpen && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-              onClick={() => setIsOpen(false)}
-            />
+            {/* Backdrop — hidden in embedded mode */}
+            {!embedded && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+                onClick={() => setIsOpen(false)}
+              />
+            )}
 
             <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.96 }}
+              initial={embedded ? false : { opacity: 0, y: 30, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 30, scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              style={!isFullscreen ? { width: widgetSize.w, height: widgetSize.h } : undefined}
-              className={`fixed z-50 bg-background/80 backdrop-blur-2xl border border-border/60 shadow-2xl flex flex-col overflow-hidden iridescent-border ${
-                isFullscreen
-                  ? "inset-3 rounded-2xl transition-[inset] duration-300"
-                  : "bottom-6 right-6 max-h-[calc(100vh-3rem)] rounded-2xl"
+              exit={embedded ? { opacity: 0 } : { opacity: 0, y: 30, scale: 0.96 }}
+              transition={embedded ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
+              style={!embedded && !isFullscreen ? { width: widgetSize.w, height: widgetSize.h } : undefined}
+              className={`bg-background/80 backdrop-blur-2xl border border-border/60 shadow-2xl flex flex-col overflow-hidden iridescent-border ${
+                embedded
+                  ? "w-full h-full rounded-none border-0"
+                  : isFullscreen
+                    ? "fixed z-50 inset-3 rounded-2xl transition-[inset] duration-300"
+                    : "fixed z-50 bottom-6 right-6 max-h-[calc(100vh-3rem)] rounded-2xl"
               }`}
             >
               {/* Resize handle — top-left corner */}
