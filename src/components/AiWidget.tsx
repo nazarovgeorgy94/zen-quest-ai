@@ -409,9 +409,9 @@ const AiWidget = ({ embedded = false }: AiWidgetProps) => {
 
   return (
     <>
-      {/* Floating trigger button */}
+      {/* Floating trigger button — hidden in embedded mode */}
       <AnimatePresence>
-        {!isOpen && (
+        {!isOpen && !embedded && (
           <motion.div
             initial={{ scale: 0, opacity: 0, rotate: -180 }}
             animate={{ scale: 1, opacity: 1, rotate: 0 }}
