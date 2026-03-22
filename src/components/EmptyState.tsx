@@ -191,51 +191,28 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       className="w-full space-y-5"
     >
       {/* ── Hero ── */}
-      <motion.div variants={item} className="text-center space-y-3 pt-1">
-        <div className="relative w-16 h-16 mx-auto">
-          {/* Orbiting ring 1 */}
+      <motion.div variants={item} className="text-center pt-4 pb-1">
+        <div className="relative inline-block">
+          {/* Ambient glow behind text */}
           <motion.div
-            className="absolute inset-[-14px] rounded-full border border-primary/20"
-            animate={{ rotate: 360, scale: [1, 1.06, 1] }}
-            transition={{ rotate: { duration: 12, repeat: Infinity, ease: "linear" }, scale: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
-          />
-          {/* Orbiting ring 2 — counter-rotate */}
-          <motion.div
-            className="absolute inset-[-8px] rounded-full border border-teal-accent/15"
-            animate={{ rotate: -360, scale: [1, 0.95, 1] }}
-            transition={{ rotate: { duration: 8, repeat: Infinity, ease: "linear" }, scale: { duration: 3, repeat: Infinity, ease: "easeInOut" } }}
-          />
-          {/* Breathing glow */}
-          <motion.div
-            className="absolute inset-[-18px] rounded-full bg-primary/25 blur-2xl"
-            animate={{ opacity: [0.15, 0.35, 0.15], scale: [0.9, 1.1, 0.9] }}
+            className="absolute -inset-x-8 -inset-y-4 bg-primary/20 blur-3xl rounded-full"
+            animate={{ opacity: [0.15, 0.35, 0.15], scale: [0.85, 1.1, 0.85] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
-            className="absolute inset-[-10px] rounded-full bg-teal-accent/15 blur-xl"
+            className="absolute -inset-x-6 -inset-y-3 bg-teal-accent/15 blur-2xl rounded-full"
             animate={{ opacity: [0.1, 0.25, 0.1], scale: [1.05, 0.9, 1.05] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
           />
-          {/* Orb */}
           <motion.div
-            className="relative w-16 h-16 rounded-full flex items-center justify-center overflow-hidden"
-            animate={{ scale: [1, 1.06, 1] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="absolute inset-0 ai-btn-ring opacity-50" />
-            <div className="absolute inset-[2px] rounded-full bg-card flex items-center justify-center">
-              <motion.div
-                animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.2, 0.9, 1] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Sparkles className="w-6 h-6 text-primary" />
-              </motion.div>
-            </div>
-          </motion.div>
+            className="absolute -inset-x-4 -inset-y-2 bg-cyan-pop/10 blur-xl rounded-full"
+            animate={{ opacity: [0.08, 0.2, 0.08], scale: [0.95, 1.08, 0.95] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+          />
+          <h2 className="relative text-2xl font-bold tracking-tight-custom bg-gradient-to-r from-primary via-teal-accent to-cyan-pop bg-clip-text text-transparent">
+            Чем могу помочь?
+          </h2>
         </div>
-        <h2 className="text-lg font-bold tracking-tight-custom bg-gradient-to-r from-primary via-teal-accent to-cyan-pop bg-clip-text text-transparent">
-          Чем могу помочь?
-        </h2>
       </motion.div>
 
       {/* ── Live Stats ── */}
