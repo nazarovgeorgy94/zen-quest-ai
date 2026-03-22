@@ -191,25 +191,41 @@ const EmptyState = ({ onQuerySelect }: EmptyStateProps) => {
       className="w-full space-y-5"
     >
       {/* ── Hero ── */}
-      <motion.div variants={item} className="text-center pt-4 pb-1">
-        <div className="relative inline-block">
-          {/* Ambient glow behind text */}
-          <motion.div
-            className="absolute -inset-x-8 -inset-y-4 bg-primary/20 blur-3xl rounded-full"
-            animate={{ opacity: [0.15, 0.35, 0.15], scale: [0.85, 1.1, 0.85] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute -inset-x-6 -inset-y-3 bg-teal-accent/15 blur-2xl rounded-full"
-            animate={{ opacity: [0.1, 0.25, 0.1], scale: [1.05, 0.9, 1.05] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-          />
-          <motion.div
-            className="absolute -inset-x-4 -inset-y-2 bg-cyan-pop/10 blur-xl rounded-full"
-            animate={{ opacity: [0.08, 0.2, 0.08], scale: [0.95, 1.08, 0.95] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-          />
-          <h2 className="relative text-2xl font-bold tracking-tight-custom bg-gradient-to-r from-primary via-teal-accent to-cyan-pop bg-clip-text text-transparent">
+      <motion.div variants={item} className="text-center pt-6 pb-2">
+        <div className="relative inline-flex items-center justify-center">
+          {/* Defocused Orb behind text */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            {/* Outer ring */}
+            <motion.div
+              className="absolute w-28 h-28 rounded-full border border-primary/15 blur-lg"
+              animate={{ rotate: 360, scale: [0.9, 1.1, 0.9] }}
+              transition={{ rotate: { duration: 20, repeat: Infinity, ease: "linear" }, scale: { duration: 5, repeat: Infinity, ease: "easeInOut" } }}
+            />
+            {/* Middle ring */}
+            <motion.div
+              className="absolute w-20 h-20 rounded-full border border-teal-accent/20 blur-md"
+              animate={{ rotate: -360, scale: [1.05, 0.9, 1.05] }}
+              transition={{ rotate: { duration: 15, repeat: Infinity, ease: "linear" }, scale: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
+            />
+            {/* Inner ring */}
+            <motion.div
+              className="absolute w-14 h-14 rounded-full border border-cyan-pop/20 blur-sm"
+              animate={{ rotate: 360, scale: [0.95, 1.1, 0.95] }}
+              transition={{ rotate: { duration: 10, repeat: Infinity, ease: "linear" }, scale: { duration: 3.5, repeat: Infinity, ease: "easeInOut" } }}
+            />
+            {/* Core glow */}
+            <motion.div
+              className="absolute w-16 h-16 rounded-full bg-primary/15 blur-2xl"
+              animate={{ opacity: [0.2, 0.45, 0.2], scale: [0.85, 1.15, 0.85] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute w-10 h-10 rounded-full bg-teal-accent/10 blur-xl"
+              animate={{ opacity: [0.15, 0.35, 0.15], scale: [1.05, 0.85, 1.05] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            />
+          </div>
+          <h2 className="relative text-2xl font-bold tracking-tight bg-gradient-to-r from-primary via-teal-accent to-cyan-pop bg-clip-text text-transparent py-4 px-8">
             Чем могу помочь?
           </h2>
         </div>
