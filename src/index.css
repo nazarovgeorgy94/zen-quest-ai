@@ -347,6 +347,18 @@
   .shimmer-line {
     height: 2px;
     position: relative;
+
+    /* ── Вариант A: Primary + Teal (текущий) ── */
+    background: linear-gradient(
+      90deg,
+      hsl(var(--primary) / 0.05) 0%,
+      hsl(var(--primary)) 20%,
+      hsl(var(--teal-accent)) 50%,
+      hsl(var(--primary)) 80%,
+      hsl(var(--primary) / 0.05) 100%
+    );
+
+    /* ── Вариант B: Спектральный Google AI Mode (раскомментируй для возврата) ──
     background: linear-gradient(
       90deg,
       hsl(160 70% 45% / 0.05) 0%,
@@ -360,6 +372,8 @@
       hsl(190 80% 50%) 90%,
       hsl(160 70% 45% / 0.05) 100%
     );
+    */
+
     background-size: 200% 100%;
     animation: shimmer-slide 6s linear infinite;
     animation-play-state: paused;
