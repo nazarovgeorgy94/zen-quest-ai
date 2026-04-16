@@ -1,6 +1,14 @@
 export type IncidentSeverity = "critical" | "high" | "medium" | "low";
 export type IncidentStatus = "active" | "investigating" | "resolved";
 
+export interface IncidentMetric {
+  label: string;
+  value: string;
+  sparkline?: number[];
+  trend?: "up" | "down" | "stable";
+  color?: string;
+}
+
 export interface Incident {
   id: string;
   title: string;
@@ -10,7 +18,7 @@ export interface Incident {
   service: string;
   createdAt: Date;
   resolvedAt?: Date;
-  metrics?: { label: string; value: string }[];
+  metrics?: IncidentMetric[];
 }
 
 export interface DiagnosisStep {
@@ -36,9 +44,9 @@ export const mockIncidents: Incident[] = [
     service: "payment-gateway",
     createdAt: new Date(Date.now() - 45 * 60 * 1000),
     metrics: [
-      { label: "P99 Latency", value: "12.4s" },
-      { label: "Error Rate", value: "23.1%" },
-      { label: "Affected Txns", value: "1,847" },
+      { label: "P99 Latency", value: "12.4s", sparkline: [0.5, 0.8, 1.2, 2.1, 4.5, 7.8, 10.2, 12.4], trend: "up", color: "hsl(0 68% 52%)" },
+      { label: "Error Rate", value: "23.1%", sparkline: [2, 3, 5, 8, 12, 18, 21, 23.1], trend: "up", color: "hsl(25 95% 53%)" },
+      { label: "Affected Txns", value: "1,847", sparkline: [120, 340, 580, 890, 1100, 1400, 1650, 1847], trend: "up" },
     ],
   },
   {
@@ -50,8 +58,8 @@ export const mockIncidents: Incident[] = [
     service: "aml-scoring",
     createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
     metrics: [
-      { label: "Staleness", value: "3h 12m" },
-      { label: "Affected Checks", value: "5,200" },
+      { label: "Staleness", value: "3h 12m", sparkline: [5, 15, 30, 60, 90, 120, 160, 192], trend: "up", color: "hsl(25 95% 53%)" },
+      { label: "Affected Checks", value: "5,200", sparkline: [800, 1500, 2200, 3000, 3800, 4400, 4900, 5200], trend: "up" },
     ],
   },
   {
@@ -63,8 +71,8 @@ export const mockIncidents: Incident[] = [
     service: "velocity-engine",
     createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
     metrics: [
-      { label: "False Positive Rate", value: "8.7%" },
-      { label: "Blocked Users", value: "342" },
+      { label: "False Positive Rate", value: "8.7%", sparkline: [2.1, 2.4, 3.2, 4.8, 5.9, 7.2, 8.1, 8.7], trend: "up", color: "hsl(45 93% 47%)" },
+      { label: "Blocked Users", value: "342", sparkline: [40, 80, 130, 180, 230, 270, 310, 342], trend: "up" },
     ],
   },
   {
@@ -136,6 +144,29 @@ export const mockDiagnosisSteps: DiagnosisStep[] = [
   { label: "Анализ зависимостей", detail: "Проверка upstream/downstream сервисов", duration: 1800 },
   { label: "Формирование гипотез", detail: "Ранжирование возможных причин по вероятности", duration: 2200 },
 ];
+
+export const mockFollowUpSuggestions: Record<string, string[]> = {
+  "INC-4521": [
+    "Показать dependency graph",
+    "Проверить последние деплои",
+    "Детализировать connection pool",
+  ],
+  "INC-4518": [
+    "Показать Kafka consumer lag",
+    "Проверить feature store pipeline",
+    "Сравнить с предыдущими инцидентами",
+  ],
+  "INC-4515": [
+    "Показать velocity rules",
+    "Анализ дедупликации Kafka",
+    "Проверить baseline метрики",
+  ],
+  default: [
+    "Показать зависимости сервиса",
+    "Проверить последние изменения",
+    "Сравнить с baseline",
+  ],
+};
 
 export const mockHypotheses: Record<string, Hypothesis[]> = {
   "INC-4521": [

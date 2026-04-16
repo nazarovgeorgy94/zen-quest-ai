@@ -14,6 +14,7 @@ import {
   getSeverityColor,
   mockDiagnosisSteps,
   mockHypotheses,
+  mockFollowUpSuggestions,
   getMockAIResponse,
   mockIncidents,
   getRelativeTime,
@@ -22,6 +23,8 @@ import DiagnosisTimeline from "./DiagnosisTimeline";
 import HypothesisCard from "./HypothesisCard";
 import ChatMessageList, { Message } from "./ChatMessageList";
 import ChatInput from "./ChatInput";
+import FollowUpSuggestions from "./FollowUpSuggestions";
+import Sparkline from "./Sparkline";
 
 interface RCChatProps {
   incident: Incident | null;
@@ -53,6 +56,8 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
   const [incidentSuggestion, setIncidentSuggestion] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isNearBottom, setIsNearBottom] = useState(true);
+  const [showFollowUps, setShowFollowUps] = useState(false);
+  const [currentFollowUps, setCurrentFollowUps] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevIncidentRef = useRef<string | null>(null);
   const streamingRef = useRef(false);
@@ -132,6 +137,13 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     streamingRef.current = false;
     setIsStreaming(false);
     scrollToBottom();
+
+    // Show follow-up suggestions after streaming completes
+    if (incident) {
+      const followUps = mockFollowUpSuggestions[incident.id] || mockFollowUpSuggestions.default;
+      setCurrentFollowUps(followUps);
+      setShowFollowUps(true);
+    }
   };
 
   const handleStopGeneration = () => {
@@ -194,6 +206,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       return;
     }
     if (!input.trim() || !incident) return;
+    setShowFollowUps(false);
 
     const userMsg: Message = {
       id: crypto.randomUUID(),
@@ -221,6 +234,38 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     setMessages((prev) => [...prev, aiMsg]);
     scrollToBottom();
     await streamMessage(aiContent, msgId);
+  };
+
+  const handleFollowUpSelect = (suggestion: string) => {
+    setInput(suggestion);
+    setShowFollowUps(false);
+    // Auto-send
+    setTimeout(() => {
+      const userMsg: Message = {
+        id: crypto.randomUUID(),
+        role: "user",
+        content: suggestion,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      scrollToBottom(true);
+      setIsTyping(true);
+      setTimeout(async () => {
+        setIsTyping(false);
+        const aiContent = getMockAIResponse(incident!.id, suggestion);
+        const msgId = crypto.randomUUID();
+        const aiMsg: Message = {
+          id: msgId,
+          role: "assistant",
+          content: "",
+          timestamp: new Date(),
+          isStreaming: true,
+        };
+        setMessages((prev) => [...prev, aiMsg]);
+        scrollToBottom();
+        await streamMessage(aiContent, msgId);
+      }, 800 + Math.random() * 800);
+    }, 50);
   };
 
   if (!incident) return null;
@@ -281,10 +326,20 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                 {incident.metrics.map((m) => (
                   <div
                     key={m.label}
-                    className="px-3 py-1.5 rounded-lg bg-surface-1/60 backdrop-blur-sm border border-border/20"
+                    className="px-3 py-1.5 rounded-lg bg-surface-1/60 backdrop-blur-sm border border-border/20 flex items-center gap-2.5"
                   >
-                    <p className="text-[9px] text-muted-foreground">{m.label}</p>
-                    <p className="text-xs font-mono font-bold text-foreground">{m.value}</p>
+                    <div>
+                      <p className="text-[9px] text-muted-foreground">{m.label}</p>
+                      <p className="text-xs font-mono font-bold text-foreground">{m.value}</p>
+                    </div>
+                    {m.sparkline && (
+                      <Sparkline
+                        data={m.sparkline}
+                        width={52}
+                        height={18}
+                        color={m.color || "hsl(var(--primary))"}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
@@ -362,6 +417,16 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
         {/* Chat messages */}
         <ChatMessageList messages={messages} isTyping={isTyping} />
+
+        {/* Follow-up suggestions */}
+        <AnimatePresence>
+          {showFollowUps && !isStreaming && !isTyping && currentFollowUps.length > 0 && (
+            <FollowUpSuggestions
+              suggestions={currentFollowUps}
+              onSelect={handleFollowUpSelect}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Scroll to bottom button */}
