@@ -102,9 +102,11 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
   const scrollToBottom = useCallback((force = false) => {
     if (!force && !isNearBottom) return;
-    setTimeout(() => {
-      scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-    }, 100);
+    requestAnimationFrame(() => {
+      const el = scrollRef.current;
+      if (!el) return;
+      el.scrollTo({ top: el.scrollHeight, behavior: force ? "instant" : "smooth" });
+    });
   }, [isNearBottom]);
 
   const forceScrollToBottom = useCallback(() => {
@@ -159,7 +161,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
     for (let i = 0; i < mockDiagnosisSteps.length; i++) {
       setDiagnosisStep(i);
-      scrollToBottom(true);
+      scrollToBottom();
       await new Promise((r) => setTimeout(r, mockDiagnosisSteps[i].duration));
     }
 
@@ -178,7 +180,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
     for (let i = 0; i < hyps.length; i++) {
       setRevealedHypCount(i + 1);
-      scrollToBottom(true);
+      scrollToBottom();
       await new Promise((r) => setTimeout(r, 600));
     }
 
@@ -194,7 +196,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       isStreaming: true,
     };
     setMessages([summaryMsg]);
-    scrollToBottom(true);
+    scrollToBottom();
     await streamMessage(fullContent, msgId);
   };
 
@@ -216,7 +218,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
-    scrollToBottom(true);
+    scrollToBottom();
 
     setIsTyping(true);
     await new Promise((r) => setTimeout(r, 800 + Math.random() * 800));
@@ -248,7 +250,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, userMsg]);
-      scrollToBottom(true);
+      scrollToBottom();
       setIsTyping(true);
       setTimeout(async () => {
         setIsTyping(false);
