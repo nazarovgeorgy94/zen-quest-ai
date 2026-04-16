@@ -76,7 +76,7 @@ const RootCause = () => {
           onNewChat={handleNewChat}
           onOpenSearch={() => setSearchOpen(true)}
           lastScanTime={lastScanTime}
-          isScanning={mode === "discovery"}
+          isScanning={mode === "discovery" && !scanComplete}
         />
 
         <AnimatePresence mode="wait">
