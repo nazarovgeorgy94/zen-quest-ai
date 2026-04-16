@@ -108,6 +108,28 @@ export const mockIncidents: Incident[] = [
   },
 ];
 
+// ── Discovery Mode: Services to scan ──
+export interface SystemService {
+  name: string;
+  displayName: string;
+  status: "healthy" | "degraded" | "down";
+  latency: string;
+  incidentIds?: string[]; // linked incidents
+}
+
+export const mockServices: SystemService[] = [
+  { name: "payment-gateway", displayName: "Payment Gateway", status: "degraded", latency: "12.4s", incidentIds: ["INC-4521"] },
+  { name: "aml-scoring", displayName: "AML Scoring", status: "degraded", latency: "340ms", incidentIds: ["INC-4518"] },
+  { name: "velocity-engine", displayName: "Velocity Engine", status: "degraded", latency: "89ms", incidentIds: ["INC-4515"] },
+  { name: "bin-lookup", displayName: "BIN Lookup", status: "healthy", latency: "12ms", incidentIds: ["INC-4510"] },
+  { name: "session-store", displayName: "Session Store (Redis)", status: "healthy", latency: "2ms" },
+  { name: "3ds-gateway", displayName: "3DS Gateway", status: "healthy", latency: "45ms" },
+  { name: "webhook-dispatcher", displayName: "Webhook Dispatcher", status: "healthy", latency: "8ms" },
+  { name: "fraud-scorer", displayName: "Fraud Scorer ML", status: "healthy", latency: "67ms" },
+  { name: "card-tokenizer", displayName: "Card Tokenizer", status: "healthy", latency: "5ms" },
+  { name: "kyc-service", displayName: "KYC Service", status: "healthy", latency: "120ms" },
+];
+
 export const mockDiagnosisSteps: DiagnosisStep[] = [
   { label: "Сбор метрик", detail: "Анализ логов, метрик и трейсов за последние 2 часа", duration: 1500 },
   { label: "Корреляция событий", detail: "Поиск паттернов и корреляций между сервисами", duration: 2000 },

@@ -1,15 +1,25 @@
 import { useState, useEffect } from "react";
 import RCSidebar from "@/components/root-cause/RCSidebar";
 import RCChat from "@/components/root-cause/RCChat";
+import RCCommandCenter from "@/components/root-cause/RCCommandCenter";
+import RCDiscovery from "@/components/root-cause/RCDiscovery";
 import RCSearchModal from "@/components/root-cause/RCSearchModal";
 import { mockIncidents } from "@/lib/mockIncidents";
+
+type AppMode = "empty" | "discovery" | "diagnosis";
 
 const RootCause = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mode, setMode] = useState<AppMode>("empty");
 
   const selectedIncident =
     mockIncidents.find((i) => i.id === selectedId) || null;
+
+  // When incident selected → diagnosis mode
+  useEffect(() => {
+    if (selectedId) setMode("diagnosis");
+  }, [selectedId]);
 
   // Cmd+K shortcut
   useEffect(() => {
@@ -22,6 +32,21 @@ const RootCause = () => {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
+
+  const handleStartScan = () => {
+    setSelectedId(null);
+    setMode("discovery");
+  };
+
+  const handleSelectIncident = (id: string) => {
+    setSelectedId(id);
+    setMode("diagnosis");
+  };
+
+  const handleNewChat = () => {
+    setSelectedId(null);
+    setMode("empty");
+  };
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
@@ -41,18 +66,39 @@ const RootCause = () => {
         <RCSidebar
           incidents={mockIncidents}
           selectedId={selectedId}
-          onSelect={setSelectedId}
-          onNewChat={() => setSelectedId(null)}
+          onSelect={handleSelectIncident}
+          onNewChat={handleNewChat}
           onOpenSearch={() => setSearchOpen(true)}
         />
-        <RCChat incident={selectedIncident} />
+
+        {/* Main content area */}
+        {mode === "empty" && (
+          <RCCommandCenter
+            onStartScan={handleStartScan}
+            onSelectIncident={handleSelectIncident}
+            onHighlightSidebar={() => setSearchOpen(true)}
+          />
+        )}
+        {mode === "discovery" && (
+          <RCDiscovery
+            onSelectIncident={handleSelectIncident}
+            onCancel={handleNewChat}
+          />
+        )}
+        {mode === "diagnosis" && (
+          <RCChat
+            incident={selectedIncident}
+            onStartScan={handleStartScan}
+            onSelectIncident={handleSelectIncident}
+          />
+        )}
       </div>
 
       <RCSearchModal
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
         incidents={mockIncidents}
-        onSelect={setSelectedId}
+        onSelect={handleSelectIncident}
       />
     </div>
   );
