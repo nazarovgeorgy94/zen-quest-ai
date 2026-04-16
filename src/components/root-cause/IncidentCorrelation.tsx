@@ -38,10 +38,9 @@ const mockCorrelations: CorrelationLink[] = [
 interface IncidentCorrelationProps {
   currentIncidentId: string;
   incidents: Incident[];
-  onSelectIncident: (id: string) => void;
 }
 
-const IncidentCorrelation = ({ currentIncidentId, incidents, onSelectIncident }: IncidentCorrelationProps) => {
+const IncidentCorrelation = ({ currentIncidentId, incidents }: IncidentCorrelationProps) => {
   const relevant = mockCorrelations.filter(
     (c) => c.fromId === currentIncidentId || c.toId === currentIncidentId
   );
@@ -73,13 +72,12 @@ const IncidentCorrelation = ({ currentIncidentId, incidents, onSelectIncident }:
             const colors = getSeverityColor(otherInc.severity);
 
             return (
-              <motion.button
+              <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6 + i * 0.1 }}
-                onClick={() => onSelectIncident(otherId)}
-                className="w-full text-left group rounded-lg p-3 transition-all duration-200 hover:-translate-y-0.5"
+                className="w-full text-left rounded-lg p-3"
                 style={{
                   background: "hsl(var(--surface-2) / 0.4)",
                   border: "1px solid hsl(var(--border) / 0.2)",
@@ -117,9 +115,8 @@ const IncidentCorrelation = ({ currentIncidentId, incidents, onSelectIncident }:
                 <div className="flex items-center gap-1.5 mt-1.5">
                   <span className="text-[9px] text-muted-foreground/50 uppercase tracking-wide">Связь:</span>
                   <code className="text-[10px] font-mono text-primary/70 bg-primary/5 px-1.5 py-0.5 rounded">{corr.sharedComponent}</code>
-                  <ArrowRight className="w-3 h-3 text-muted-foreground/30 ml-auto group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </div>
-              </motion.button>
+              </motion.div>
             );
           })}
         </div>
