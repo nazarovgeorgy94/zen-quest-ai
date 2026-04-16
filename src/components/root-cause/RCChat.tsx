@@ -25,7 +25,6 @@ import ChatMessageList, { Message } from "./ChatMessageList";
 import ChatInput from "./ChatInput";
 import FollowUpSuggestions from "./FollowUpSuggestions";
 import Sparkline from "./Sparkline";
-import IncidentTimeline from "./IncidentTimeline";
 import IncidentCorrelation from "./IncidentCorrelation";
 
 interface RCChatProps {
@@ -354,9 +353,6 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
       {/* Chat area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-5 space-y-4 relative z-10">
-        {/* Incident Timeline */}
-        <IncidentTimeline incident={incident} />
-
         {/* Incident brief card */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -427,7 +423,6 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
           <IncidentCorrelation
             currentIncidentId={incident.id}
             incidents={mockIncidents}
-            onSelectIncident={onSelectIncident}
           />
         )}
 
