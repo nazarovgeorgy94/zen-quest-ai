@@ -1,6 +1,6 @@
 ---
 name: Design Tokens — Cool Onyx
-description: Full color palette, severity tokens, surface elevation, gradient tokens
+description: Full color palette, severity tokens, surface elevation, gradient tokens, typography
 type: design
 ---
 ## Theme: Cool Onyx with Mint accents
@@ -11,4 +11,19 @@ Background: #0D0F12 → 220 16% 6% (cool onyx — neutral dark with minimal cold
 
 Surfaces use hue 220 with low saturation (8-16%) and increasing lightness (6% → 19%).
 Neutral background lets mint/cyan accents pop without color bleeding.
-User rejected: cosmic navy (too blue), warm graphite (too flat), dark slate (too blue), deep forest (too green).
+
+## Typography
+- Display/Headings: Space Grotesk (tech-security character)
+- Body: Space Grotesk
+- Mono (IDs, metrics, terminal): JetBrains Mono
+- AI prose: IBM Plex Serif
+
+## Severity Visual Language
+- Critical: red ambient glow on card, red stripe, pulsing dot, ⚡ icon
+- High: orange stripe, ⚠ icon
+- Medium: yellow stripe, ● icon
+- Low: blue stripe, ℹ icon
+Each severity has `ambient`, `stripe`, and `icon` properties in getSeverityColor().
+
+## Living Background
+Noise texture overlay (0.025 opacity) + animated mesh gradient orbs (slow rotation) + vignette edge darkening.
