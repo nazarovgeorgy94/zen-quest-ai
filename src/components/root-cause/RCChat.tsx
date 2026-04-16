@@ -144,7 +144,7 @@ const RCChat = ({ incident }: RCChatProps) => {
       {/* Header */}
       <div className="shrink-0 border-b border-border bg-surface-0/80 backdrop-blur-sm">
         {/* Shimmer line */}
-        <div className="h-[2px] w-full shimmer-line" />
+        <div className={cn("h-[2px] w-full shimmer-line", isDiagnosing && "shimmer-active")} />
         <div className="px-6 py-4">
           <div className="flex items-center gap-3">
             <div className={cn("w-3 h-3 rounded-full", colors.dot)} />
