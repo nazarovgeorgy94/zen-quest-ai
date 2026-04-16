@@ -6,20 +6,20 @@ import {
   Activity,
   CheckCircle2,
   Loader2,
-  AlertTriangle,
   Lightbulb,
   ArrowRight,
+  Radar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import {
   Incident,
   Hypothesis,
-  DiagnosisStep,
   getSeverityColor,
   mockDiagnosisSteps,
   mockHypotheses,
   getMockAIResponse,
+  mockIncidents,
 } from "@/lib/mockIncidents";
 
 interface Message {
@@ -30,15 +30,20 @@ interface Message {
 
 interface RCChatProps {
   incident: Incident | null;
+  onStartScan: () => void;
+  onSelectIncident: (id: string) => void;
 }
 
-const RCChat = ({ incident }: RCChatProps) => {
+const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isDiagnosing, setIsDiagnosing] = useState(false);
   const [diagnosisStep, setDiagnosisStep] = useState(-1);
   const [hypotheses, setHypotheses] = useState<Hypothesis[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [incidentSuggestion, setIncidentSuggestion] = useState<string | null>(
+    null
+  );
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const prevIncidentRef = useRef<string | null>(null);
@@ -50,9 +55,22 @@ const RCChat = ({ incident }: RCChatProps) => {
       setMessages([]);
       setHypotheses([]);
       setDiagnosisStep(-1);
+      setIncidentSuggestion(null);
       startDiagnosis(incident);
     }
   }, [incident]);
+
+  // Smart input: detect INC-XXXX pattern
+  useEffect(() => {
+    const match = input.match(/^(INC-\d{3,6})$/i);
+    if (match) {
+      const id = match[1].toUpperCase();
+      const found = mockIncidents.find((i) => i.id === id);
+      setIncidentSuggestion(found ? id : null);
+    } else {
+      setIncidentSuggestion(null);
+    }
+  }, [input]);
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -68,14 +86,12 @@ const RCChat = ({ incident }: RCChatProps) => {
     setMessages([]);
     setHypotheses([]);
 
-    // Simulate diagnosis steps
     for (let i = 0; i < mockDiagnosisSteps.length; i++) {
       setDiagnosisStep(i);
       scrollToBottom();
       await new Promise((r) => setTimeout(r, mockDiagnosisSteps[i].duration));
     }
 
-    // Show hypotheses
     const hyps = mockHypotheses[inc.id] || [
       {
         title: "Resource Constraint",
@@ -90,7 +106,6 @@ const RCChat = ({ incident }: RCChatProps) => {
     setIsDiagnosing(false);
     setDiagnosisStep(-1);
 
-    // Add initial AI message
     const summaryMsg: Message = {
       id: crypto.randomUUID(),
       role: "assistant",
@@ -101,6 +116,14 @@ const RCChat = ({ incident }: RCChatProps) => {
   };
 
   const handleSend = async () => {
+    // If user typed an incident ID, select it
+    if (incidentSuggestion) {
+      onSelectIncident(incidentSuggestion);
+      setInput("");
+      setIncidentSuggestion(null);
+      return;
+    }
+
     if (!input.trim() || !incident) return;
 
     const userMsg: Message = {
@@ -133,9 +156,7 @@ const RCChat = ({ incident }: RCChatProps) => {
     }
   };
 
-  if (!incident) {
-    return <EmptyState />;
-  }
+  if (!incident) return null;
 
   const colors = getSeverityColor(incident.severity);
 
@@ -143,11 +164,25 @@ const RCChat = ({ incident }: RCChatProps) => {
     <div className="flex-1 flex flex-col h-screen">
       {/* Header */}
       <div className="shrink-0 border-b border-border bg-surface-0/80 backdrop-blur-sm">
-        {/* Shimmer line */}
-        <div className={cn("h-[2px] w-full shimmer-line", isDiagnosing && "shimmer-active")} />
+        <div
+          className={cn(
+            "h-[2px] w-full shimmer-line",
+            isDiagnosing && "shimmer-active"
+          )}
+        />
         <div className="px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className={cn("w-3 h-3 rounded-full", colors.dot)} />
+            <div className="relative">
+              <div className={cn("w-3 h-3 rounded-full", colors.dot)} />
+              {incident.status === "active" && (
+                <div
+                  className={cn(
+                    "absolute inset-0 w-3 h-3 rounded-full animate-ping opacity-50",
+                    colors.dot
+                  )}
+                />
+              )}
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-sm font-semibold text-foreground">
@@ -280,18 +315,36 @@ const RCChat = ({ incident }: RCChatProps) => {
                     <h3 className="text-sm font-semibold text-foreground">
                       {hyp.title}
                     </h3>
-                    <span
-                      className={cn(
-                        "text-xs font-mono px-2 py-0.5 rounded-full",
-                        hyp.confidence >= 80
-                          ? "bg-primary/15 text-primary"
-                          : hyp.confidence >= 50
-                          ? "bg-yellow-500/15 text-yellow-400"
-                          : "bg-surface-2 text-muted-foreground"
-                      )}
-                    >
-                      {hyp.confidence}%
-                    </span>
+                    {/* Animated confidence bar */}
+                    <div className="flex items-center gap-2 ml-auto">
+                      <div className="w-16 h-1.5 rounded-full bg-surface-2 overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${hyp.confidence}%` }}
+                          transition={{ duration: 1, delay: i * 0.15 + 0.3 }}
+                          className={cn(
+                            "h-full rounded-full",
+                            hyp.confidence >= 80
+                              ? "bg-primary"
+                              : hyp.confidence >= 50
+                              ? "bg-yellow-500"
+                              : "bg-muted-foreground"
+                          )}
+                        />
+                      </div>
+                      <span
+                        className={cn(
+                          "text-xs font-mono",
+                          hyp.confidence >= 80
+                            ? "text-primary"
+                            : hyp.confidence >= 50
+                            ? "text-yellow-400"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        {hyp.confidence}%
+                      </span>
+                    </div>
                   </div>
                   <p className="text-sm text-foreground/70 mt-1.5">
                     {hyp.explanation}
@@ -351,9 +404,42 @@ const RCChat = ({ incident }: RCChatProps) => {
         )}
       </div>
 
-      {/* Input */}
+      {/* Smart Input */}
       <div className="shrink-0 border-t border-border bg-surface-0/80 backdrop-blur-sm px-6 py-4">
+        {/* Incident ID suggestion */}
+        <AnimatePresence>
+          {incidentSuggestion && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              className="mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/8 border border-primary/15 text-sm"
+            >
+              <Zap className="w-3.5 h-3.5 text-primary shrink-0" />
+              <span className="text-foreground/80">
+                Открыть инцидент{" "}
+                <span className="font-mono font-semibold text-primary">
+                  {incidentSuggestion}
+                </span>
+                ?
+              </span>
+              <span className="text-[10px] text-muted-foreground ml-auto">
+                Enter для подтверждения
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="flex items-end gap-3">
+          {/* Scan button */}
+          <button
+            onClick={onStartScan}
+            className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-surface-1 border border-border/30 text-muted-foreground hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all"
+            title="Сканировать систему"
+          >
+            <Radar className="w-4 h-4" />
+          </button>
+
           <div className="flex-1 relative">
             <textarea
               ref={inputRef}
@@ -363,7 +449,7 @@ const RCChat = ({ incident }: RCChatProps) => {
               placeholder={
                 isDiagnosing
                   ? "Дождитесь завершения диагностики..."
-                  : "Задайте вопрос по инциденту..."
+                  : "Задайте вопрос или введите INC-XXXX..."
               }
               disabled={isDiagnosing}
               rows={1}
@@ -376,7 +462,9 @@ const RCChat = ({ incident }: RCChatProps) => {
             className={cn(
               "shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all",
               input.trim() && !isDiagnosing
-                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                ? incidentSuggestion
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90"
                 : "bg-surface-2 text-muted-foreground cursor-not-allowed"
             )}
           >
@@ -387,37 +475,5 @@ const RCChat = ({ incident }: RCChatProps) => {
     </div>
   );
 };
-
-function EmptyState() {
-  return (
-    <div className="flex-1 flex items-center justify-center h-screen">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="text-center space-y-4"
-      >
-        {/* Orb */}
-        <div className="relative w-24 h-24 mx-auto">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 to-teal-accent/10 blur-2xl" />
-          <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary/10 to-teal-accent/5 border border-primary/10 flex items-center justify-center">
-            <Zap className="w-8 h-8 text-primary/60" />
-          </div>
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-foreground">
-            Root Cause Agent
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1 max-w-sm">
-            Выберите инцидент из списка или используйте{" "}
-            <kbd className="text-[11px] bg-surface-2 px-1.5 py-0.5 rounded font-mono">
-              ⌘K
-            </kbd>{" "}
-            для поиска
-          </p>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
 
 export default RCChat;
