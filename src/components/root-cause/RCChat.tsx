@@ -56,6 +56,8 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
   const [incidentSuggestion, setIncidentSuggestion] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isNearBottom, setIsNearBottom] = useState(true);
+  const [showFollowUps, setShowFollowUps] = useState(false);
+  const [currentFollowUps, setCurrentFollowUps] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevIncidentRef = useRef<string | null>(null);
   const streamingRef = useRef(false);
