@@ -210,6 +210,20 @@
     --teal-accent: 175 60% 35%;
     --cyan-pop: 185 65% 40%;
 
+    --warning: 45 90% 42%;
+    --warning-foreground: 45 10% 10%;
+    --success: 158 72% 35%;
+    --success-foreground: 160 20% 5%;
+    --info: 210 55% 45%;
+    --info-foreground: 210 10% 95%;
+    --primary-hover: 158 72% 40%;
+    --primary-muted: 158 35% 50%;
+    --primary-subtle: 155 20% 80%;
+
+    --shadow-critical: 0 4px 20px -4px hsl(0 68% 48% / 0.15);
+    --shadow-warning: 0 4px 20px -4px hsl(45 90% 42% / 0.15);
+    --shadow-info: 0 4px 20px -4px hsl(210 55% 45% / 0.15);
+
     /* Градиенты — формулы те же, цвета берутся из токенов выше */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
     --gradient-surface: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--surface)) 100%);

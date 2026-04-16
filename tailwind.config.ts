@@ -34,6 +34,18 @@ export default {
         "surface-elevated": "hsl(var(--surface-elevated))",
         "teal-accent": "hsl(var(--teal-accent))",
         "cyan-pop": "hsl(var(--cyan-pop))",
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
