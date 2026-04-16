@@ -295,9 +295,6 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
       {/* Chat area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-5 space-y-4 relative z-10">
-        {/* Incident timeline */}
-        <IncidentTimeline incident={incident} />
-
         {/* Incident brief card */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -366,6 +363,21 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
         {/* Chat messages */}
         <ChatMessageList messages={messages} isTyping={isTyping} />
       </div>
+
+      {/* Scroll to bottom button */}
+      <AnimatePresence>
+        {!isNearBottom && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            onClick={forceScrollToBottom}
+            className="absolute bottom-24 right-8 z-20 w-9 h-9 rounded-full bg-surface-2/90 backdrop-blur-sm border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface-3 shadow-lg transition-colors"
+          >
+            <ChevronDown className="w-4 h-4" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Input area */}
       <ChatInput
