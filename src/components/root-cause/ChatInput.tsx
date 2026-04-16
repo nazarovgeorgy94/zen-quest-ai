@@ -115,7 +115,7 @@ const ChatInput = ({
               input.trim() && !isDiagnosing
                 ? {
                     background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))",
-                    boxShadow: "0 4px 15px -3px hsl(158 72% 42% / 0.35)",
+                    boxShadow: "0 4px 15px -3px hsl(var(--primary) / 0.35)",
                   }
                 : undefined
             }

@@ -366,7 +366,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                   ? "hsl(0 50% 40% / 0.15)"
                   : incident.severity === "high"
                   ? "hsl(25 60% 45% / 0.12)"
-                  : "hsl(158 72% 42% / 0.08)"
+                  : "hsl(var(--primary) / 0.08)"
               }, transparent)`,
             }}
           />
