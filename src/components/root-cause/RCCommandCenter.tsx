@@ -40,9 +40,9 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
         <svg viewBox="0 0 160 160" className="w-full h-full">
           <defs>
             <linearGradient id="orbRing" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="hsl(158 72% 42%)" stopOpacity={isHovered ? 0.6 : 0.25} />
-              <stop offset="50%" stopColor="hsl(175 65% 38%)" stopOpacity={0.05} />
-              <stop offset="100%" stopColor="hsl(185 70% 45%)" stopOpacity={isHovered ? 0.5 : 0.15} />
+              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={isHovered ? 0.6 : 0.25} />
+              <stop offset="50%" stopColor="hsl(var(--accent))" stopOpacity={0.05} />
+              <stop offset="100%" stopColor="hsl(var(--cyan-pop))" stopOpacity={isHovered ? 0.5 : 0.15} />
             </linearGradient>
           </defs>
           <circle cx="80" cy="80" r="76" fill="none" stroke="url(#orbRing)"
@@ -77,7 +77,7 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
           transition={{ duration: 0.3 }}>
           <motion.path
             d="M20 4 L32 10 L32 22 C32 30 26 36 20 38 C14 36 8 30 8 22 L8 10 Z"
-            stroke="hsl(158 72% 42%)"
+            stroke="hsl(var(--primary))"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -88,7 +88,7 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
           />
           {[[20,12],[14,18],[26,18],[16,26],[24,26],[20,32]].map(([cx, cy], i) => (
             <motion.circle key={i} cx={cx} cy={cy} r="1.5"
-              fill="hsl(158 72% 42%)"
+              fill="hsl(var(--primary))"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: [0.4, 0.9, 0.4], scale: 1 }}
               transition={{
@@ -243,7 +243,7 @@ const RCCommandCenter = ({
       <div className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage:
-            "linear-gradient(hsl(158 72% 42%) 1px, transparent 1px), linear-gradient(90deg, hsl(158 72% 42%) 1px, transparent 1px)",
+            "linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }} />
 
@@ -337,8 +337,8 @@ const RCCommandCenter = ({
                   className="px-3 py-1.5 rounded-lg text-xs font-medium text-primary-foreground disabled:opacity-30 transition-all"
                   style={{
                     background: incidentInput.trim()
-                      ? "linear-gradient(135deg, hsl(158 72% 42%), hsl(175 65% 38%))"
-                      : "hsl(160 12% 15%)",
+                      ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))"
+                      : "hsl(var(--border))",
                   }}>
                   Найти
                 </button>
