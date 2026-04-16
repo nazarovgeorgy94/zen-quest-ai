@@ -98,10 +98,39 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     }, 100);
   };
 
+  // Stream text character-by-character into a message
+  const streamMessage = async (fullContent: string, msgId: string) => {
+    streamingRef.current = true;
+    const chars = [...fullContent];
+    let shown = "";
+
+    for (let c = 0; c < chars.length; c++) {
+      if (!streamingRef.current) break;
+      shown += chars[c];
+      const partial = shown;
+      setMessages((prev) =>
+        prev.map((m) => (m.id === msgId ? { ...m, content: partial } : m))
+      );
+      // Faster for markdown headers/symbols, slower for regular text
+      const ch = chars[c];
+      const delay = ch === "\n" ? 30 : ch === "#" || ch === "*" || ch === "|" ? 8 : 12 + Math.random() * 14;
+      await new Promise((r) => setTimeout(r, delay));
+      if (c % 20 === 0) scrollToBottom();
+    }
+
+    // Mark as done streaming
+    setMessages((prev) =>
+      prev.map((m) => (m.id === msgId ? { ...m, isStreaming: false } : m))
+    );
+    streamingRef.current = false;
+    scrollToBottom();
+  };
+
   const startDiagnosis = async (inc: Incident) => {
     setIsDiagnosing(true);
     setMessages([]);
     setHypotheses([]);
+    setRevealedHypCount(0);
 
     for (let i = 0; i < mockDiagnosisSteps.length; i++) {
       setDiagnosisStep(i);
@@ -109,26 +138,42 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       await new Promise((r) => setTimeout(r, mockDiagnosisSteps[i].duration));
     }
 
-    const hyps = mockHypotheses[inc.id] || [
+    // Sort hypotheses by confidence descending
+    const hyps = (mockHypotheses[inc.id] || [
       {
         title: "Resource Constraint",
         confidence: 72,
         explanation: "Анализ указывает на ресурсное ограничение в одном из компонентов системы.",
         recommendation: "Проверить потребление ресурсов и масштабировать при необходимости.",
       },
-    ];
+    ]).sort((a, b) => b.confidence - a.confidence);
+
     setHypotheses(hyps);
     setIsDiagnosing(false);
     setDiagnosisStep(-1);
 
+    // Reveal hypotheses one by one
+    for (let i = 0; i < hyps.length; i++) {
+      setRevealedHypCount(i + 1);
+      scrollToBottom();
+      await new Promise((r) => setTimeout(r, 600));
+    }
+
+    await new Promise((r) => setTimeout(r, 300));
+
+    // Stream the summary message
+    const fullContent = `## Диагностика ${inc.id} завершена\n\nОбнаружено **${hyps.length} гипотез(ы)** возможной причины. Основная гипотеза: **${hyps[0].title}** с уверенностью ${hyps[0].confidence}%.\n\nЗадайте вопросы для более детального анализа.`;
+    const msgId = crypto.randomUUID();
     const summaryMsg: Message = {
-      id: crypto.randomUUID(),
+      id: msgId,
       role: "assistant",
-      content: `## Диагностика ${inc.id} завершена\n\nОбнаружено **${hyps.length} гипотез(ы)** возможной причины. Основная гипотеза: **${hyps[0].title}** с уверенностью ${hyps[0].confidence}%.\n\nЗадайте вопросы для более детального анализа.`,
+      content: "",
       timestamp: new Date(),
+      isStreaming: true,
     };
     setMessages([summaryMsg]);
     scrollToBottom();
+    await streamMessage(fullContent, msgId);
   };
 
   const handleSend = async () => {
@@ -151,18 +196,21 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     scrollToBottom();
 
     setIsTyping(true);
-    await new Promise((r) => setTimeout(r, 1500 + Math.random() * 2000));
+    await new Promise((r) => setTimeout(r, 800 + Math.random() * 800));
+    setIsTyping(false);
 
     const aiContent = getMockAIResponse(incident.id, userMsg.content);
+    const msgId = crypto.randomUUID();
     const aiMsg: Message = {
-      id: crypto.randomUUID(),
+      id: msgId,
       role: "assistant",
-      content: aiContent,
+      content: "",
       timestamp: new Date(),
+      isStreaming: true,
     };
     setMessages((prev) => [...prev, aiMsg]);
-    setIsTyping(false);
     scrollToBottom();
+    await streamMessage(aiContent, msgId);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
