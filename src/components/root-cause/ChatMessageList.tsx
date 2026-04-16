@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Shield, Copy, Check, User } from "lucide-react";
+import { Bot, Copy, Check, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import { useState, useCallback } from "react";
@@ -54,7 +54,7 @@ const ChatMessageList = ({ messages, isTyping }: ChatMessageListProps) => {
         >
           {msg.role === "assistant" && (
             <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0 mt-1">
-              <Shield className="w-3.5 h-3.5 text-primary" />
+              <Bot className="w-3.5 h-3.5 text-primary" />
             </div>
           )}
           <div className={cn("space-y-1", msg.role === "user" ? "max-w-[75%]" : "max-w-[82%]")}>
@@ -111,7 +111,7 @@ const ChatMessageList = ({ messages, isTyping }: ChatMessageListProps) => {
       {isTyping && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 pl-1">
           <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0">
-            <Shield className="w-3.5 h-3.5 text-primary" />
+            <Bot className="w-3.5 h-3.5 text-primary" />
           </div>
           <div className="flex items-center gap-1.5 px-4 py-3 rounded-2xl bg-surface-1/60 backdrop-blur-sm border border-border/15 rounded-bl-md">
             {[0, 1, 2].map((i) => (
