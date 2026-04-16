@@ -14,6 +14,7 @@ const RootCause = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mode, setMode] = useState<AppMode>("empty");
   const [lastScanTime, setLastScanTime] = useState<Date | null>(null);
+  const [scanComplete, setScanComplete] = useState(false);
 
   const selectedIncident =
     mockIncidents.find((i) => i.id === selectedId) || null;
