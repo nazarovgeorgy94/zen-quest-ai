@@ -137,6 +137,13 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     streamingRef.current = false;
     setIsStreaming(false);
     scrollToBottom();
+
+    // Show follow-up suggestions after streaming completes
+    if (incident) {
+      const followUps = mockFollowUpSuggestions[incident.id] || mockFollowUpSuggestions.default;
+      setCurrentFollowUps(followUps);
+      setShowFollowUps(true);
+    }
   };
 
   const handleStopGeneration = () => {
