@@ -417,6 +417,16 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
         {/* Chat messages */}
         <ChatMessageList messages={messages} isTyping={isTyping} />
+
+        {/* Follow-up suggestions */}
+        <AnimatePresence>
+          {showFollowUps && !isStreaming && !isTyping && currentFollowUps.length > 0 && (
+            <FollowUpSuggestions
+              suggestions={currentFollowUps}
+              onSelect={handleFollowUpSelect}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Scroll to bottom button */}
