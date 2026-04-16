@@ -307,7 +307,7 @@ function IncidentCard({
           ? "hsl(var(--primary) / 0.08)"
           : "transparent",
         borderColor: isSelected ? "hsl(var(--primary) / 0.25)" : undefined,
-        ringColor: isSelected ? "hsl(var(--primary) / 0.25)" : undefined,
+        
       }}
     >
       {/* Hover bg */}
