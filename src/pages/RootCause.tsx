@@ -14,6 +14,7 @@ const RootCause = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mode, setMode] = useState<AppMode>("empty");
   const [lastScanTime, setLastScanTime] = useState<Date | null>(null);
+  const [scanComplete, setScanComplete] = useState(false);
 
   const selectedIncident =
     mockIncidents.find((i) => i.id === selectedId) || null;
@@ -35,11 +36,13 @@ const RootCause = () => {
 
   const handleStartScan = () => {
     setSelectedId(null);
+    setScanComplete(false);
     setMode("discovery");
   };
 
   const handleScanComplete = () => {
     setLastScanTime(new Date());
+    setScanComplete(true);
   };
 
   const handleSelectIncident = (id: string) => {
@@ -73,7 +76,7 @@ const RootCause = () => {
           onNewChat={handleNewChat}
           onOpenSearch={() => setSearchOpen(true)}
           lastScanTime={lastScanTime}
-          isScanning={mode === "discovery"}
+          isScanning={mode === "discovery" && !scanComplete}
         />
 
         <AnimatePresence mode="wait">
