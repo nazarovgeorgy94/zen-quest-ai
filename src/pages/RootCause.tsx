@@ -62,7 +62,7 @@ const RootCause = () => {
           className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[120px]"
           style={{
             background:
-              "conic-gradient(from 180deg, hsl(158 72% 42% / 0.05), hsl(175 65% 38% / 0.04), hsl(185 70% 45% / 0.03), hsl(158 72% 42% / 0.05))",
+              "conic-gradient(from 180deg, hsl(var(--primary) / 0.05), hsl(var(--accent) / 0.04), hsl(var(--cyan-pop) / 0.03), hsl(var(--primary) / 0.05))",
           }}
         />
         <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-teal-accent/[0.02] blur-[100px]" />

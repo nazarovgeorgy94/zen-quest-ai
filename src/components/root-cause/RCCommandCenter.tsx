@@ -22,7 +22,7 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
         className="absolute inset-[-24px] rounded-full blur-[50px]"
         style={{
           background:
-            "radial-gradient(circle, hsl(158 72% 42% / 0.2), hsl(175 65% 38% / 0.08), transparent)",
+            "radial-gradient(circle, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.08), transparent)",
         }}
         animate={{
           scale: isHovered ? 1.25 : [1, 1.1, 1],
@@ -40,9 +40,9 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
         <svg viewBox="0 0 160 160" className="w-full h-full">
           <defs>
             <linearGradient id="orbRing" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="hsl(158 72% 42%)" stopOpacity={isHovered ? 0.6 : 0.25} />
-              <stop offset="50%" stopColor="hsl(175 65% 38%)" stopOpacity={0.05} />
-              <stop offset="100%" stopColor="hsl(185 70% 45%)" stopOpacity={isHovered ? 0.5 : 0.15} />
+              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={isHovered ? 0.6 : 0.25} />
+              <stop offset="50%" stopColor="hsl(var(--accent))" stopOpacity={0.05} />
+              <stop offset="100%" stopColor="hsl(var(--cyan-pop))" stopOpacity={isHovered ? 0.5 : 0.15} />
             </linearGradient>
           </defs>
           <circle cx="80" cy="80" r="76" fill="none" stroke="url(#orbRing)"
@@ -56,7 +56,7 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
         animate={{ rotate: 360 }}
         transition={{ duration: isHovered ? 4 : 10, repeat: Infinity, ease: "linear" }}
         style={{
-          background: "conic-gradient(from 0deg, transparent 0%, hsl(158 72% 42% / 0.1) 15%, transparent 30%)",
+          background: "conic-gradient(from 0deg, transparent 0%, hsl(var(--primary) / 0.1) 15%, transparent 30%)",
         }}
       />
 
@@ -65,7 +65,7 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
         className="absolute inset-[6px] rounded-full backdrop-blur-md"
         style={{
           background:
-            "radial-gradient(circle at 35% 35%, hsl(158 72% 42% / 0.12), hsl(175 65% 38% / 0.06), hsl(160 18% 6% / 0.9))",
+            "radial-gradient(circle at 35% 35%, hsl(var(--primary) / 0.12), hsl(var(--accent) / 0.06), hsl(var(--background) / 0.9))",
           border: "1px solid hsl(var(--primary) / 0.1)",
         }}
       />
@@ -77,18 +77,18 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
           transition={{ duration: 0.3 }}>
           <motion.path
             d="M20 4 L32 10 L32 22 C32 30 26 36 20 38 C14 36 8 30 8 22 L8 10 Z"
-            stroke="hsl(158 72% 42%)"
+            stroke="hsl(var(--primary))"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            fill="hsl(158 72% 42% / 0.08)"
+            fill="hsl(var(--primary) / 0.08)"
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
             transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
           />
           {[[20,12],[14,18],[26,18],[16,26],[24,26],[20,32]].map(([cx, cy], i) => (
             <motion.circle key={i} cx={cx} cy={cy} r="1.5"
-              fill="hsl(158 72% 42%)"
+              fill="hsl(var(--primary))"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: [0.4, 0.9, 0.4], scale: 1 }}
               transition={{
@@ -103,7 +103,7 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
             "M16 26 L20 32","M24 26 L20 32",
           ].map((d, i) => (
             <motion.path key={i} d={d}
-              stroke="hsl(158 72% 42% / 0.35)"
+              stroke="hsl(var(--primary) / 0.35)"
               strokeWidth="0.75"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
@@ -243,14 +243,14 @@ const RCCommandCenter = ({
       <div className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage:
-            "linear-gradient(hsl(158 72% 42%) 1px, transparent 1px), linear-gradient(90deg, hsl(158 72% 42%) 1px, transparent 1px)",
+            "linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }} />
 
       {/* Radial ambient */}
       <div className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at 50% 40%, hsl(158 72% 42% / 0.04) 0%, transparent 60%)",
+          background: "radial-gradient(ellipse at 50% 40%, hsl(var(--primary) / 0.04) 0%, transparent 60%)",
         }} />
 
       <div className="relative z-10 text-center max-w-md px-6 w-full">
@@ -301,12 +301,12 @@ const RCCommandCenter = ({
           >
             <div className="absolute inset-0 rounded-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"
               style={{
-                background: "linear-gradient(135deg, hsl(158 72% 42% / 0.3), hsl(175 65% 38% / 0.15), hsl(185 70% 45% / 0.2))",
+                background: "linear-gradient(135deg, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.15), hsl(var(--cyan-pop) / 0.2))",
               }} />
             <div className="absolute inset-[1px] rounded-[11px] bg-surface-0/95 group-hover:bg-surface-0/90 transition-colors duration-300" />
             <div className="relative flex items-center gap-4 px-5 py-3.5">
               <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-primary/20 group-hover:border-primary/40 transition-colors duration-300"
-                style={{ background: "linear-gradient(135deg, hsl(158 72% 42% / 0.15), hsl(175 65% 38% / 0.08))" }}>
+                style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--accent) / 0.08))" }}>
                 <Radar className="w-4.5 h-4.5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
@@ -337,8 +337,8 @@ const RCCommandCenter = ({
                   className="px-3 py-1.5 rounded-lg text-xs font-medium text-primary-foreground disabled:opacity-30 transition-all"
                   style={{
                     background: incidentInput.trim()
-                      ? "linear-gradient(135deg, hsl(158 72% 42%), hsl(175 65% 38%))"
-                      : "hsl(160 12% 15%)",
+                      ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))"
+                      : "hsl(var(--border))",
                   }}>
                   Найти
                 </button>

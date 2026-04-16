@@ -468,7 +468,7 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
             </div>
             <div className="h-1 rounded-full bg-surface-2 overflow-hidden">
               <motion.div className="h-full rounded-full"
-                style={{ background: "linear-gradient(90deg, hsl(158 72% 42%), hsl(175 65% 38%))" }}
+                style={{ background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)))" }}
                 initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.5, ease: "easeOut" }} />

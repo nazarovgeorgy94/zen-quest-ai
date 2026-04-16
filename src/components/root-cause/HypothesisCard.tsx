@@ -93,7 +93,7 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
           style={{
             background: isTop
               ? "linear-gradient(135deg, hsl(var(--primary) / 0.06) 0%, transparent 40%, hsl(var(--accent) / 0.04) 100%)"
-              : "linear-gradient(135deg, hsl(160 18% 40% / 0.04) 0%, transparent 50%)",
+              : "linear-gradient(135deg, hsl(var(--muted-foreground) / 0.04) 0%, transparent 50%)",
           }}
         />
 
