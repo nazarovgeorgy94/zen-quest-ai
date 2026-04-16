@@ -211,15 +211,6 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
       {/* Particles */}
       <OrbParticles isHovered={isHovered} />
 
-      {/* Pulse rings */}
-      {[0, 1, 2].map((i) => (
-        <motion.div key={i}
-          className="absolute inset-0 rounded-full"
-          style={{ border: `1px solid hsl(var(--primary) / ${isHovered ? 0.12 : 0.05})` }}
-          animate={{ scale: [1, 2.2], opacity: [isHovered ? 0.25 : 0.12, 0] }}
-          transition={{ duration: 3.5, repeat: Infinity, delay: i * 1.1, ease: "easeOut" }}
-        />
-      ))}
     </div>
   );
 }
