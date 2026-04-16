@@ -377,19 +377,29 @@ function IncidentCard({ incident, isSelected, onClick }: {
         isResolved && "opacity-60"
       )}
       style={{
-        background: isSelected ? "hsl(var(--primary) / 0.08)" : "transparent",
+        background: isSelected
+          ? "hsl(var(--primary) / 0.08)"
+          : isCritical && incident.status === "active"
+          ? `linear-gradient(135deg, ${colors.ambient || "transparent"}, transparent 60%)`
+          : "transparent",
         borderColor: isSelected ? "hsl(var(--primary) / 0.25)" : undefined,
+        boxShadow: isCritical && incident.status === "active" && !isSelected
+          ? `inset 0 0 20px -8px ${colors.ambient || "transparent"}`
+          : undefined,
       }}
     >
-      {!isSelected && (
+      {!isSelected && !isCritical && (
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"
           style={{ background: "hsl(var(--surface-1))" }} />
       )}
+
+      {/* Severity stripe */}
       <div className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full transition-opacity duration-200"
         style={{
-          background: isCritical ? "hsl(0 68% 52%)" : incident.severity === "high" ? "hsl(25 95% 53%)" : "hsl(var(--primary))",
-          opacity: isSelected ? 1 : 0.4,
+          background: colors.stripe || "hsl(var(--primary))",
+          opacity: isSelected ? 1 : isCritical ? 0.7 : 0.3,
         }} />
+
       <div className="relative z-10">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-[10px] font-mono text-muted-foreground/70">{incident.id}</span>
