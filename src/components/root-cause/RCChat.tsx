@@ -437,7 +437,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                   Гипотезы ({hypotheses.length})
                 </span>
               </div>
-              {hypotheses.map((hyp, i) => (
+              {hypotheses.slice(0, revealedHypCount).map((hyp, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 20, scale: 0.97 }}
