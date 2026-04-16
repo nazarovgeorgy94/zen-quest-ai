@@ -14,6 +14,7 @@ import {
   getSeverityColor,
   mockDiagnosisSteps,
   mockHypotheses,
+  mockFollowUpSuggestions,
   getMockAIResponse,
   mockIncidents,
   getRelativeTime,
@@ -22,6 +23,8 @@ import DiagnosisTimeline from "./DiagnosisTimeline";
 import HypothesisCard from "./HypothesisCard";
 import ChatMessageList, { Message } from "./ChatMessageList";
 import ChatInput from "./ChatInput";
+import FollowUpSuggestions from "./FollowUpSuggestions";
+import Sparkline from "./Sparkline";
 
 interface RCChatProps {
   incident: Incident | null;
