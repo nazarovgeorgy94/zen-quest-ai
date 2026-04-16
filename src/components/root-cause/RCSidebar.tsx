@@ -39,8 +39,33 @@ const RCSidebar = ({
       {/* Logo */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
-            <Zap className="w-4 h-4 text-primary" />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center relative overflow-hidden"
+            style={{
+              background: "linear-gradient(135deg, hsl(158 72% 42% / 0.15), hsl(175 65% 38% / 0.08))",
+            }}
+          >
+            <svg viewBox="0 0 40 40" className="w-5 h-5" fill="none">
+              <path
+                d="M20 4 L32 10 L32 22 C32 30 26 36 20 38 C14 36 8 30 8 22 L8 10 Z"
+                stroke="hsl(158 72% 42%)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="hsl(158 72% 42% / 0.1)"
+              />
+              {[
+                [20, 12], [14, 18], [26, 18], [16, 26], [24, 26], [20, 32],
+              ].map(([cx, cy], i) => (
+                <circle key={i} cx={cx} cy={cy} r="1.5" fill="hsl(158 72% 42%)" />
+              ))}
+              {[
+                "M20 12 L14 18", "M20 12 L26 18", "M14 18 L16 26",
+                "M26 18 L24 26", "M14 18 L26 18", "M16 26 L24 26",
+                "M16 26 L20 32", "M24 26 L20 32",
+              ].map((d, i) => (
+                <path key={i} d={d} stroke="hsl(158 72% 42% / 0.4)" strokeWidth="0.75" />
+              ))}
+            </svg>
           </div>
           <div>
             <h1 className="text-sm font-semibold text-foreground tracking-tight">
