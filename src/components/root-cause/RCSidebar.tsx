@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, Zap, Clock, ChevronDown } from "lucide-react";
+import { Search, Plus, Clock, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Incident,
