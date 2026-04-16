@@ -630,8 +630,8 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isDiagnosing ? "Дождитесь завершения диагностики..." : "Задайте вопрос или введите INC-XXXX..."}
-              disabled={isDiagnosing}
+              placeholder={isDiagnosing ? "Дождитесь завершения диагностики..." : streamingRef.current ? "Агент печатает ответ..." : "Задайте вопрос или введите INC-XXXX..."}
+              disabled={isDiagnosing || streamingRef.current}
               rows={1}
               className="w-full resize-none rounded-xl bg-surface-1/60 backdrop-blur-sm border border-border/40 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/15 transition-all disabled:opacity-40"
             />
