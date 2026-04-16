@@ -59,7 +59,7 @@ const ChatInput = ({
         )}
       </AnimatePresence>
 
-      <div className="flex items-end gap-3">
+      <div className="flex items-center gap-3">
         <button
           onClick={onStartScan}
           className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-surface-1/60 backdrop-blur-sm border border-border/30 text-muted-foreground hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all"
