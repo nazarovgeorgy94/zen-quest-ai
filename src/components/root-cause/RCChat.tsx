@@ -250,7 +250,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, userMsg]);
-      scrollToBottom(true);
+      scrollToBottom();
       setIsTyping(true);
       setTimeout(async () => {
         setIsTyping(false);
