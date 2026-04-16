@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Radar,
   CheckCircle2,
   AlertTriangle,
   XCircle,
   ArrowRight,
   X,
+  Shield,
+  Terminal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -23,33 +24,160 @@ interface RCDiscoveryProps {
 
 type ScanPhase = "scanning" | "complete";
 
+// Fake terminal log entries per service
+const scanLogs: Record<string, string[]> = {
+  "payment-gateway": [
+    "Connecting to payment-gateway:8443...",
+    "TLS handshake OK. Checking health endpoint...",
+    "⚠ P99 latency 12.4s — exceeds threshold (500ms)",
+    "→ Anomaly detected: connection pool saturation",
+  ],
+  "aml-scoring": [
+    "Connecting to aml-scoring:9090...",
+    "Health check passed. Validating feature store freshness...",
+    "⚠ Feature store stale: last update 3h 12m ago",
+    "→ Anomaly detected: Kafka consumer lag",
+  ],
+  "velocity-engine": [
+    "Connecting to velocity-engine:8080...",
+    "Health OK. Checking rule execution metrics...",
+    "⚠ False positive rate 8.7% — above baseline 2.1%",
+    "→ Anomaly detected: event deduplication failure",
+  ],
+  "bin-lookup": [
+    "Connecting to bin-lookup:8080...",
+    "Health OK. Verifying BIN database sync...",
+    "ℹ Last sync: 12h ago. Minor drift detected.",
+  ],
+  "session-store": [
+    "Connecting to redis-cluster:6379...",
+    "Cluster health OK. Memory: 61% used.",
+    "✓ All nodes responsive.",
+  ],
+  "3ds-gateway": [
+    "Connecting to 3ds-gateway:443...",
+    "Health OK. Checking provider connectivity...",
+    "✓ Visa OK, Mastercard OK.",
+  ],
+  "webhook-dispatcher": [
+    "Connecting to webhook-dispatcher:8080...",
+    "Health OK. Queue depth: 0.",
+    "✓ All webhooks delivered.",
+  ],
+  "fraud-scorer": [
+    "Connecting to fraud-scorer-ml:5000...",
+    "Model inference check OK. Latency: 67ms.",
+    "✓ Model v3.2.1 loaded.",
+  ],
+  "card-tokenizer": [
+    "Connecting to card-tokenizer:8443...",
+    "HSM connectivity OK. Token generation: 5ms.",
+    "✓ PCI DSS compliance check passed.",
+  ],
+  "kyc-service": [
+    "Connecting to kyc-service:8080...",
+    "Provider API check OK. Latency: 120ms.",
+    "✓ Document verification pipeline operational.",
+  ],
+};
+
 const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
   const [phase, setPhase] = useState<ScanPhase>("scanning");
   const [scannedIndex, setScannedIndex] = useState(-1);
   const [discoveredIncidents, setDiscoveredIncidents] = useState<string[]>([]);
+  const [terminalLines, setTerminalLines] = useState<
+    { text: string; type: "info" | "warn" | "ok" | "header" }[]
+  >([]);
+  const [radarAngle, setRadarAngle] = useState(0);
+  const terminalRef = useRef<HTMLDivElement>(null);
+
+  // Radar rotation
+  useEffect(() => {
+    if (phase !== "scanning") return;
+    const id = setInterval(() => setRadarAngle((a) => a + 3), 30);
+    return () => clearInterval(id);
+  }, [phase]);
+
+  // Auto-scroll terminal
+  useEffect(() => {
+    terminalRef.current?.scrollTo({
+      top: terminalRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [terminalLines]);
 
   useEffect(() => {
     let cancelled = false;
 
+    const addLine = (
+      text: string,
+      type: "info" | "warn" | "ok" | "header"
+    ) => {
+      if (!cancelled)
+        setTerminalLines((prev) => [...prev, { text, type }]);
+    };
+
     const runScan = async () => {
-      // Scan services one by one
+      addLine("$ rca-agent scan --all-services --deep", "header");
+      await new Promise((r) => setTimeout(r, 600));
+      addLine(
+        `Initiating deep scan of ${mockServices.length} services...`,
+        "info"
+      );
+      await new Promise((r) => setTimeout(r, 400));
+
       for (let i = 0; i < mockServices.length; i++) {
         if (cancelled) return;
         setScannedIndex(i);
-        await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
-
-        // If service has incidents, "discover" them
         const svc = mockServices[i];
+        const logs = scanLogs[svc.name] || [
+          `Connecting to ${svc.name}...`,
+          "✓ Health check passed.",
+        ];
+
+        addLine("", "info"); // spacer
+        addLine(`[${i + 1}/${mockServices.length}] Scanning ${svc.displayName}`, "header");
+
+        for (const log of logs) {
+          if (cancelled) return;
+          await new Promise((r) => setTimeout(r, 150 + Math.random() * 200));
+          const type = log.startsWith("⚠") || log.startsWith("→")
+            ? "warn"
+            : log.startsWith("✓")
+            ? "ok"
+            : "info";
+          addLine(log, type);
+        }
+
+        // Discover incidents
         if (svc.incidentIds?.length) {
+          await new Promise((r) => setTimeout(r, 200));
+          for (const incId of svc.incidentIds) {
+            addLine(
+              `🔴 INCIDENT DETECTED: ${incId} — requires investigation`,
+              "warn"
+            );
+          }
           setDiscoveredIncidents((prev) => [
             ...prev,
             ...svc.incidentIds!.filter((id) => !prev.includes(id)),
           ]);
         }
+
+        await new Promise((r) => setTimeout(r, 200));
       }
 
       if (!cancelled) {
-        await new Promise((r) => setTimeout(r, 600));
+        await new Promise((r) => setTimeout(r, 400));
+        addLine("", "info");
+        addLine("═══ Scan complete ═══", "header");
+        const found = mockIncidents.filter(
+          (i) => i.status !== "resolved"
+        ).length;
+        addLine(
+          `Result: ${mockServices.length} services scanned, ${found} incidents detected.`,
+          found > 0 ? "warn" : "ok"
+        );
         setPhase("complete");
       }
     };
@@ -64,38 +192,51 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
     (i) => i.status !== "resolved" && discoveredIncidents.includes(i.id)
   );
 
-  const getServiceIcon = (svc: SystemService, isScanned: boolean) => {
-    if (!isScanned) return <div className="w-4 h-4 rounded-full border border-border" />;
+  const progress =
+    phase === "complete"
+      ? 100
+      : Math.round(((scannedIndex + 1) / mockServices.length) * 100);
+
+  const getStatusIcon = (svc: SystemService) => {
     if (svc.status === "healthy")
-      return <CheckCircle2 className="w-4 h-4 text-primary" />;
+      return <CheckCircle2 className="w-3.5 h-3.5 text-primary" />;
     if (svc.status === "degraded")
-      return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
-    return <XCircle className="w-4 h-4 text-red-400" />;
+      return <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" />;
+    return <XCircle className="w-3.5 h-3.5 text-destructive" />;
   };
 
   return (
     <div className="flex-1 flex flex-col h-screen">
       {/* Header */}
       <div className="shrink-0 border-b border-border bg-surface-0/80 backdrop-blur-sm">
-        <div className={cn("h-[2px] w-full shimmer-line", phase === "scanning" && "shimmer-active")} />
+        <div
+          className={cn(
+            "h-[2px] w-full shimmer-line",
+            phase === "scanning" && "shimmer-active"
+          )}
+        />
         <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <motion.div
-              animate={phase === "scanning" ? { rotate: 360 } : {}}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            >
-              <Radar className="w-5 h-5 text-primary" />
-            </motion.div>
+            <div className="relative w-6 h-6">
+              <Shield className="w-6 h-6 text-primary" />
+              {phase === "scanning" && (
+                <motion.div
+                  className="absolute inset-[-3px] rounded-full border border-primary/30"
+                  animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              )}
+            </div>
             <div>
               <h2 className="text-sm font-semibold text-foreground">
                 {phase === "scanning"
-                  ? "Сканирование системы..."
+                  ? "Глубокое сканирование..."
                   : "Сканирование завершено"}
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {phase === "scanning"
-                  ? `Проверено ${Math.min(scannedIndex + 1, mockServices.length)} из ${mockServices.length} сервисов`
-                  : `Обнаружено ${activeIncidents.length} инцидентов`}
+                  ? `${scannedIndex + 1} из ${mockServices.length} сервисов`
+                  : `${activeIncidents.length} инцидентов обнаружено`}
               </p>
             </div>
           </div>
@@ -108,91 +249,259 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
         </div>
       </div>
 
-      {/* Scan content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6">
-        {/* Services grid */}
-        <div className="grid grid-cols-2 gap-2 mb-6">
-          {mockServices.map((svc, i) => {
-            const isScanned = i <= scannedIndex;
-            const isActive = i === scannedIndex && phase === "scanning";
-            return (
-              <motion.div
-                key={svc.name}
-                initial={{ opacity: 0.3 }}
-                animate={{
-                  opacity: isScanned ? 1 : 0.3,
-                  scale: isActive ? 1.02 : 1,
-                }}
-                transition={{ duration: 0.3 }}
-                className={cn(
-                  "flex items-center gap-2.5 px-3 py-2.5 rounded-lg border transition-all",
-                  isActive
-                    ? "bg-primary/8 border-primary/20"
-                    : isScanned
-                    ? svc.status !== "healthy"
-                      ? "bg-surface-1 border-yellow-500/20"
-                      : "bg-surface-1 border-border/30"
-                    : "bg-surface-0 border-border/10"
-                )}
-              >
-                {getServiceIcon(svc, isScanned)}
-                <div className="flex-1 min-w-0">
-                  <p
-                    className={cn(
-                      "text-xs truncate",
-                      isScanned ? "text-foreground" : "text-muted-foreground"
-                    )}
-                  >
-                    {svc.displayName}
-                  </p>
-                  {isScanned && (
-                    <p className="text-[10px] text-muted-foreground font-mono">
-                      {svc.latency}
-                    </p>
-                  )}
-                </div>
-                {isActive && (
+      <div className="flex-1 overflow-hidden flex flex-col">
+        {/* Top section: Radar + Services */}
+        <div className="px-6 pt-6 pb-4 shrink-0">
+          <div className="flex gap-6">
+            {/* Radar visualization */}
+            <div className="shrink-0 flex items-center justify-center">
+              <div className="relative w-[140px] h-[140px]">
+                {/* Concentric rings */}
+                {[1, 2, 3].map((ring) => (
+                  <div
+                    key={ring}
+                    className="absolute rounded-full border border-primary/[0.08]"
+                    style={{
+                      inset: `${(3 - ring) * 20}px`,
+                    }}
+                  />
+                ))}
+
+                {/* Radar sweep beam */}
+                {phase === "scanning" && (
                   <motion.div
-                    className="w-1.5 h-1.5 rounded-full bg-primary"
-                    animate={{ opacity: [1, 0.3, 1] }}
-                    transition={{ duration: 0.6, repeat: Infinity }}
+                    className="absolute top-1/2 left-1/2 origin-left"
+                    style={{ width: "70px", height: "2px" }}
+                    animate={{ rotate: radarAngle }}
+                  >
+                    <div
+                      className="w-full h-full"
+                      style={{
+                        background:
+                          "linear-gradient(to right, hsl(158 72% 42% / 0.6), transparent)",
+                      }}
+                    />
+                  </motion.div>
+                )}
+
+                {/* Sweep trail (conic gradient) */}
+                {phase === "scanning" && (
+                  <motion.div
+                    className="absolute inset-[20px] rounded-full"
+                    style={{
+                      background: `conic-gradient(from ${radarAngle}deg, transparent 0deg, hsl(158 72% 42% / 0.08) 30deg, transparent 60deg)`,
+                    }}
                   />
                 )}
-              </motion.div>
-            );
-          })}
+
+                {/* Center dot */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/60">
+                  <div className="absolute inset-0 rounded-full bg-primary/40 animate-ping" />
+                </div>
+
+                {/* Service dots on radar */}
+                {mockServices.map((svc, i) => {
+                  const isScanned = i <= scannedIndex;
+                  const angle = (i / mockServices.length) * 360 - 90;
+                  const radius = 45 + (i % 3) * 12;
+                  const x = Math.cos((angle * Math.PI) / 180) * radius;
+                  const y = Math.sin((angle * Math.PI) / 180) * radius;
+
+                  return (
+                    <motion.div
+                      key={svc.name}
+                      className="absolute"
+                      style={{
+                        top: `calc(50% + ${y}px)`,
+                        left: `calc(50% + ${x}px)`,
+                        transform: "translate(-50%, -50%)",
+                      }}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{
+                        opacity: isScanned ? 1 : 0.15,
+                        scale: isScanned ? 1 : 0.5,
+                      }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                    >
+                      <div
+                        className={cn(
+                          "w-2.5 h-2.5 rounded-full transition-colors duration-300",
+                          !isScanned
+                            ? "bg-muted-foreground/30"
+                            : svc.status === "healthy"
+                            ? "bg-primary"
+                            : svc.status === "degraded"
+                            ? "bg-yellow-400"
+                            : "bg-destructive"
+                        )}
+                      />
+                      {isScanned && svc.status !== "healthy" && (
+                        <motion.div
+                          className={cn(
+                            "absolute inset-[-3px] rounded-full border",
+                            svc.status === "degraded"
+                              ? "border-yellow-400/40"
+                              : "border-destructive/40"
+                          )}
+                          animate={{
+                            scale: [1, 1.8, 1],
+                            opacity: [0.6, 0, 0.6],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                          }}
+                        />
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Services list */}
+            <div className="flex-1 min-w-0 space-y-1 max-h-[140px] overflow-y-auto pr-1">
+              {mockServices.map((svc, i) => {
+                const isScanned = i <= scannedIndex;
+                const isActive = i === scannedIndex && phase === "scanning";
+
+                return (
+                  <motion.div
+                    key={svc.name}
+                    initial={{ opacity: 0.25 }}
+                    animate={{ opacity: isScanned ? 1 : 0.25 }}
+                    transition={{ duration: 0.5 }}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-1.5 rounded-md text-xs transition-colors duration-300",
+                      isActive && "bg-primary/5"
+                    )}
+                  >
+                    {isScanned ? (
+                      getStatusIcon(svc)
+                    ) : isActive ? (
+                      <motion.div
+                        className="w-3.5 h-3.5 rounded-full border-2 border-primary border-t-transparent"
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          duration: 0.8,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
+                      />
+                    ) : (
+                      <div className="w-3.5 h-3.5 rounded-full border border-border/50" />
+                    )}
+                    <span
+                      className={cn(
+                        "truncate transition-colors duration-300",
+                        isScanned
+                          ? svc.status !== "healthy"
+                            ? "text-foreground font-medium"
+                            : "text-foreground/70"
+                          : "text-muted-foreground/50"
+                      )}
+                    >
+                      {svc.displayName}
+                    </span>
+                    {isScanned && (
+                      <span className="ml-auto text-[10px] font-mono text-muted-foreground">
+                        {svc.latency}
+                      </span>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1.5">
+              <span>Прогресс сканирования</span>
+              <span className="font-mono">{progress}%</span>
+            </div>
+            <div className="h-1 rounded-full bg-surface-2 overflow-hidden">
+              <motion.div
+                className="h-full rounded-full"
+                style={{
+                  background:
+                    "linear-gradient(90deg, hsl(158 72% 42%), hsl(175 65% 38%))",
+                }}
+                initial={{ width: "0%" }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Discovered incidents */}
+        {/* Terminal */}
+        <div className="flex-1 flex flex-col min-h-0 px-6 pb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Terminal className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+              Scan Log
+            </span>
+          </div>
+          <div
+            ref={terminalRef}
+            className="flex-1 rounded-xl bg-[hsl(160_20%_4%)] border border-border/30 p-4 overflow-y-auto font-mono text-[11px] leading-relaxed"
+          >
+            {terminalLines.map((line, i) => (
+              <div
+                key={i}
+                className={cn(
+                  line.text === "" && "h-2",
+                  line.type === "header" && "text-primary font-semibold",
+                  line.type === "info" && "text-foreground/50",
+                  line.type === "warn" && "text-yellow-400",
+                  line.type === "ok" && "text-primary/80"
+                )}
+              >
+                {line.text}
+              </div>
+            ))}
+            {phase === "scanning" && (
+              <motion.span
+                className="inline-block w-1.5 h-3.5 bg-primary/80 ml-0.5"
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Discovered incidents (slide up from bottom) */}
         <AnimatePresence>
-          {discoveredIncidents.length > 0 && (
+          {phase === "complete" && activeIncidents.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-3"
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="shrink-0 border-t border-border bg-surface-0/90 backdrop-blur-sm px-6 py-4 max-h-[45%] overflow-y-auto"
             >
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider px-1">
-                Обнаруженные инциденты ({activeIncidents.length})
+              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                Требуют расследования ({activeIncidents.length})
               </p>
-              {activeIncidents.map((inc, i) => {
-                const colors = getSeverityColor(inc.severity);
-                return (
-                  <motion.button
-                    key={inc.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    onClick={() => onSelectIncident(inc.id)}
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    className="w-full text-left p-4 rounded-xl bg-surface-1 border border-border/30 hover:border-primary/20 transition-all group"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 relative">
-                        <div className={cn("w-3 h-3 rounded-full", colors.dot)} />
+              <div className="space-y-2">
+                {activeIncidents.map((inc, i) => {
+                  const colors = getSeverityColor(inc.severity);
+                  return (
+                    <motion.button
+                      key={inc.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.15 + i * 0.1 }}
+                      onClick={() => onSelectIncident(inc.id)}
+                      className="w-full text-left px-4 py-3 rounded-xl bg-surface-1 border border-border/30 hover:border-primary/25 transition-all group flex items-center gap-3"
+                    >
+                      <div className="relative shrink-0">
+                        <div
+                          className={cn("w-2.5 h-2.5 rounded-full", colors.dot)}
+                        />
                         <div
                           className={cn(
-                            "absolute inset-0 w-3 h-3 rounded-full animate-ping opacity-50",
+                            "absolute inset-0 w-2.5 h-2.5 rounded-full animate-ping opacity-40",
                             colors.dot
                           )}
                         />
@@ -211,22 +520,16 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
                           >
                             {inc.severity}
                           </span>
-                          <span className="text-[10px] text-muted-foreground ml-auto">
-                            {inc.service}
-                          </span>
                         </div>
-                        <p className="text-sm text-foreground mt-1">
+                        <p className="text-sm text-foreground mt-0.5 truncate">
                           {inc.title}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                          {inc.description}
-                        </p>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0 mt-1" />
-                    </div>
-                  </motion.button>
-                );
-              })}
+                      <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
+                    </motion.button>
+                  );
+                })}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
