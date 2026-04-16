@@ -52,9 +52,26 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
   const [isTyping, setIsTyping] = useState(false);
   const [incidentSuggestion, setIncidentSuggestion] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isNearBottom, setIsNearBottom] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevIncidentRef = useRef<string | null>(null);
   const streamingRef = useRef(false);
+
+  // Track scroll position
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const threshold = 80;
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+    setIsNearBottom(atBottom);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   useEffect(() => {
     if (incident && incident.id !== prevIncidentRef.current) {
@@ -78,11 +95,17 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     }
   }, [input]);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback((force = false) => {
+    if (!force && !isNearBottom) return;
     setTimeout(() => {
       scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     }, 100);
-  };
+  }, [isNearBottom]);
+
+  const forceScrollToBottom = useCallback(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    setIsNearBottom(true);
+  }, []);
 
   const streamMessage = async (fullContent: string, msgId: string) => {
     streamingRef.current = true;
