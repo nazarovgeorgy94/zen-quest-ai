@@ -206,6 +206,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       return;
     }
     if (!input.trim() || !incident) return;
+    setShowFollowUps(false);
 
     const userMsg: Message = {
       id: crypto.randomUUID(),
