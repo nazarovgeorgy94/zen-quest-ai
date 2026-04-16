@@ -1,0 +1,13 @@
+---
+name: Design Tokens — Cosmic Mint
+description: Full color palette, severity tokens, surface elevation, gradient tokens
+type: design
+---
+## Theme: Cosmic Mint
+
+Primary: #16FFBB → 156 100% 54% (electric mint)
+Accent: #29DDDA → 179 70% 51% (vivid cyan)
+Background: #0A081B → 247 53% 7% (cosmic navy)
+
+Surfaces use hue 245 with increasing lightness (7% → 20%).
+All hardcoded colors replaced with CSS variables for easy theming.
