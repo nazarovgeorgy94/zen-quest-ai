@@ -326,10 +326,20 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                 {incident.metrics.map((m) => (
                   <div
                     key={m.label}
-                    className="px-3 py-1.5 rounded-lg bg-surface-1/60 backdrop-blur-sm border border-border/20"
+                    className="px-3 py-1.5 rounded-lg bg-surface-1/60 backdrop-blur-sm border border-border/20 flex items-center gap-2.5"
                   >
-                    <p className="text-[9px] text-muted-foreground">{m.label}</p>
-                    <p className="text-xs font-mono font-bold text-foreground">{m.value}</p>
+                    <div>
+                      <p className="text-[9px] text-muted-foreground">{m.label}</p>
+                      <p className="text-xs font-mono font-bold text-foreground">{m.value}</p>
+                    </div>
+                    {m.sparkline && (
+                      <Sparkline
+                        data={m.sparkline}
+                        width={52}
+                        height={18}
+                        color={m.color || "hsl(var(--primary))"}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
