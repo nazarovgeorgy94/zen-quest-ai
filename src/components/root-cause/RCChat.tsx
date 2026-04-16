@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Zap,
   Clock,
   Server,
   TrendingUp,
   AlertCircle,
+  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -22,7 +22,6 @@ import DiagnosisTimeline from "./DiagnosisTimeline";
 import HypothesisCard from "./HypothesisCard";
 import ChatMessageList, { Message } from "./ChatMessageList";
 import ChatInput from "./ChatInput";
-import IncidentTimeline from "./IncidentTimeline";
 
 interface RCChatProps {
   incident: Incident | null;
@@ -53,9 +52,26 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
   const [isTyping, setIsTyping] = useState(false);
   const [incidentSuggestion, setIncidentSuggestion] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isNearBottom, setIsNearBottom] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const prevIncidentRef = useRef<string | null>(null);
   const streamingRef = useRef(false);
+
+  // Track scroll position
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const threshold = 80;
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+    setIsNearBottom(atBottom);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   useEffect(() => {
     if (incident && incident.id !== prevIncidentRef.current) {
@@ -79,11 +95,17 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     }
   }, [input]);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback((force = false) => {
+    if (!force && !isNearBottom) return;
     setTimeout(() => {
       scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     }, 100);
-  };
+  }, [isNearBottom]);
+
+  const forceScrollToBottom = useCallback(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    setIsNearBottom(true);
+  }, []);
 
   const streamMessage = async (fullContent: string, msgId: string) => {
     streamingRef.current = true;
@@ -125,7 +147,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
     for (let i = 0; i < mockDiagnosisSteps.length; i++) {
       setDiagnosisStep(i);
-      scrollToBottom();
+      scrollToBottom(true);
       await new Promise((r) => setTimeout(r, mockDiagnosisSteps[i].duration));
     }
 
@@ -144,7 +166,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
     for (let i = 0; i < hyps.length; i++) {
       setRevealedHypCount(i + 1);
-      scrollToBottom();
+      scrollToBottom(true);
       await new Promise((r) => setTimeout(r, 600));
     }
 
@@ -160,7 +182,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       isStreaming: true,
     };
     setMessages([summaryMsg]);
-    scrollToBottom();
+    scrollToBottom(true);
     await streamMessage(fullContent, msgId);
   };
 
@@ -181,7 +203,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
-    scrollToBottom();
+    scrollToBottom(true);
 
     setIsTyping(true);
     await new Promise((r) => setTimeout(r, 800 + Math.random() * 800));
@@ -273,9 +295,6 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
       {/* Chat area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-5 space-y-4 relative z-10">
-        {/* Incident timeline */}
-        <IncidentTimeline incident={incident} />
-
         {/* Incident brief card */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -344,6 +363,21 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
         {/* Chat messages */}
         <ChatMessageList messages={messages} isTyping={isTyping} />
       </div>
+
+      {/* Scroll to bottom button */}
+      <AnimatePresence>
+        {!isNearBottom && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            onClick={forceScrollToBottom}
+            className="absolute bottom-24 right-8 z-20 w-9 h-9 rounded-full bg-surface-2/90 backdrop-blur-sm border border-border/40 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface-3 shadow-lg transition-colors"
+          >
+            <ChevronDown className="w-4 h-4" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Input area */}
       <ChatInput
