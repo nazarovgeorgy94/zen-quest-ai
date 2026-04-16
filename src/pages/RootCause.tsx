@@ -36,11 +36,13 @@ const RootCause = () => {
 
   const handleStartScan = () => {
     setSelectedId(null);
+    setScanComplete(false);
     setMode("discovery");
   };
 
   const handleScanComplete = () => {
     setLastScanTime(new Date());
+    setScanComplete(true);
   };
 
   const handleSelectIncident = (id: string) => {
