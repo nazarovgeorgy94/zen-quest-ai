@@ -1,6 +1,14 @@
 export type IncidentSeverity = "critical" | "high" | "medium" | "low";
 export type IncidentStatus = "active" | "investigating" | "resolved";
 
+export interface IncidentMetric {
+  label: string;
+  value: string;
+  sparkline?: number[];
+  trend?: "up" | "down" | "stable";
+  color?: string;
+}
+
 export interface Incident {
   id: string;
   title: string;
@@ -10,7 +18,7 @@ export interface Incident {
   service: string;
   createdAt: Date;
   resolvedAt?: Date;
-  metrics?: { label: string; value: string }[];
+  metrics?: IncidentMetric[];
 }
 
 export interface DiagnosisStep {
