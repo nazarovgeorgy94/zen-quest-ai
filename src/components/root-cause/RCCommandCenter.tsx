@@ -116,10 +116,9 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
         className="absolute inset-[-20px] rounded-full"
         style={{ border: "1px solid hsl(var(--primary))" }}
         animate={{
-          opacity: isHovered ? [0, 0.4, 0] : 0,
-          scale: isHovered ? [1, 1.15, 1] : 1,
+          opacity: isHovered ? [0, 0.35, 0] : 0,
         }}
-        transition={{ duration: 1.5, repeat: Infinity }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       />
 
       {/* Conic sweep — speeds up on hover */}
