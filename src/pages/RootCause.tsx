@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import RCSidebar from "@/components/root-cause/RCSidebar";
 import RCChat from "@/components/root-cause/RCChat";
 import RCCommandCenter from "@/components/root-cause/RCCommandCenter";
