@@ -31,16 +31,34 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
       className="rounded-xl border border-border/30 bg-surface-1/40 backdrop-blur-sm overflow-hidden"
     >
       {/* Progress bar at top */}
-      <div className="h-1 bg-surface-2">
+      <div className="h-2 bg-surface-2/60 relative overflow-hidden">
         <motion.div
-          className="h-full rounded-r-full"
+          className="h-full rounded-r-full relative overflow-hidden"
           style={{
-            background: "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)))",
+            background: isDiagnosing
+              ? "linear-gradient(90deg, #f59e0b, hsl(var(--primary)), hsl(var(--accent)), #22d3ee)"
+              : "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)))",
+            boxShadow: isDiagnosing
+              ? "0 0 12px 2px hsl(var(--primary) / 0.5), 0 0 24px 4px hsl(var(--accent) / 0.25)"
+              : "none",
           }}
           initial={{ width: "0%" }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-        />
+        >
+          {/* Shimmer overlay */}
+          {isDiagnosing && (
+            <motion.div
+              className="absolute inset-0"
+              style={{
+                background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)",
+                width: "60%",
+              }}
+              animate={{ x: ["-60%", "260%"] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+            />
+          )}
+        </motion.div>
       </div>
 
       <div className="p-4">
