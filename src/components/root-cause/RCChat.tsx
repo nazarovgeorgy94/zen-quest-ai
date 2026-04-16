@@ -62,11 +62,13 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
   const [isDiagnosing, setIsDiagnosing] = useState(false);
   const [diagnosisStep, setDiagnosisStep] = useState(-1);
   const [hypotheses, setHypotheses] = useState<Hypothesis[]>([]);
+  const [revealedHypCount, setRevealedHypCount] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [incidentSuggestion, setIncidentSuggestion] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const prevIncidentRef = useRef<string | null>(null);
+  const streamingRef = useRef(false);
 
   useEffect(() => {
     if (incident && incident.id !== prevIncidentRef.current) {
