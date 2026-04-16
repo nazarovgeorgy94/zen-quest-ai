@@ -353,54 +353,48 @@ const RCCommandCenter = ({
           </motion.button>
 
           {/* Enter Incident ID */}
-          <AnimatePresence mode="wait">
+          <motion.div variants={fadeUp}
+            className="w-full rounded-xl bg-surface-1/50 backdrop-blur-sm border border-border/20 hover:border-border/40 transition-all duration-200 overflow-hidden"
+          >
             {showInput ? (
-              <motion.div key="input"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ ...gentleSpring }}
-                className="overflow-hidden"
-              >
-                <div className="flex items-center gap-2 px-5 py-3 rounded-xl bg-surface-1/80 backdrop-blur-sm border border-border/40">
-                  <Hash className="w-4 h-4 text-primary/60 shrink-0" />
-                  <input ref={inputRef} value={incidentInput}
-                    onChange={(e) => { setIncidentInput(e.target.value.toUpperCase()); setInputError(""); }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSubmitId();
-                      if (e.key === "Escape") { setShowInput(false); setIncidentInput(""); setInputError(""); }
-                    }}
-                    placeholder="INC-XXXX"
-                    className="flex-1 bg-transparent text-sm text-foreground font-mono placeholder:text-muted-foreground/50 outline-none"
-                  />
-                  <button onClick={handleSubmitId} disabled={!incidentInput.trim()}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-primary-foreground disabled:opacity-30 transition-all"
-                    style={{
-                      background: incidentInput.trim()
-                        ? "linear-gradient(135deg, hsl(158 72% 42%), hsl(175 65% 38%))"
-                        : "hsl(160 12% 15%)",
-                    }}>
-                    Найти
-                  </button>
-                </div>
-                {inputError && <p className="text-xs text-destructive mt-1.5 px-2">{inputError}</p>}
-              </motion.div>
+              <div className="flex items-center gap-2 px-5 py-3">
+                <Hash className="w-4 h-4 text-primary/60 shrink-0" />
+                <input ref={inputRef} value={incidentInput}
+                  onChange={(e) => { setIncidentInput(e.target.value.toUpperCase()); setInputError(""); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSubmitId();
+                    if (e.key === "Escape") { setShowInput(false); setIncidentInput(""); setInputError(""); }
+                  }}
+                  placeholder="INC-XXXX"
+                  className="flex-1 bg-transparent text-sm text-foreground font-mono placeholder:text-muted-foreground/50 outline-none"
+                />
+                <button onClick={handleSubmitId} disabled={!incidentInput.trim()}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-primary-foreground disabled:opacity-30 transition-all"
+                  style={{
+                    background: incidentInput.trim()
+                      ? "linear-gradient(135deg, hsl(158 72% 42%), hsl(175 65% 38%))"
+                      : "hsl(160 12% 15%)",
+                  }}>
+                  Найти
+                </button>
+              </div>
             ) : (
-              <motion.button key="button" variants={fadeUp}
+              <button
                 onClick={() => setShowInput(true)}
-                className="group w-full flex items-center gap-4 px-5 py-4 rounded-xl bg-surface-1/50 hover:bg-surface-1/80 backdrop-blur-sm border border-border/20 hover:border-border/40 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99] text-left"
+                className="group w-full flex items-center gap-4 px-5 py-4 text-left"
               >
-                <div className="w-10 h-10 rounded-lg bg-surface-2/60 flex items-center justify-center shrink-0 group-hover:bg-surface-2 transition-colors duration-300">
-                  <Hash className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
+                <div className="w-10 h-10 rounded-lg bg-surface-2/60 flex items-center justify-center shrink-0 group-hover:bg-surface-2 transition-colors duration-200">
+                  <Hash className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground">Ввести ID инцидента</p>
                   <p className="text-xs text-muted-foreground mt-0.5">Прямой переход по номеру INC-XXXX</p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-foreground/60 group-hover:translate-x-1 transition-all duration-300 shrink-0" />
-              </motion.button>
+                <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-foreground/60 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
+              </button>
             )}
-          </AnimatePresence>
+            {inputError && <p className="text-xs text-destructive px-5 pb-2">{inputError}</p>}
+          </motion.div>
 
           {/* Browse */}
           <motion.button variants={fadeUp}
