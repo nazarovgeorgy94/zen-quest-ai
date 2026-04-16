@@ -221,10 +221,22 @@ export function getRelativeTime(date: Date): string {
 
 export function getSeverityColor(severity: IncidentSeverity) {
   switch (severity) {
-    case "critical": return { text: "text-red-400", bg: "bg-red-500/15", dot: "bg-red-500", glow: "shadow-red-500/20" };
-    case "high": return { text: "text-orange-400", bg: "bg-orange-500/15", dot: "bg-orange-500", glow: "shadow-orange-500/20" };
-    case "medium": return { text: "text-yellow-400", bg: "bg-yellow-500/15", dot: "bg-yellow-500", glow: "shadow-yellow-500/20" };
-    case "low": return { text: "text-blue-400", bg: "bg-blue-500/15", dot: "bg-blue-500", glow: "shadow-blue-500/20" };
+    case "critical": return {
+      text: "text-red-400", bg: "bg-red-500/15", dot: "bg-red-500", glow: "shadow-red-500/20",
+      ambient: "hsl(0 60% 45% / 0.08)", stripe: "hsl(0 68% 52%)", icon: "⚡",
+    };
+    case "high": return {
+      text: "text-orange-400", bg: "bg-orange-500/15", dot: "bg-orange-500", glow: "shadow-orange-500/20",
+      ambient: "hsl(25 60% 45% / 0.05)", stripe: "hsl(25 95% 53%)", icon: "⚠",
+    };
+    case "medium": return {
+      text: "text-yellow-400", bg: "bg-yellow-500/15", dot: "bg-yellow-500", glow: "shadow-yellow-500/20",
+      ambient: "hsl(45 60% 45% / 0.04)", stripe: "hsl(45 93% 47%)", icon: "●",
+    };
+    case "low": return {
+      text: "text-blue-400", bg: "bg-blue-500/15", dot: "bg-blue-500", glow: "shadow-blue-500/20",
+      ambient: "hsl(210 50% 50% / 0.03)", stripe: "hsl(210 60% 50%)", icon: "ℹ",
+    };
   }
 }
 

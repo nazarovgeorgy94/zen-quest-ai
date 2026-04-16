@@ -57,15 +57,51 @@ const RootCause = () => {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
+      {/* Living background — noise + animated mesh + vignette */}
       <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Noise texture */}
         <div
-          className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[120px]"
+          className="absolute inset-0 opacity-[0.025] mix-blend-overlay"
           style={{
-            background:
-              "conic-gradient(from 180deg, hsl(var(--primary) / 0.05), hsl(var(--accent) / 0.04), hsl(var(--cyan-pop) / 0.03), hsl(var(--primary) / 0.05))",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+            backgroundSize: "256px 256px",
           }}
         />
-        <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-teal-accent/[0.02] blur-[100px]" />
+        {/* Animated mesh gradient orbs */}
+        <motion.div
+          className="absolute w-[700px] h-[700px] rounded-full blur-[150px]"
+          style={{
+            background: "conic-gradient(from 180deg, hsl(var(--primary) / 0.04), hsl(var(--accent) / 0.03), hsl(var(--cyan-pop) / 0.025), hsl(var(--primary) / 0.04))",
+            top: "-25%", right: "-15%",
+          }}
+          animate={{
+            rotate: [0, 360],
+            scale: [1, 1.05, 0.98, 1],
+          }}
+          transition={{
+            rotate: { duration: 60, repeat: Infinity, ease: "linear" },
+            scale: { duration: 20, repeat: Infinity, ease: "easeInOut" },
+          }}
+        />
+        <motion.div
+          className="absolute w-[500px] h-[500px] rounded-full blur-[120px]"
+          style={{
+            background: "radial-gradient(circle, hsl(var(--accent) / 0.03), hsl(var(--primary) / 0.015), transparent 70%)",
+            bottom: "-20%", left: "-10%",
+          }}
+          animate={{
+            x: [0, 30, -20, 0],
+            y: [0, -20, 15, 0],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+        />
+        {/* Vignette */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "radial-gradient(ellipse at 50% 50%, transparent 40%, hsl(var(--background) / 0.6) 100%)",
+          }}
+        />
       </div>
 
       <div className="relative z-10 flex w-full">
