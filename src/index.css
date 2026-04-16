@@ -15,66 +15,66 @@
        ═══════════════════════════════════════════════════════════ */
 
     /* ── Основные поверхности ── */
-    --background: 240 4% 5%;         /* #0C0C0E — тёплый графит */
-    --foreground: 220 10% 93%;       /* Светлый текст */
+    --background: 228 20% 7%;        /* #0F1117 — тёмный слейт */
+    --foreground: 220 12% 93%;       /* Светлый текст */
 
-    --card: 240 3% 8%;               /* #131315 */
-    --card-foreground: 220 10% 93%;
+    --card: 228 16% 9%;              /* #171921 */
+    --card-foreground: 220 12% 93%;
 
-    --popover: 240 3% 8%;
-    --popover-foreground: 220 10% 93%;
+    --popover: 228 16% 9%;
+    --popover-foreground: 220 12% 93%;
 
     /* ── Акцентные цвета ── */
     --primary: 156 100% 54%;         /* #16FFBB — электрический минт */
-    --primary-foreground: 240 4% 5%;
+    --primary-foreground: 228 20% 7%;
 
     --accent: 179 70% 51%;           /* #29DDDA — яркий циан */
-    --accent-foreground: 220 10% 93%;
+    --accent-foreground: 220 12% 93%;
 
-    --secondary: 240 3% 11%;         /* Нейтральный вторичный */
-    --secondary-foreground: 220 8% 75%;
+    --secondary: 228 14% 12%;        /* Нейтральный вторичный */
+    --secondary-foreground: 220 10% 76%;
 
-    --muted: 240 3% 14%;             /* Приглушённые элементы */
-    --muted-foreground: 220 5% 45%;
+    --muted: 228 12% 16%;            /* Приглушённые элементы */
+    --muted-foreground: 225 8% 48%;
 
     --destructive: 0 68% 52%;
     --destructive-foreground: 0 0% 98%;
 
     /* ── Границы и формы ── */
-    --border: 240 3% 14%;
-    --input: 240 3% 14%;
+    --border: 228 14% 15%;
+    --input: 228 14% 15%;
     --ring: 156 100% 54%;
     --radius: 0.75rem;
 
     /* ── Цветовые "всплески" для эффектов ── */
-    --teal-accent: 179 70% 51%;      /* = accent */
-    --cyan-pop: 190 80% 55%;         /* Яркий голубой */
-    --emerald-glow: 156 100% 54%;    /* = primary */
+    --teal-accent: 179 70% 51%;
+    --cyan-pop: 190 80% 55%;
+    --emerald-glow: 156 100% 54%;
     --emerald-dim: 160 50% 30%;
-    --emerald-subtle: 240 3% 11%;
+    --emerald-subtle: 228 14% 12%;
 
     /* ── Severity semantic tokens ── */
     --warning: 45 93% 47%;
     --warning-foreground: 45 10% 10%;
     --success: 156 100% 54%;
-    --success-foreground: 240 4% 5%;
+    --success-foreground: 228 20% 7%;
     --info: 210 60% 50%;
     --info-foreground: 210 10% 95%;
 
     /* ── Extended primary shades ── */
     --primary-hover: 156 100% 60%;
     --primary-muted: 156 50% 30%;
-    --primary-subtle: 240 3% 12%;
+    --primary-subtle: 228 14% 13%;
 
     /* ── Многослойные поверхности (Elevation) ── */
-    --surface-0: 240 4% 5%;          /* = background */
-    --surface-1: 240 3% 8%;          /* карточки */
-    --surface-2: 240 3% 11%;         /* приподнятый */
-    --surface-3: 240 3% 14%;         /* поповеры */
-    --surface-4: 240 3% 18%;         /* модалки */
+    --surface-0: 228 20% 7%;         /* = background */
+    --surface-1: 228 16% 9%;         /* карточки */
+    --surface-2: 228 14% 12%;        /* приподнятый */
+    --surface-3: 228 12% 15%;        /* поповеры */
+    --surface-4: 228 10% 19%;        /* модалки */
 
-    --surface: 240 3% 8%;
-    --surface-elevated: 240 3% 11%;
+    --surface: 228 16% 9%;
+    --surface-elevated: 228 14% 12%;
 
     /* ══════════════════════════════════════════════════════════
        🌈 GRADIENT TOKENS
@@ -126,13 +126,13 @@
     --shadow-info: 0 4px 20px -4px hsl(210 60% 50% / 0.2);
 
     /* ── Sidebar ── */
-    --sidebar-background: 240 4% 4%;
-    --sidebar-foreground: 220 5% 65%;
+    --sidebar-background: 228 22% 5%;
+    --sidebar-foreground: 225 8% 68%;
     --sidebar-primary: 156 100% 54%;
-    --sidebar-primary-foreground: 240 4% 5%;
-    --sidebar-accent: 240 3% 10%;
-    --sidebar-accent-foreground: 220 8% 80%;
-    --sidebar-border: 240 3% 12%;
+    --sidebar-primary-foreground: 228 20% 7%;
+    --sidebar-accent: 228 14% 11%;
+    --sidebar-accent-foreground: 220 10% 80%;
+    --sidebar-border: 228 14% 13%;
     --sidebar-ring: 156 100% 54%;
   }
 
