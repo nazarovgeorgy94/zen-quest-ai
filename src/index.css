@@ -377,95 +377,60 @@
      Shimmer progress bar — flowing energy ribbon
      ═══════════════════════════════════════════ */
   .shimmer-line {
-    height: 3px;
+    height: 2px;
     position: relative;
     overflow: hidden;
-    /* Idle: barely visible base */
     background: linear-gradient(
       90deg,
-      hsl(var(--primary) / 0.08),
-      hsl(var(--teal-accent) / 0.12),
-      hsl(var(--primary) / 0.08)
+      hsl(var(--primary) / 0.05),
+      hsl(var(--teal-accent) / 0.08),
+      hsl(var(--primary) / 0.05)
     );
     transition: all 0.4s ease;
   }
 
   .shimmer-line.shimmer-active {
-    height: 3px;
-    /* Flowing multi-stop gradient — 200% width for seamless scroll */
     background: linear-gradient(
       90deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--teal-accent)) 15%,
-      hsl(var(--cyan-pop)) 30%,
-      hsl(158 72% 56%) 45%,
-      hsl(var(--primary)) 60%,
-      hsl(var(--teal-accent)) 75%,
-      hsl(var(--cyan-pop)) 90%,
-      hsl(var(--primary)) 100%
+      hsl(var(--primary) / 0.6) 0%,
+      hsl(var(--teal-accent) / 0.5) 25%,
+      hsl(var(--cyan-pop) / 0.6) 50%,
+      hsl(var(--primary) / 0.5) 75%,
+      hsl(var(--teal-accent) / 0.6) 100%
     );
     background-size: 200% 100%;
-    animation: shimmer-flow 2s linear infinite;
-    box-shadow:
-      0 0 8px 1px hsl(var(--primary) / 0.4),
-      0 0 20px 2px hsl(var(--teal-accent) / 0.2),
-      0 1px 3px 0 hsl(var(--cyan-pop) / 0.3);
+    animation: shimmer-flow 2.5s linear infinite;
+    box-shadow: 0 0 6px 0 hsl(var(--primary) / 0.2);
   }
 
-  /* Bright traveling spark on top */
   .shimmer-line.shimmer-active::before {
     content: '';
     position: absolute;
-    top: -1px;
-    width: 80px;
-    height: calc(100% + 2px);
+    top: 0;
+    width: 60px;
+    height: 100%;
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.6) 40%,
-      rgba(255, 255, 255, 0.9) 50%,
-      rgba(255, 255, 255, 0.6) 60%,
+      rgba(255, 255, 255, 0.4) 50%,
       transparent
     );
-    animation: shimmer-spark 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    filter: blur(0.5px);
+    animation: shimmer-spark 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   }
 
-  /* Soft glow trailing the spark */
-  .shimmer-line.shimmer-active::after {
-    content: '';
-    position: absolute;
-    top: -6px;
-    width: 120px;
-    height: calc(100% + 12px);
-    background: radial-gradient(
-      ellipse at center,
-      hsl(var(--cyan-pop) / 0.7),
-      hsl(var(--primary) / 0.3) 40%,
-      transparent 70%
-    );
-    filter: blur(6px);
-    animation: shimmer-spark 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    animation-delay: 0.05s;
-    opacity: 0.7;
-  }
-
-  /* Idle pseudo-elements hidden */
   .shimmer-line::before,
   .shimmer-line::after {
     content: none;
   }
 
-  /* Continuous gradient scroll */
   @keyframes shimmer-flow {
     0% { background-position: 200% 0; }
     100% { background-position: 0% 0; }
   }
 
-  /* Spark traveling across */
   @keyframes shimmer-spark {
-    0% { left: -80px; }
-    100% { left: calc(100% + 80px); }
+    0% { left: -60px; }
+    100% { left: calc(100% + 60px); }
   }
 
   /* ── Aurora mesh background ── */
