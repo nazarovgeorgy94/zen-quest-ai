@@ -15,34 +15,34 @@
        ═══════════════════════════════════════════════════════════ */
 
     /* ── Основные поверхности ── */
-    --background: 228 20% 7%;        /* #0F1117 — тёмный слейт */
-    --foreground: 220 12% 93%;       /* Светлый текст */
+    --background: 150 40% 6%;        /* #0B1A14 — Deep Forest */
+    --foreground: 140 10% 92%;       /* Светлый текст */
 
-    --card: 228 16% 9%;              /* #171921 */
-    --card-foreground: 220 12% 93%;
+    --card: 152 30% 9%;              /* Чуть светлее фона */
+    --card-foreground: 140 10% 92%;
 
-    --popover: 228 16% 9%;
-    --popover-foreground: 220 12% 93%;
+    --popover: 152 30% 9%;
+    --popover-foreground: 140 10% 92%;
 
     /* ── Акцентные цвета ── */
     --primary: 156 100% 54%;         /* #16FFBB — электрический минт */
-    --primary-foreground: 228 20% 7%;
+    --primary-foreground: 150 40% 6%;
 
     --accent: 179 70% 51%;           /* #29DDDA — яркий циан */
-    --accent-foreground: 220 12% 93%;
+    --accent-foreground: 140 10% 92%;
 
-    --secondary: 228 14% 12%;        /* Нейтральный вторичный */
-    --secondary-foreground: 220 10% 76%;
+    --secondary: 150 20% 12%;        /* Нейтральный вторичный */
+    --secondary-foreground: 145 10% 75%;
 
-    --muted: 228 12% 16%;            /* Приглушённые элементы */
-    --muted-foreground: 225 8% 48%;
+    --muted: 150 15% 16%;            /* Приглушённые элементы */
+    --muted-foreground: 150 8% 48%;
 
     --destructive: 0 68% 52%;
     --destructive-foreground: 0 0% 98%;
 
     /* ── Границы и формы ── */
-    --border: 228 14% 15%;
-    --input: 228 14% 15%;
+    --border: 150 18% 14%;
+    --input: 150 18% 14%;
     --ring: 156 100% 54%;
     --radius: 0.75rem;
 
@@ -51,30 +51,30 @@
     --cyan-pop: 190 80% 55%;
     --emerald-glow: 156 100% 54%;
     --emerald-dim: 160 50% 30%;
-    --emerald-subtle: 228 14% 12%;
+    --emerald-subtle: 150 20% 12%;
 
     /* ── Severity semantic tokens ── */
     --warning: 45 93% 47%;
     --warning-foreground: 45 10% 10%;
     --success: 156 100% 54%;
-    --success-foreground: 228 20% 7%;
+    --success-foreground: 150 40% 6%;
     --info: 210 60% 50%;
     --info-foreground: 210 10% 95%;
 
     /* ── Extended primary shades ── */
     --primary-hover: 156 100% 60%;
     --primary-muted: 156 50% 30%;
-    --primary-subtle: 228 14% 13%;
+    --primary-subtle: 150 20% 13%;
 
     /* ── Многослойные поверхности (Elevation) ── */
-    --surface-0: 228 20% 7%;         /* = background */
-    --surface-1: 228 16% 9%;         /* карточки */
-    --surface-2: 228 14% 12%;        /* приподнятый */
-    --surface-3: 228 12% 15%;        /* поповеры */
-    --surface-4: 228 10% 19%;        /* модалки */
+    --surface-0: 150 40% 6%;         /* = background */
+    --surface-1: 152 30% 9%;         /* карточки */
+    --surface-2: 150 25% 12%;        /* приподнятый */
+    --surface-3: 150 20% 15%;        /* поповеры */
+    --surface-4: 150 15% 19%;        /* модалки */
 
-    --surface: 228 16% 9%;
-    --surface-elevated: 228 14% 12%;
+    --surface: 152 30% 9%;
+    --surface-elevated: 150 25% 12%;
 
     /* ══════════════════════════════════════════════════════════
        🌈 GRADIENT TOKENS
