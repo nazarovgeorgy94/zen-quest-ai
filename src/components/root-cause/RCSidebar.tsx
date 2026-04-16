@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, Clock, Shield, Activity, AlertTriangle } from "lucide-react";
+import { Search, Plus, Clock, Shield, Activity, AlertTriangle, Radar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Incident,
@@ -14,9 +14,10 @@ interface RCSidebarProps {
   onSelect: (id: string) => void;
   onNewChat: () => void;
   onOpenSearch: () => void;
+  lastScanTime: Date | null;
+  isScanning: boolean;
 }
 
-/* ── Severity micro-icon ── */
 function SeverityIcon({ severity }: { severity: string }) {
   if (severity === "critical")
     return <AlertTriangle className="w-3 h-3 text-red-400" />;
@@ -25,7 +26,6 @@ function SeverityIcon({ severity }: { severity: string }) {
   return <Shield className="w-3 h-3 text-yellow-400" />;
 }
 
-/* ── Neural Shield logo (matches CommandCenter) ── */
 function NeuralShieldLogo() {
   return (
     <div
@@ -54,25 +54,15 @@ function NeuralShieldLogo() {
           animate={{ pathLength: 1 }}
           transition={{ duration: 2, ease: "easeOut" }}
         />
-        {[
-          [20, 12], [14, 18], [26, 18], [16, 26], [24, 26], [20, 32],
-        ].map(([cx, cy], i) => (
+        {[[20, 12], [14, 18], [26, 18], [16, 26], [24, 26], [20, 32]].map(([cx, cy], i) => (
           <motion.circle
-            key={i}
-            cx={cx}
-            cy={cy}
-            r="1.5"
-            fill="hsl(var(--primary))"
+            key={i} cx={cx} cy={cy} r="1.5" fill="hsl(var(--primary))"
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 + i * 0.1 }}
           />
         ))}
-        {[
-          "M20 12 L14 18", "M20 12 L26 18", "M14 18 L16 26",
-          "M26 18 L24 26", "M14 18 L26 18", "M16 26 L24 26",
-          "M16 26 L20 32", "M24 26 L20 32",
-        ].map((d, i) => (
+        {["M20 12 L14 18","M20 12 L26 18","M14 18 L16 26","M26 18 L24 26","M14 18 L26 18","M16 26 L24 26","M16 26 L20 32","M24 26 L20 32"].map((d, i) => (
           <path key={i} d={d} stroke="hsl(var(--primary) / 0.3)" strokeWidth="0.75" />
         ))}
       </svg>
@@ -80,7 +70,6 @@ function NeuralShieldLogo() {
   );
 }
 
-/* ── Live status dot ── */
 function LiveDot() {
   return (
     <span className="relative flex h-2 w-2">
@@ -90,17 +79,38 @@ function LiveDot() {
   );
 }
 
+function formatScanTime(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return "только что";
+  if (diffMin < 60) return `${diffMin} мин. назад`;
+  const diffH = Math.floor(diffMin / 60);
+  if (diffH < 24) return `${diffH} ч. назад`;
+  return date.toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
+}
+
 const RCSidebar = ({
   incidents,
   selectedId,
   onSelect,
   onNewChat,
   onOpenSearch,
+  lastScanTime,
+  isScanning,
 }: RCSidebarProps) => {
   const active = incidents.filter((i) => i.status !== "resolved");
   const criticalCount = incidents.filter(
     (i) => i.severity === "critical" && i.status !== "resolved"
   ).length;
+
+  // Update "ago" text every 30s
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    if (!lastScanTime) return;
+    const id = setInterval(() => setTick((t) => t + 1), 30000);
+    return () => clearInterval(id);
+  }, [lastScanTime]);
 
   return (
     <motion.aside
@@ -113,16 +123,12 @@ const RCSidebar = ({
         borderRight: "1px solid hsl(var(--border) / 0.5)",
       }}
     >
-      {/* Ambient gradient */}
+      {/* Ambient */}
       <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute -top-20 -left-20 w-60 h-60 rounded-full blur-[80px] opacity-30"
-          style={{ background: "hsl(var(--primary) / 0.15)" }}
-        />
-        <div
-          className="absolute bottom-0 right-0 w-40 h-40 rounded-full blur-[60px] opacity-20"
-          style={{ background: "hsl(var(--accent) / 0.1)" }}
-        />
+        <div className="absolute -top-20 -left-20 w-60 h-60 rounded-full blur-[80px] opacity-30"
+          style={{ background: "hsl(var(--primary) / 0.15)" }} />
+        <div className="absolute bottom-0 right-0 w-40 h-40 rounded-full blur-[60px] opacity-20"
+          style={{ background: "hsl(var(--accent) / 0.1)" }} />
       </div>
 
       {/* Logo */}
@@ -135,9 +141,7 @@ const RCSidebar = ({
             </h1>
             <div className="flex items-center gap-1.5 mt-0.5">
               <LiveDot />
-              <p className="text-[10px] text-muted-foreground">
-                Мониторинг активен
-              </p>
+              <p className="text-[10px] text-muted-foreground">Мониторинг активен</p>
             </div>
           </div>
         </div>
@@ -146,8 +150,7 @@ const RCSidebar = ({
       {/* Actions */}
       <div className="relative z-10 px-3 pb-2 space-y-1.5">
         <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
           onClick={onNewChat}
           className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative overflow-hidden group"
           style={{
@@ -155,12 +158,8 @@ const RCSidebar = ({
             border: "1px solid hsl(var(--primary) / 0.2)",
           }}
         >
-          <div
-            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            style={{
-              background: "linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.12))",
-            }}
-          />
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.12))" }} />
           <Plus className="w-4 h-4 text-primary relative z-10" />
           <span className="text-primary relative z-10">Новый инцидент</span>
         </motion.button>
@@ -176,37 +175,23 @@ const RCSidebar = ({
           <Search className="w-3.5 h-3.5 text-muted-foreground" />
           <span className="flex-1 text-left text-muted-foreground">Поиск…</span>
           <kbd className="text-[10px] text-muted-foreground/60 px-1.5 py-0.5 rounded font-mono"
-            style={{ background: "hsl(var(--surface-2))" }}
-          >
-            ⌘K
-          </kbd>
+            style={{ background: "hsl(var(--surface-2))" }}>⌘K</kbd>
         </button>
       </div>
 
-      {/* Threat level bar */}
-      <div className="relative z-10 mx-3 mb-2">
-        <div
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
-          style={{
-            background: "hsl(var(--surface-1))",
-            border: "1px solid hsl(var(--border) / 0.3)",
-          }}
-        >
+      {/* Threat level + Last scan */}
+      <div className="relative z-10 mx-3 mb-2 space-y-2">
+        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
+          style={{ background: "hsl(var(--surface-1))", border: "1px solid hsl(var(--border) / 0.3)" }}>
           <div className="flex-1">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                Threat Level
-              </span>
-              <span className={cn(
-                "text-[10px] font-mono font-semibold",
-                criticalCount > 0 ? "text-red-400" : "text-primary"
-              )}>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Threat Level</span>
+              <span className={cn("text-[10px] font-mono font-semibold", criticalCount > 0 ? "text-red-400" : "text-primary")}>
                 {criticalCount > 0 ? "CRITICAL" : "NOMINAL"}
               </span>
             </div>
             <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "hsl(var(--surface-3))" }}>
-              <motion.div
-                className="h-full rounded-full"
+              <motion.div className="h-full rounded-full"
                 style={{
                   background: criticalCount > 0
                     ? "linear-gradient(90deg, hsl(var(--primary)), hsl(0 68% 52%))"
@@ -219,11 +204,38 @@ const RCSidebar = ({
             </div>
           </div>
           <div className="text-right">
-            <p className="text-lg font-bold font-mono text-foreground leading-none">
-              {active.length}
-            </p>
+            <p className="text-lg font-bold font-mono text-foreground leading-none">{active.length}</p>
             <p className="text-[9px] text-muted-foreground mt-0.5">активных</p>
           </div>
+        </div>
+
+        {/* Last scan status */}
+        <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
+          style={{ background: "hsl(var(--surface-1) / 0.6)", border: "1px solid hsl(var(--border) / 0.2)" }}>
+          <div className="relative">
+            <Radar className={cn("w-4 h-4", isScanning ? "text-primary" : "text-muted-foreground/60")} />
+            {isScanning && (
+              <motion.div className="absolute inset-[-3px] rounded-full border border-primary/40"
+                animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
+                transition={{ duration: 1.5, repeat: Infinity }} />
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] text-muted-foreground leading-none">
+              {isScanning ? (
+                <span className="text-primary font-medium">Сканирование…</span>
+              ) : lastScanTime ? (
+                <>Последнее: <span className="text-foreground/70">{formatScanTime(lastScanTime)}</span></>
+              ) : (
+                "Сканирование не запускалось"
+              )}
+            </p>
+          </div>
+          {isScanning && (
+            <motion.div className="w-3 h-3 rounded-full border-2 border-primary border-t-transparent"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
+          )}
         </div>
       </div>
 
@@ -240,21 +252,13 @@ const RCSidebar = ({
           <Activity className="w-3 h-3" />
           Инциденты
         </p>
-
         <div className="space-y-1">
           <AnimatePresence>
             {active.map((inc, idx) => (
-              <motion.div
-                key={inc.id}
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05, duration: 0.3 }}
-              >
-                <IncidentCard
-                  incident={inc}
-                  isSelected={selectedId === inc.id}
-                  onClick={() => onSelect(inc.id)}
-                />
+              <motion.div key={inc.id}
+                initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.05, duration: 0.3 }}>
+                <IncidentCard incident={inc} isSelected={selectedId === inc.id} onClick={() => onSelect(inc.id)} />
               </motion.div>
             ))}
           </AnimatePresence>
@@ -272,9 +276,7 @@ const RCSidebar = ({
               <div key={i} className={cn("w-2 h-2 rounded-full border border-background", c)} />
             ))}
           </div>
-          <span className="text-[10px] text-muted-foreground">
-            3 агента на связи
-          </span>
+          <span className="text-[10px] text-muted-foreground">3 агента на связи</span>
         </div>
       </div>
     </motion.aside>
@@ -282,68 +284,36 @@ const RCSidebar = ({
 };
 
 /* ── Incident Card ── */
-function IncidentCard({
-  incident,
-  isSelected,
-  onClick,
-}: {
-  incident: Incident;
-  isSelected: boolean;
-  onClick: () => void;
+function IncidentCard({ incident, isSelected, onClick }: {
+  incident: Incident; isSelected: boolean; onClick: () => void;
 }) {
   const colors = getSeverityColor(incident.severity);
   const isCritical = incident.severity === "critical";
 
   return (
-    <motion.button
-      whileHover={{ x: 2 }}
-      onClick={onClick}
+    <motion.button whileHover={{ x: 2 }} onClick={onClick}
       className={cn(
         "w-full text-left px-3 py-2.5 rounded-xl transition-all duration-200 relative overflow-hidden group",
         isSelected ? "ring-1" : ""
       )}
       style={{
-        background: isSelected
-          ? "hsl(var(--primary) / 0.08)"
-          : "transparent",
+        background: isSelected ? "hsl(var(--primary) / 0.08)" : "transparent",
         borderColor: isSelected ? "hsl(var(--primary) / 0.25)" : undefined,
-        
       }}
     >
-      {/* Hover bg */}
       {!isSelected && (
-        <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"
-          style={{ background: "hsl(var(--surface-1))" }}
-        />
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"
+          style={{ background: "hsl(var(--surface-1))" }} />
       )}
-
-      {/* Left severity accent */}
-      <div
-        className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full transition-opacity duration-200"
+      <div className="absolute left-0 top-2 bottom-2 w-[2px] rounded-full transition-opacity duration-200"
         style={{
-          background: isCritical
-            ? "hsl(0 68% 52%)"
-            : incident.severity === "high"
-            ? "hsl(25 95% 53%)"
-            : "hsl(var(--primary))",
+          background: isCritical ? "hsl(0 68% 52%)" : incident.severity === "high" ? "hsl(25 95% 53%)" : "hsl(var(--primary))",
           opacity: isSelected ? 1 : 0.4,
-        }}
-      />
-
+        }} />
       <div className="relative z-10">
-        {/* Top row: ID + severity */}
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-[10px] font-mono text-muted-foreground/70">
-            {incident.id}
-          </span>
-          <span
-            className={cn(
-              "text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md flex items-center gap-1",
-              colors.bg,
-              colors.text
-            )}
-          >
+          <span className="text-[10px] font-mono text-muted-foreground/70">{incident.id}</span>
+          <span className={cn("text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded-md flex items-center gap-1", colors.bg, colors.text)}>
             <SeverityIcon severity={incident.severity} />
             {incident.severity}
           </span>
@@ -354,27 +324,14 @@ function IncidentCard({
             </span>
           )}
         </div>
-
-        {/* Title */}
-        <p
-          className={cn(
-            "text-[13px] leading-snug truncate",
-            isSelected ? "text-foreground font-medium" : "text-foreground/80"
-          )}
-        >
+        <p className={cn("text-[13px] leading-snug truncate", isSelected ? "text-foreground font-medium" : "text-foreground/80")}>
           {incident.title}
         </p>
-
-        {/* Meta */}
         <div className="flex items-center gap-1.5 mt-1.5">
           <Clock className="w-3 h-3 text-muted-foreground/50" />
-          <span className="text-[10px] text-muted-foreground/60">
-            {getRelativeTime(incident.createdAt)}
-          </span>
+          <span className="text-[10px] text-muted-foreground/60">{getRelativeTime(incident.createdAt)}</span>
           <span className="text-muted-foreground/30">·</span>
-          <span className="text-[10px] text-muted-foreground/60 truncate">
-            {incident.service}
-          </span>
+          <span className="text-[10px] text-muted-foreground/60 truncate">{incident.service}</span>
         </div>
       </div>
     </motion.button>

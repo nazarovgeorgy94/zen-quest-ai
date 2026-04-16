@@ -12,16 +12,15 @@ const RootCause = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mode, setMode] = useState<AppMode>("empty");
+  const [lastScanTime, setLastScanTime] = useState<Date | null>(null);
 
   const selectedIncident =
     mockIncidents.find((i) => i.id === selectedId) || null;
 
-  // When incident selected → diagnosis mode
   useEffect(() => {
     if (selectedId) setMode("diagnosis");
   }, [selectedId]);
 
-  // Cmd+K shortcut
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -38,6 +37,10 @@ const RootCause = () => {
     setMode("discovery");
   };
 
+  const handleScanComplete = () => {
+    setLastScanTime(new Date());
+  };
+
   const handleSelectIncident = (id: string) => {
     setSelectedId(id);
     setMode("diagnosis");
@@ -50,7 +53,6 @@ const RootCause = () => {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      {/* Ambient background */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div
           className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[120px]"
@@ -69,9 +71,10 @@ const RootCause = () => {
           onSelect={handleSelectIncident}
           onNewChat={handleNewChat}
           onOpenSearch={() => setSearchOpen(true)}
+          lastScanTime={lastScanTime}
+          isScanning={mode === "discovery"}
         />
 
-        {/* Main content area */}
         {mode === "empty" && (
           <RCCommandCenter
             onStartScan={handleStartScan}
@@ -83,6 +86,7 @@ const RootCause = () => {
           <RCDiscovery
             onSelectIncident={handleSelectIncident}
             onCancel={handleNewChat}
+            onScanComplete={handleScanComplete}
           />
         )}
         {mode === "diagnosis" && (

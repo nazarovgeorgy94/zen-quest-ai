@@ -20,11 +20,11 @@ import {
 interface RCDiscoveryProps {
   onSelectIncident: (id: string) => void;
   onCancel: () => void;
+  onScanComplete?: () => void;
 }
 
 type ScanPhase = "scanning" | "complete";
 
-// Fake terminal log entries per service
 const scanLogs: Record<string, string[]> = {
   "payment-gateway": [
     "Connecting to payment-gateway:8443...",
@@ -81,24 +81,231 @@ const scanLogs: Record<string, string[]> = {
   ],
 };
 
-const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
+/* ── Advanced Radar ── */
+function ScanRadar({
+  services,
+  scannedIndex,
+  phase,
+}: {
+  services: SystemService[];
+  scannedIndex: number;
+  phase: ScanPhase;
+}) {
+  const isScanning = phase === "scanning";
+  const size = 220;
+  const cx = size / 2;
+  const cy = size / 2;
+  const rings = [30, 55, 80];
+
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="absolute inset-0">
+        {/* Grid lines — crosshair */}
+        <line x1={cx} y1={0} x2={cx} y2={size} stroke="hsl(var(--primary))" strokeOpacity={0.06} strokeWidth={1} />
+        <line x1={0} y1={cy} x2={size} y2={cy} stroke="hsl(var(--primary))" strokeOpacity={0.06} strokeWidth={1} />
+
+        {/* Concentric rings */}
+        {rings.map((r, i) => (
+          <circle key={i} cx={cx} cy={cy} r={r} fill="none"
+            stroke="hsl(var(--primary))" strokeOpacity={0.08} strokeWidth={1}
+            strokeDasharray={i === 2 ? "4 4" : "none"}
+          />
+        ))}
+
+        {/* Ring labels */}
+        <text x={cx + rings[0] + 3} y={cy - 3} fill="hsl(var(--primary))" fillOpacity={0.2} fontSize={7} fontFamily="monospace">CORE</text>
+        <text x={cx + rings[1] + 3} y={cy - 3} fill="hsl(var(--primary))" fillOpacity={0.2} fontSize={7} fontFamily="monospace">MID</text>
+        <text x={cx + rings[2] + 3} y={cy - 3} fill="hsl(var(--primary))" fillOpacity={0.2} fontSize={7} fontFamily="monospace">EDGE</text>
+      </svg>
+
+      {/* Sweep beam — conic gradient */}
+      {isScanning && (
+        <motion.div
+          className="absolute rounded-full"
+          style={{
+            inset: cx - rings[2],
+            width: rings[2] * 2,
+            height: rings[2] * 2,
+            top: cy - rings[2],
+            left: cx - rings[2],
+            background: `conic-gradient(from 0deg, transparent 0deg, hsl(var(--primary) / 0.12) 20deg, hsl(var(--primary) / 0.04) 50deg, transparent 80deg)`,
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+        />
+      )}
+
+      {/* Sweep line */}
+      {isScanning && (
+        <motion.div
+          className="absolute origin-bottom"
+          style={{
+            width: 2,
+            height: rings[2],
+            left: cx - 1,
+            top: cy - rings[2],
+            background: "linear-gradient(to top, hsl(var(--primary) / 0.5), hsl(var(--primary) / 0.05))",
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+        />
+      )}
+
+      {/* Center core */}
+      <div className="absolute" style={{ left: cx - 8, top: cy - 8, width: 16, height: 16 }}>
+        <div className="w-4 h-4 rounded-full flex items-center justify-center"
+          style={{ background: "hsl(var(--primary) / 0.3)", boxShadow: "0 0 20px hsl(var(--primary) / 0.3)" }}>
+          <div className="w-2 h-2 rounded-full" style={{ background: "hsl(var(--primary))" }} />
+        </div>
+        {isScanning && (
+          <motion.div className="absolute inset-[-4px] rounded-full border border-primary/30"
+            animate={{ scale: [1, 2, 1], opacity: [0.5, 0, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity }} />
+        )}
+      </div>
+
+      {/* Service nodes */}
+      {services.map((svc, i) => {
+        const isScanned = i <= scannedIndex;
+        const angle = (i / services.length) * 360 - 90;
+        const ringIdx = i % 3;
+        const radius = rings[ringIdx] + (i % 2 === 0 ? -5 : 5);
+        const x = cx + Math.cos((angle * Math.PI) / 180) * radius;
+        const y = cy + Math.sin((angle * Math.PI) / 180) * radius;
+        const nodeSize = svc.status !== "healthy" && isScanned ? 10 : 7;
+        const hasIncident = svc.incidentIds && svc.incidentIds.length > 0;
+
+        return (
+          <motion.div
+            key={svc.name}
+            className="absolute"
+            style={{ left: x - nodeSize / 2, top: y - nodeSize / 2 }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{
+              opacity: isScanned ? 1 : 0.2,
+              scale: isScanned ? 1 : 0.5,
+            }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            {/* Connection line to center */}
+            {isScanned && (
+              <svg
+                className="absolute pointer-events-none"
+                style={{
+                  left: nodeSize / 2,
+                  top: nodeSize / 2,
+                  width: 1,
+                  height: 1,
+                  overflow: "visible",
+                }}
+              >
+                <motion.line
+                  x1={0} y1={0}
+                  x2={cx - x} y2={cy - y}
+                  stroke={
+                    svc.status === "healthy"
+                      ? "hsl(var(--primary))"
+                      : svc.status === "degraded"
+                      ? "hsl(45 93% 47%)"
+                      : "hsl(0 68% 52%)"
+                  }
+                  strokeOpacity={0.12}
+                  strokeWidth={0.75}
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.6 }}
+                />
+              </svg>
+            )}
+
+            {/* Node */}
+            <div
+              className="rounded-full transition-all duration-500 relative"
+              style={{
+                width: nodeSize,
+                height: nodeSize,
+                background: !isScanned
+                  ? "hsl(var(--muted-foreground) / 0.2)"
+                  : svc.status === "healthy"
+                  ? "hsl(var(--primary))"
+                  : svc.status === "degraded"
+                  ? "hsl(45 93% 47%)"
+                  : "hsl(0 68% 52%)",
+                boxShadow: isScanned && svc.status !== "healthy"
+                  ? `0 0 12px ${svc.status === "degraded" ? "hsl(45 93% 47% / 0.4)" : "hsl(0 68% 52% / 0.5)"}`
+                  : isScanned
+                  ? "0 0 8px hsl(var(--primary) / 0.3)"
+                  : "none",
+              }}
+            />
+
+            {/* Alert pulse for incidents */}
+            {isScanned && hasIncident && (
+              <motion.div
+                className="absolute rounded-full"
+                style={{
+                  inset: -4,
+                  border: `1.5px solid ${svc.status === "degraded" ? "hsl(45 93% 47% / 0.5)" : "hsl(0 68% 52% / 0.5)"}`,
+                }}
+                animate={{ scale: [1, 1.8, 1], opacity: [0.6, 0, 0.6] }}
+                transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }}
+              />
+            )}
+
+            {/* Label on hover/scan */}
+            {isScanned && (
+              <motion.div
+                className="absolute whitespace-nowrap text-[8px] font-mono pointer-events-none"
+                style={{
+                  top: nodeSize + 4,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  color: svc.status !== "healthy"
+                    ? svc.status === "degraded" ? "hsl(45 93% 47%)" : "hsl(0 68% 52%)"
+                    : "hsl(var(--muted-foreground) / 0.5)",
+                }}
+                initial={{ opacity: 0, y: -3 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                {svc.displayName.length > 10 ? svc.displayName.slice(0, 8) + "…" : svc.displayName}
+              </motion.div>
+            )}
+          </motion.div>
+        );
+      })}
+
+      {/* Scan complete overlay */}
+      {phase === "complete" && (
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="px-3 py-1.5 rounded-lg text-[10px] font-mono font-semibold text-primary uppercase tracking-wider"
+            style={{
+              background: "hsl(var(--surface-0) / 0.9)",
+              border: "1px solid hsl(var(--primary) / 0.3)",
+              boxShadow: "0 0 20px hsl(var(--primary) / 0.1)",
+            }}>
+            Scan Complete
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscoveryProps) => {
   const [phase, setPhase] = useState<ScanPhase>("scanning");
   const [scannedIndex, setScannedIndex] = useState(-1);
   const [discoveredIncidents, setDiscoveredIncidents] = useState<string[]>([]);
   const [terminalLines, setTerminalLines] = useState<
     { text: string; type: "info" | "warn" | "ok" | "header" }[]
   >([]);
-  const [radarAngle, setRadarAngle] = useState(0);
   const terminalRef = useRef<HTMLDivElement>(null);
 
-  // Radar rotation
-  useEffect(() => {
-    if (phase !== "scanning") return;
-    const id = setInterval(() => setRadarAngle((a) => a + 3), 30);
-    return () => clearInterval(id);
-  }, [phase]);
-
-  // Auto-scroll terminal
   useEffect(() => {
     terminalRef.current?.scrollTo({
       top: terminalRef.current.scrollHeight,
@@ -109,54 +316,36 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
   useEffect(() => {
     let cancelled = false;
 
-    const addLine = (
-      text: string,
-      type: "info" | "warn" | "ok" | "header"
-    ) => {
-      if (!cancelled)
-        setTerminalLines((prev) => [...prev, { text, type }]);
+    const addLine = (text: string, type: "info" | "warn" | "ok" | "header") => {
+      if (!cancelled) setTerminalLines((prev) => [...prev, { text, type }]);
     };
 
     const runScan = async () => {
       addLine("$ rca-agent scan --all-services --deep", "header");
       await new Promise((r) => setTimeout(r, 600));
-      addLine(
-        `Initiating deep scan of ${mockServices.length} services...`,
-        "info"
-      );
+      addLine(`Initiating deep scan of ${mockServices.length} services...`, "info");
       await new Promise((r) => setTimeout(r, 400));
 
       for (let i = 0; i < mockServices.length; i++) {
         if (cancelled) return;
         setScannedIndex(i);
         const svc = mockServices[i];
-        const logs = scanLogs[svc.name] || [
-          `Connecting to ${svc.name}...`,
-          "✓ Health check passed.",
-        ];
+        const logs = scanLogs[svc.name] || [`Connecting to ${svc.name}...`, "✓ Health check passed."];
 
-        addLine("", "info"); // spacer
+        addLine("", "info");
         addLine(`[${i + 1}/${mockServices.length}] Scanning ${svc.displayName}`, "header");
 
         for (const log of logs) {
           if (cancelled) return;
           await new Promise((r) => setTimeout(r, 150 + Math.random() * 200));
-          const type = log.startsWith("⚠") || log.startsWith("→")
-            ? "warn"
-            : log.startsWith("✓")
-            ? "ok"
-            : "info";
+          const type = log.startsWith("⚠") || log.startsWith("→") ? "warn" : log.startsWith("✓") ? "ok" : "info";
           addLine(log, type);
         }
 
-        // Discover incidents
         if (svc.incidentIds?.length) {
           await new Promise((r) => setTimeout(r, 200));
           for (const incId of svc.incidentIds) {
-            addLine(
-              `🔴 INCIDENT DETECTED: ${incId} — requires investigation`,
-              "warn"
-            );
+            addLine(`🔴 INCIDENT DETECTED: ${incId} — requires investigation`, "warn");
           }
           setDiscoveredIncidents((prev) => [
             ...prev,
@@ -171,37 +360,26 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
         await new Promise((r) => setTimeout(r, 400));
         addLine("", "info");
         addLine("═══ Scan complete ═══", "header");
-        const found = mockIncidents.filter(
-          (i) => i.status !== "resolved"
-        ).length;
-        addLine(
-          `Result: ${mockServices.length} services scanned, ${found} incidents detected.`,
-          found > 0 ? "warn" : "ok"
-        );
+        const found = mockIncidents.filter((i) => i.status !== "resolved").length;
+        addLine(`Result: ${mockServices.length} services scanned, ${found} incidents detected.`, found > 0 ? "warn" : "ok");
         setPhase("complete");
+        onScanComplete?.();
       }
     };
 
     runScan();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   const activeIncidents = mockIncidents.filter(
     (i) => i.status !== "resolved" && discoveredIncidents.includes(i.id)
   );
 
-  const progress =
-    phase === "complete"
-      ? 100
-      : Math.round(((scannedIndex + 1) / mockServices.length) * 100);
+  const progress = phase === "complete" ? 100 : Math.round(((scannedIndex + 1) / mockServices.length) * 100);
 
   const getStatusIcon = (svc: SystemService) => {
-    if (svc.status === "healthy")
-      return <CheckCircle2 className="w-3.5 h-3.5 text-primary" />;
-    if (svc.status === "degraded")
-      return <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" />;
+    if (svc.status === "healthy") return <CheckCircle2 className="w-3.5 h-3.5 text-primary" />;
+    if (svc.status === "degraded") return <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" />;
     return <XCircle className="w-3.5 h-3.5 text-destructive" />;
   };
 
@@ -209,29 +387,20 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
     <div className="flex-1 flex flex-col h-screen">
       {/* Header */}
       <div className="shrink-0 border-b border-border bg-surface-0/80 backdrop-blur-sm">
-        <div
-          className={cn(
-            "h-[2px] w-full shimmer-line",
-            phase === "scanning" && "shimmer-active"
-          )}
-        />
+        <div className={cn("h-[2px] w-full shimmer-line", phase === "scanning" && "shimmer-active")} />
         <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative w-6 h-6">
               <Shield className="w-6 h-6 text-primary" />
               {phase === "scanning" && (
-                <motion.div
-                  className="absolute inset-[-3px] rounded-full border border-primary/30"
+                <motion.div className="absolute inset-[-3px] rounded-full border border-primary/30"
                   animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                />
+                  transition={{ duration: 1.5, repeat: Infinity }} />
               )}
             </div>
             <div>
               <h2 className="text-sm font-semibold text-foreground">
-                {phase === "scanning"
-                  ? "Глубокое сканирование..."
-                  : "Сканирование завершено"}
+                {phase === "scanning" ? "Глубокое сканирование..." : "Сканирование завершено"}
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {phase === "scanning"
@@ -240,173 +409,50 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
               </p>
             </div>
           </div>
-          <button
-            onClick={onCancel}
-            className="p-2 rounded-lg hover:bg-surface-1 text-muted-foreground hover:text-foreground transition-colors"
-          >
+          <button onClick={onCancel}
+            className="p-2 rounded-lg hover:bg-surface-1 text-muted-foreground hover:text-foreground transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col">
-        {/* Top section: Radar + Services */}
+        {/* Radar + Services */}
         <div className="px-6 pt-6 pb-4 shrink-0">
-          <div className="flex gap-6">
-            {/* Radar visualization */}
-            <div className="shrink-0 flex items-center justify-center">
-              <div className="relative w-[140px] h-[140px]">
-                {/* Concentric rings */}
-                {[1, 2, 3].map((ring) => (
-                  <div
-                    key={ring}
-                    className="absolute rounded-full border border-primary/[0.08]"
-                    style={{
-                      inset: `${(3 - ring) * 20}px`,
-                    }}
-                  />
-                ))}
-
-                {/* Radar sweep beam */}
-                {phase === "scanning" && (
-                  <motion.div
-                    className="absolute top-1/2 left-1/2 origin-left"
-                    style={{ width: "70px", height: "2px" }}
-                    animate={{ rotate: radarAngle }}
-                  >
-                    <div
-                      className="w-full h-full"
-                      style={{
-                        background:
-                          "linear-gradient(to right, hsl(158 72% 42% / 0.6), transparent)",
-                      }}
-                    />
-                  </motion.div>
-                )}
-
-                {/* Sweep trail (conic gradient) */}
-                {phase === "scanning" && (
-                  <motion.div
-                    className="absolute inset-[20px] rounded-full"
-                    style={{
-                      background: `conic-gradient(from ${radarAngle}deg, transparent 0deg, hsl(158 72% 42% / 0.08) 30deg, transparent 60deg)`,
-                    }}
-                  />
-                )}
-
-                {/* Center dot */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/60">
-                  <div className="absolute inset-0 rounded-full bg-primary/40 animate-ping" />
-                </div>
-
-                {/* Service dots on radar */}
-                {mockServices.map((svc, i) => {
-                  const isScanned = i <= scannedIndex;
-                  const angle = (i / mockServices.length) * 360 - 90;
-                  const radius = 45 + (i % 3) * 12;
-                  const x = Math.cos((angle * Math.PI) / 180) * radius;
-                  const y = Math.sin((angle * Math.PI) / 180) * radius;
-
-                  return (
-                    <motion.div
-                      key={svc.name}
-                      className="absolute"
-                      style={{
-                        top: `calc(50% + ${y}px)`,
-                        left: `calc(50% + ${x}px)`,
-                        transform: "translate(-50%, -50%)",
-                      }}
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{
-                        opacity: isScanned ? 1 : 0.15,
-                        scale: isScanned ? 1 : 0.5,
-                      }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                    >
-                      <div
-                        className={cn(
-                          "w-2.5 h-2.5 rounded-full transition-colors duration-300",
-                          !isScanned
-                            ? "bg-muted-foreground/30"
-                            : svc.status === "healthy"
-                            ? "bg-primary"
-                            : svc.status === "degraded"
-                            ? "bg-yellow-400"
-                            : "bg-destructive"
-                        )}
-                      />
-                      {isScanned && svc.status !== "healthy" && (
-                        <motion.div
-                          className={cn(
-                            "absolute inset-[-3px] rounded-full border",
-                            svc.status === "degraded"
-                              ? "border-yellow-400/40"
-                              : "border-destructive/40"
-                          )}
-                          animate={{
-                            scale: [1, 1.8, 1],
-                            opacity: [0.6, 0, 0.6],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                          }}
-                        />
-                      )}
-                    </motion.div>
-                  );
-                })}
-              </div>
+          <div className="flex gap-6 items-start">
+            <div className="shrink-0">
+              <ScanRadar services={mockServices} scannedIndex={scannedIndex} phase={phase} />
             </div>
 
             {/* Services list */}
-            <div className="flex-1 min-w-0 space-y-1 max-h-[140px] overflow-y-auto pr-1">
+            <div className="flex-1 min-w-0 space-y-1 max-h-[220px] overflow-y-auto pr-1">
               {mockServices.map((svc, i) => {
                 const isScanned = i <= scannedIndex;
                 const isActive = i === scannedIndex && phase === "scanning";
-
                 return (
-                  <motion.div
-                    key={svc.name}
+                  <motion.div key={svc.name}
                     initial={{ opacity: 0.25 }}
                     animate={{ opacity: isScanned ? 1 : 0.25 }}
                     transition={{ duration: 0.5 }}
                     className={cn(
                       "flex items-center gap-2.5 px-3 py-1.5 rounded-md text-xs transition-colors duration-300",
                       isActive && "bg-primary/5"
-                    )}
-                  >
-                    {isScanned ? (
-                      getStatusIcon(svc)
-                    ) : isActive ? (
-                      <motion.div
-                        className="w-3.5 h-3.5 rounded-full border-2 border-primary border-t-transparent"
+                    )}>
+                    {isScanned ? getStatusIcon(svc) : isActive ? (
+                      <motion.div className="w-3.5 h-3.5 rounded-full border-2 border-primary border-t-transparent"
                         animate={{ rotate: 360 }}
-                        transition={{
-                          duration: 0.8,
-                          repeat: Infinity,
-                          ease: "linear",
-                        }}
-                      />
+                        transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
                     ) : (
                       <div className="w-3.5 h-3.5 rounded-full border border-border/50" />
                     )}
-                    <span
-                      className={cn(
-                        "truncate transition-colors duration-300",
-                        isScanned
-                          ? svc.status !== "healthy"
-                            ? "text-foreground font-medium"
-                            : "text-foreground/70"
-                          : "text-muted-foreground/50"
-                      )}
-                    >
-                      {svc.displayName}
-                    </span>
+                    <span className={cn(
+                      "truncate transition-colors duration-300",
+                      isScanned
+                        ? svc.status !== "healthy" ? "text-foreground font-medium" : "text-foreground/70"
+                        : "text-muted-foreground/50"
+                    )}>{svc.displayName}</span>
                     {isScanned && (
-                      <span className="ml-auto text-[10px] font-mono text-muted-foreground">
-                        {svc.latency}
-                      </span>
+                      <span className="ml-auto text-[10px] font-mono text-muted-foreground">{svc.latency}</span>
                     )}
                   </motion.div>
                 );
@@ -421,16 +467,11 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
               <span className="font-mono">{progress}%</span>
             </div>
             <div className="h-1 rounded-full bg-surface-2 overflow-hidden">
-              <motion.div
-                className="h-full rounded-full"
-                style={{
-                  background:
-                    "linear-gradient(90deg, hsl(158 72% 42%), hsl(175 65% 38%))",
-                }}
+              <motion.div className="h-full rounded-full"
+                style={{ background: "linear-gradient(90deg, hsl(158 72% 42%), hsl(175 65% 38%))" }}
                 initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-              />
+                transition={{ duration: 0.5, ease: "easeOut" }} />
             </div>
           </div>
         </div>
@@ -439,39 +480,28 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
         <div className="flex-1 flex flex-col min-h-0 px-6 pb-4">
           <div className="flex items-center gap-2 mb-2">
             <Terminal className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-              Scan Log
-            </span>
+            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Scan Log</span>
           </div>
-          <div
-            ref={terminalRef}
-            className="flex-1 rounded-xl bg-[hsl(160_20%_4%)] border border-border/30 p-4 overflow-y-auto font-mono text-[11px] leading-relaxed"
-          >
+          <div ref={terminalRef}
+            className="flex-1 rounded-xl bg-[hsl(160_20%_4%)] border border-border/30 p-4 overflow-y-auto font-mono text-[11px] leading-relaxed">
             {terminalLines.map((line, i) => (
-              <div
-                key={i}
-                className={cn(
-                  line.text === "" && "h-2",
-                  line.type === "header" && "text-primary font-semibold",
-                  line.type === "info" && "text-foreground/50",
-                  line.type === "warn" && "text-yellow-400",
-                  line.type === "ok" && "text-primary/80"
-                )}
-              >
-                {line.text}
-              </div>
+              <div key={i} className={cn(
+                line.text === "" && "h-2",
+                line.type === "header" && "text-primary font-semibold",
+                line.type === "info" && "text-foreground/50",
+                line.type === "warn" && "text-yellow-400",
+                line.type === "ok" && "text-primary/80"
+              )}>{line.text}</div>
             ))}
             {phase === "scanning" && (
-              <motion.span
-                className="inline-block w-1.5 h-3.5 bg-primary/80 ml-0.5"
+              <motion.span className="inline-block w-1.5 h-3.5 bg-primary/80 ml-0.5"
                 animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 0.8, repeat: Infinity }}
-              />
+                transition={{ duration: 0.8, repeat: Infinity }} />
             )}
           </div>
         </div>
 
-        {/* Discovered incidents (slide up from bottom) */}
+        {/* Discovered incidents */}
         <AnimatePresence>
           {phase === "complete" && activeIncidents.length > 0 && (
             <motion.div
@@ -487,43 +517,23 @@ const RCDiscovery = ({ onSelectIncident, onCancel }: RCDiscoveryProps) => {
                 {activeIncidents.map((inc, i) => {
                   const colors = getSeverityColor(inc.severity);
                   return (
-                    <motion.button
-                      key={inc.id}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
+                    <motion.button key={inc.id}
+                      initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.15 + i * 0.1 }}
                       onClick={() => onSelectIncident(inc.id)}
-                      className="w-full text-left px-4 py-3 rounded-xl bg-surface-1 border border-border/30 hover:border-primary/25 transition-all group flex items-center gap-3"
-                    >
+                      className="w-full text-left px-4 py-3 rounded-xl bg-surface-1 border border-border/30 hover:border-primary/25 transition-all group flex items-center gap-3">
                       <div className="relative shrink-0">
-                        <div
-                          className={cn("w-2.5 h-2.5 rounded-full", colors.dot)}
-                        />
-                        <div
-                          className={cn(
-                            "absolute inset-0 w-2.5 h-2.5 rounded-full animate-ping opacity-40",
-                            colors.dot
-                          )}
-                        />
+                        <div className={cn("w-2.5 h-2.5 rounded-full", colors.dot)} />
+                        <div className={cn("absolute inset-0 w-2.5 h-2.5 rounded-full animate-ping opacity-40", colors.dot)} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono text-muted-foreground">
-                            {inc.id}
-                          </span>
-                          <span
-                            className={cn(
-                              "text-[9px] font-medium uppercase px-1.5 py-0.5 rounded-full",
-                              colors.bg,
-                              colors.text
-                            )}
-                          >
+                          <span className="text-xs font-mono text-muted-foreground">{inc.id}</span>
+                          <span className={cn("text-[9px] font-medium uppercase px-1.5 py-0.5 rounded-full", colors.bg, colors.text)}>
                             {inc.severity}
                           </span>
                         </div>
-                        <p className="text-sm text-foreground mt-0.5 truncate">
-                          {inc.title}
-                        </p>
+                        <p className="text-sm text-foreground mt-0.5 truncate">{inc.title}</p>
                       </div>
                       <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
                     </motion.button>
