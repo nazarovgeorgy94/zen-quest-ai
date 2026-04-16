@@ -161,7 +161,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
     for (let i = 0; i < mockDiagnosisSteps.length; i++) {
       setDiagnosisStep(i);
-      scrollToBottom(true);
+      scrollToBottom();
       await new Promise((r) => setTimeout(r, mockDiagnosisSteps[i].duration));
     }
 
@@ -180,7 +180,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
     for (let i = 0; i < hyps.length; i++) {
       setRevealedHypCount(i + 1);
-      scrollToBottom(true);
+      scrollToBottom();
       await new Promise((r) => setTimeout(r, 600));
     }
 
@@ -196,7 +196,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       isStreaming: true,
     };
     setMessages([summaryMsg]);
-    scrollToBottom(true);
+    scrollToBottom();
     await streamMessage(fullContent, msgId);
   };
 
