@@ -31,7 +31,7 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
       className="rounded-xl border border-border/30 bg-surface-1/40 backdrop-blur-sm overflow-hidden"
     >
       {/* Progress bar at top */}
-      <div className="h-2 bg-surface-2/60 relative overflow-hidden">
+      <div className="h-1 bg-surface-2/60 relative overflow-hidden">
         <motion.div
           className="h-full rounded-r-full relative overflow-hidden"
           style={{
