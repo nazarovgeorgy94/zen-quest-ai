@@ -145,6 +145,29 @@ export const mockDiagnosisSteps: DiagnosisStep[] = [
   { label: "Формирование гипотез", detail: "Ранжирование возможных причин по вероятности", duration: 2200 },
 ];
 
+export const mockFollowUpSuggestions: Record<string, string[]> = {
+  "INC-4521": [
+    "Показать dependency graph",
+    "Проверить последние деплои",
+    "Детализировать connection pool",
+  ],
+  "INC-4518": [
+    "Показать Kafka consumer lag",
+    "Проверить feature store pipeline",
+    "Сравнить с предыдущими инцидентами",
+  ],
+  "INC-4515": [
+    "Показать velocity rules",
+    "Анализ дедупликации Kafka",
+    "Проверить baseline метрики",
+  ],
+  default: [
+    "Показать зависимости сервиса",
+    "Проверить последние изменения",
+    "Сравнить с baseline",
+  ],
+};
+
 export const mockHypotheses: Record<string, Hypothesis[]> = {
   "INC-4521": [
     {
