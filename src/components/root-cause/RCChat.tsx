@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Zap,
   Clock,
   Server,
   TrendingUp,
   AlertCircle,
+  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -22,7 +22,6 @@ import DiagnosisTimeline from "./DiagnosisTimeline";
 import HypothesisCard from "./HypothesisCard";
 import ChatMessageList, { Message } from "./ChatMessageList";
 import ChatInput from "./ChatInput";
-import IncidentTimeline from "./IncidentTimeline";
 
 interface RCChatProps {
   incident: Incident | null;
