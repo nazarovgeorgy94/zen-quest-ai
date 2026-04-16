@@ -556,6 +556,13 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                 {msg.role === "assistant" ? (
                   <div className="prose prose-sm prose-invert max-w-none [&_table]:text-xs [&_th]:px-2 [&_td]:px-2 [&_th]:py-1 [&_td]:py-1 [&_p]:leading-relaxed [&_li]:leading-relaxed">
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    {msg.isStreaming && (
+                      <motion.span
+                        className="inline-block w-[3px] h-[14px] bg-primary/70 ml-0.5 align-middle rounded-full"
+                        animate={{ opacity: [1, 0, 1] }}
+                        transition={{ duration: 0.6, repeat: Infinity }}
+                      />
+                    )}
                   </div>
                 ) : (
                   msg.content
