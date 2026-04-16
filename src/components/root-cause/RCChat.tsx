@@ -102,9 +102,11 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
 
   const scrollToBottom = useCallback((force = false) => {
     if (!force && !isNearBottom) return;
-    setTimeout(() => {
-      scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-    }, 100);
+    requestAnimationFrame(() => {
+      const el = scrollRef.current;
+      if (!el) return;
+      el.scrollTo({ top: el.scrollHeight, behavior: force ? "instant" : "smooth" });
+    });
   }, [isNearBottom]);
 
   const forceScrollToBottom = useCallback(() => {
