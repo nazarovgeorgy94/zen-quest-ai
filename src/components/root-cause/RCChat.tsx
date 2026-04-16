@@ -236,6 +236,38 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     await streamMessage(aiContent, msgId);
   };
 
+  const handleFollowUpSelect = (suggestion: string) => {
+    setInput(suggestion);
+    setShowFollowUps(false);
+    // Auto-send
+    setTimeout(() => {
+      const userMsg: Message = {
+        id: crypto.randomUUID(),
+        role: "user",
+        content: suggestion,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      scrollToBottom(true);
+      setIsTyping(true);
+      setTimeout(async () => {
+        setIsTyping(false);
+        const aiContent = getMockAIResponse(incident!.id, suggestion);
+        const msgId = crypto.randomUUID();
+        const aiMsg: Message = {
+          id: msgId,
+          role: "assistant",
+          content: "",
+          timestamp: new Date(),
+          isStreaming: true,
+        };
+        setMessages((prev) => [...prev, aiMsg]);
+        scrollToBottom();
+        await streamMessage(aiContent, msgId);
+      }, 800 + Math.random() * 800);
+    }, 50);
+  };
+
   if (!incident) return null;
 
   const colors = getSeverityColor(incident.severity);
