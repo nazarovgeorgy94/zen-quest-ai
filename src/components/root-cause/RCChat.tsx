@@ -33,6 +33,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  isStreaming?: boolean;
 }
 
 interface RCChatProps {
@@ -61,11 +62,13 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
   const [isDiagnosing, setIsDiagnosing] = useState(false);
   const [diagnosisStep, setDiagnosisStep] = useState(-1);
   const [hypotheses, setHypotheses] = useState<Hypothesis[]>([]);
+  const [revealedHypCount, setRevealedHypCount] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [incidentSuggestion, setIncidentSuggestion] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const prevIncidentRef = useRef<string | null>(null);
+  const streamingRef = useRef(false);
 
   useEffect(() => {
     if (incident && incident.id !== prevIncidentRef.current) {
@@ -95,10 +98,39 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     }, 100);
   };
 
+  // Stream text character-by-character into a message
+  const streamMessage = async (fullContent: string, msgId: string) => {
+    streamingRef.current = true;
+    const chars = [...fullContent];
+    let shown = "";
+
+    for (let c = 0; c < chars.length; c++) {
+      if (!streamingRef.current) break;
+      shown += chars[c];
+      const partial = shown;
+      setMessages((prev) =>
+        prev.map((m) => (m.id === msgId ? { ...m, content: partial } : m))
+      );
+      // Faster for markdown headers/symbols, slower for regular text
+      const ch = chars[c];
+      const delay = ch === "\n" ? 30 : ch === "#" || ch === "*" || ch === "|" ? 8 : 12 + Math.random() * 14;
+      await new Promise((r) => setTimeout(r, delay));
+      if (c % 20 === 0) scrollToBottom();
+    }
+
+    // Mark as done streaming
+    setMessages((prev) =>
+      prev.map((m) => (m.id === msgId ? { ...m, isStreaming: false } : m))
+    );
+    streamingRef.current = false;
+    scrollToBottom();
+  };
+
   const startDiagnosis = async (inc: Incident) => {
     setIsDiagnosing(true);
     setMessages([]);
     setHypotheses([]);
+    setRevealedHypCount(0);
 
     for (let i = 0; i < mockDiagnosisSteps.length; i++) {
       setDiagnosisStep(i);
@@ -106,26 +138,42 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       await new Promise((r) => setTimeout(r, mockDiagnosisSteps[i].duration));
     }
 
-    const hyps = mockHypotheses[inc.id] || [
+    // Sort hypotheses by confidence descending
+    const hyps = (mockHypotheses[inc.id] || [
       {
         title: "Resource Constraint",
         confidence: 72,
         explanation: "Анализ указывает на ресурсное ограничение в одном из компонентов системы.",
         recommendation: "Проверить потребление ресурсов и масштабировать при необходимости.",
       },
-    ];
+    ]).sort((a, b) => b.confidence - a.confidence);
+
     setHypotheses(hyps);
     setIsDiagnosing(false);
     setDiagnosisStep(-1);
 
+    // Reveal hypotheses one by one
+    for (let i = 0; i < hyps.length; i++) {
+      setRevealedHypCount(i + 1);
+      scrollToBottom();
+      await new Promise((r) => setTimeout(r, 600));
+    }
+
+    await new Promise((r) => setTimeout(r, 300));
+
+    // Stream the summary message
+    const fullContent = `## Диагностика ${inc.id} завершена\n\nОбнаружено **${hyps.length} гипотез(ы)** возможной причины. Основная гипотеза: **${hyps[0].title}** с уверенностью ${hyps[0].confidence}%.\n\nЗадайте вопросы для более детального анализа.`;
+    const msgId = crypto.randomUUID();
     const summaryMsg: Message = {
-      id: crypto.randomUUID(),
+      id: msgId,
       role: "assistant",
-      content: `## Диагностика ${inc.id} завершена\n\nОбнаружено **${hyps.length} гипотез(ы)** возможной причины. Основная гипотеза: **${hyps[0].title}** с уверенностью ${hyps[0].confidence}%.\n\nЗадайте вопросы для более детального анализа.`,
+      content: "",
       timestamp: new Date(),
+      isStreaming: true,
     };
     setMessages([summaryMsg]);
     scrollToBottom();
+    await streamMessage(fullContent, msgId);
   };
 
   const handleSend = async () => {
@@ -148,18 +196,21 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     scrollToBottom();
 
     setIsTyping(true);
-    await new Promise((r) => setTimeout(r, 1500 + Math.random() * 2000));
+    await new Promise((r) => setTimeout(r, 800 + Math.random() * 800));
+    setIsTyping(false);
 
     const aiContent = getMockAIResponse(incident.id, userMsg.content);
+    const msgId = crypto.randomUUID();
     const aiMsg: Message = {
-      id: crypto.randomUUID(),
+      id: msgId,
       role: "assistant",
-      content: aiContent,
+      content: "",
       timestamp: new Date(),
+      isStreaming: true,
     };
     setMessages((prev) => [...prev, aiMsg]);
-    setIsTyping(false);
     scrollToBottom();
+    await streamMessage(aiContent, msgId);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -386,7 +437,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                   Гипотезы ({hypotheses.length})
                 </span>
               </div>
-              {hypotheses.map((hyp, i) => (
+              {hypotheses.slice(0, revealedHypCount).map((hyp, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 20, scale: 0.97 }}
@@ -505,6 +556,13 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                 {msg.role === "assistant" ? (
                   <div className="prose prose-sm prose-invert max-w-none [&_table]:text-xs [&_th]:px-2 [&_td]:px-2 [&_th]:py-1 [&_td]:py-1 [&_p]:leading-relaxed [&_li]:leading-relaxed">
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    {msg.isStreaming && (
+                      <motion.span
+                        className="inline-block w-[3px] h-[14px] bg-primary/70 ml-0.5 align-middle rounded-full"
+                        animate={{ opacity: [1, 0, 1] }}
+                        transition={{ duration: 0.6, repeat: Infinity }}
+                      />
+                    )}
                   </div>
                 ) : (
                   msg.content
@@ -572,8 +630,8 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={isDiagnosing ? "Дождитесь завершения диагностики..." : "Задайте вопрос или введите INC-XXXX..."}
-              disabled={isDiagnosing}
+              placeholder={isDiagnosing ? "Дождитесь завершения диагностики..." : streamingRef.current ? "Агент печатает ответ..." : "Задайте вопрос или введите INC-XXXX..."}
+              disabled={isDiagnosing || streamingRef.current}
               rows={1}
               className="w-full resize-none rounded-xl bg-surface-1/60 backdrop-blur-sm border border-border/40 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/15 transition-all disabled:opacity-40"
             />
