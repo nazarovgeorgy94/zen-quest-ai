@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Activity, CheckCircle2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DiagnosisStep } from "@/lib/mockIncidents";
+import { useRef, useEffect, useState } from "react";
 
 interface DiagnosisTimelineProps {
   steps: DiagnosisStep[];
@@ -9,10 +10,19 @@ interface DiagnosisTimelineProps {
   isDiagnosing: boolean;
 }
 
+const STEP_HEIGHT = 44; // fixed height per step in px
+
 const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimelineProps) => {
   const progress = isDiagnosing
     ? Math.round(((currentStep + 1) / steps.length) * 100)
     : 100;
+
+  // Calculate line height in pixels based on fixed step heights
+  const totalSteps = steps.length;
+  const activeIndex = isDiagnosing ? currentStep : totalSteps - 1;
+  // Line goes from center of first node to center of active node
+  const lineHeightPx = activeIndex * STEP_HEIGHT;
+  const totalLineHeightPx = (totalSteps - 1) * STEP_HEIGHT;
 
   return (
     <motion.div
@@ -58,36 +68,36 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
 
         {/* Vertical timeline */}
         <div className="relative ml-1">
-          {/* Vertical line */}
-          <div className="absolute left-[7px] top-2 bottom-2 w-px bg-border/30" />
-          {/* Animated progress line */}
+          {/* Background vertical line - fixed height */}
+          <div
+            className="absolute left-[7px] w-px bg-border/30"
+            style={{ top: 8, height: totalLineHeightPx }}
+          />
+          {/* Animated progress line - pixel based */}
           <motion.div
-            className="absolute left-[7px] top-2 w-px"
+            className="absolute left-[7px] w-px"
             style={{
+              top: 8,
               background: "linear-gradient(180deg, hsl(var(--primary)), hsl(var(--accent)))",
             }}
             initial={{ height: 0 }}
-            animate={{
-              height: `${Math.min(100, ((isDiagnosing ? currentStep : steps.length - 1) / Math.max(1, steps.length - 1)) * 100)}%`,
-            }}
+            animate={{ height: lineHeightPx }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
 
-          <div className="space-y-0">
+          <div>
             {steps.map((step, i) => {
               const isActive = isDiagnosing && currentStep === i;
               const isDone = !isDiagnosing || (isDiagnosing && currentStep > i);
 
               return (
-                <motion.div
+                <div
                   key={i}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: isDone || isActive ? 1 : 0.35, x: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.06 }}
-                  className="relative flex items-start gap-3 py-2"
+                  className="relative flex items-start gap-3"
+                  style={{ height: STEP_HEIGHT }}
                 >
                   {/* Node */}
-                  <div className="relative z-10 mt-0.5 shrink-0">
+                  <div className="relative z-10 mt-[5px] shrink-0">
                     {isDone ? (
                       <motion.div
                         initial={{ scale: 0.5 }}
@@ -111,10 +121,12 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1 min-w-0 -mt-0.5">
-                    <span
+                  <div className="flex-1 min-w-0 mt-0.5">
+                    <motion.span
+                      animate={{ opacity: isDone || isActive ? 1 : 0.35 }}
+                      transition={{ duration: 0.3 }}
                       className={cn(
-                        "text-xs font-medium block",
+                        "text-xs font-medium block leading-tight",
                         isDone
                           ? "text-foreground/80"
                           : isActive
@@ -123,23 +135,23 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
                       )}
                     >
                       {step.label}
-                    </span>
+                    </motion.span>
                     <AnimatePresence mode="wait">
                       {isActive && (
                         <motion.p
                           key={`detail-${i}`}
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.25 }}
-                          className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-[10px] text-muted-foreground mt-0.5 leading-snug truncate"
                         >
                           {step.detail}
                         </motion.p>
                       )}
                     </AnimatePresence>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
