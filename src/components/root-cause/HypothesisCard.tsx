@@ -48,69 +48,139 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-      className={cn(
-        "rounded-xl border transition-colors duration-200",
-        isTop
-          ? "border-primary/20 bg-primary/[0.04]"
-          : "border-border/20 bg-surface-1/50 hover:border-border/40"
-      )}
+      className="relative group/card"
     >
-      <div className="p-4">
-        {/* Title row */}
-        <div className="flex items-start gap-3">
-          <div
-            className={cn(
-              "w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5",
-              isTop ? "bg-primary/15" : "bg-surface-2/60"
-            )}
-          >
-            <Lightbulb className={cn("w-3.5 h-3.5", isTop ? "text-primary" : "text-muted-foreground")} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-foreground">{hyp.title}</h3>
-              {isTop && (
-                <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
-                  Top
-                </span>
+      {/* Outer glow for top hypothesis */}
+      {isTop && (
+        <div
+          className="absolute -inset-[1px] rounded-xl opacity-60 blur-[1px]"
+          style={{
+            background: "linear-gradient(135deg, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.15), hsl(var(--primary) / 0.2))",
+          }}
+        />
+      )}
+
+      {/* Glass container */}
+      <div
+        className={cn(
+          "relative rounded-xl overflow-hidden transition-all duration-300",
+          isTop
+            ? "shadow-[0_8px_32px_-8px_hsl(var(--primary)/0.15)]"
+            : "hover:shadow-[0_4px_20px_-6px_hsl(var(--primary)/0.1)]"
+        )}
+        style={{
+          background: isTop
+            ? "linear-gradient(135deg, hsl(var(--surface-1) / 0.85), hsl(var(--surface-2) / 0.6))"
+            : "hsl(var(--surface-1) / 0.5)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          border: isTop
+            ? "1px solid hsl(var(--primary) / 0.2)"
+            : "1px solid hsl(var(--border) / 0.2)",
+        }}
+      >
+        {/* Noise texture overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          }}
+        />
+
+        {/* Inner light reflection */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: isTop
+              ? "linear-gradient(135deg, hsl(var(--primary) / 0.06) 0%, transparent 40%, hsl(var(--accent) / 0.04) 100%)"
+              : "linear-gradient(135deg, hsl(160 18% 40% / 0.04) 0%, transparent 50%)",
+          }}
+        />
+
+        {/* Shimmer edge on hover */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"
+          style={{
+            background: "linear-gradient(135deg, hsl(var(--primary) / 0.08), transparent 60%)",
+          }}
+        />
+
+        <div className="relative p-4">
+          {/* Title row */}
+          <div className="flex items-start gap-3">
+            <div
+              className={cn(
+                "w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 relative overflow-hidden",
               )}
+              style={{
+                background: isTop
+                  ? "linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.1))"
+                  : "hsl(var(--surface-2) / 0.6)",
+                border: isTop ? "1px solid hsl(var(--primary) / 0.15)" : "none",
+              }}
+            >
+              <Lightbulb className={cn("w-3.5 h-3.5 relative z-10", isTop ? "text-primary" : "text-muted-foreground")} />
             </div>
-            <div className="mt-2">
-              <ConfidenceBar value={hyp.confidence} />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-foreground">{hyp.title}</h3>
+                {isTop && (
+                  <span
+                    className="text-[9px] uppercase px-1.5 py-0.5 rounded-full font-semibold"
+                    style={{
+                      background: "linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.12))",
+                      color: "hsl(var(--primary))",
+                      border: "1px solid hsl(var(--primary) / 0.15)",
+                    }}
+                  >
+                    Top
+                  </span>
+                )}
+              </div>
+              <div className="mt-2">
+                <ConfidenceBar value={hyp.confidence} />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Explanation */}
-        <p className="text-[13px] text-foreground/60 mt-3 leading-relaxed pl-10">{hyp.explanation}</p>
+          {/* Explanation */}
+          <p className="text-[13px] text-foreground/60 mt-3 leading-relaxed pl-10">{hyp.explanation}</p>
 
-        {/* Expandable recommendation */}
-        <div className="mt-3 pl-10">
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1.5 text-[11px] text-primary/70 hover:text-primary font-medium transition-colors"
-          >
-            <ArrowRight className="w-3 h-3" />
-            Рекомендация
-            <ChevronDown
-              className={cn("w-3 h-3 transition-transform duration-200", expanded && "rotate-180")}
-            />
-          </button>
-          <AnimatePresence>
-            {expanded && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="mt-2 p-3 rounded-lg bg-primary/[0.04] border border-primary/10">
-                  <p className="text-xs text-foreground/70 leading-relaxed">{hyp.recommendation}</p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Expandable recommendation */}
+          <div className="mt-3 pl-10">
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="flex items-center gap-1.5 text-[11px] text-primary/70 hover:text-primary font-medium transition-colors"
+            >
+              <ArrowRight className="w-3 h-3" />
+              Рекомендация
+              <ChevronDown
+                className={cn("w-3 h-3 transition-transform duration-200", expanded && "rotate-180")}
+              />
+            </button>
+            <AnimatePresence>
+              {expanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div
+                    className="mt-2 p-3 rounded-lg"
+                    style={{
+                      background: "hsl(var(--primary) / 0.04)",
+                      border: "1px solid hsl(var(--primary) / 0.1)",
+                      backdropFilter: "blur(8px)",
+                    }}
+                  >
+                    <p className="text-xs text-foreground/70 leading-relaxed">{hyp.recommendation}</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </motion.div>
