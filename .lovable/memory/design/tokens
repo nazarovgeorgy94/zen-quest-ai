@@ -1,13 +1,14 @@
 ---
-name: Design Tokens — Deep Forest
+name: Design Tokens — Cool Onyx
 description: Full color palette, severity tokens, surface elevation, gradient tokens
 type: design
 ---
-## Theme: Deep Forest with Cosmic Mint accents
+## Theme: Cool Onyx with Mint accents
 
 Primary: #16FFBB → 156 100% 54% (electric mint)
 Accent: #29DDDA → 179 70% 51% (vivid cyan)
-Background: #0B1A14 → 150 40% 6% (deep forest green)
+Background: #0D0F12 → 220 16% 6% (cool onyx — neutral dark with minimal cold undertone)
 
-Surfaces use hue 150 with decreasing saturation (40% → 15%) and increasing lightness (6% → 19%).
-User explicitly chose to return to this original forest palette after trying cosmic navy, warm graphite, and dark slate.
+Surfaces use hue 220 with low saturation (8-16%) and increasing lightness (6% → 19%).
+Neutral background lets mint/cyan accents pop without color bleeding.
+User rejected: cosmic navy (too blue), warm graphite (too flat), dark slate (too blue), deep forest (too green).
