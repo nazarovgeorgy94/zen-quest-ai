@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, Clock, Shield, Activity, AlertTriangle, Radar } from "lucide-react";
+import { Search, Plus, Clock, Shield, Activity, AlertTriangle, Radar, ChevronDown, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Incident,
   getSeverityColor,
   getRelativeTime,
 } from "@/lib/mockIncidents";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 interface RCSidebarProps {
   incidents: Incident[];
@@ -90,6 +90,8 @@ function formatScanTime(date: Date): string {
   return date.toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
 }
 
+type SeverityFilter = "all" | "critical" | "high" | "medium" | "low";
+
 const RCSidebar = ({
   incidents,
   selectedId,
@@ -99,10 +101,28 @@ const RCSidebar = ({
   lastScanTime,
   isScanning,
 }: RCSidebarProps) => {
-  const active = incidents.filter((i) => i.status !== "resolved");
-  const criticalCount = incidents.filter(
-    (i) => i.severity === "critical" && i.status !== "resolved"
-  ).length;
+  const [severityFilter, setSeverityFilter] = useState<SeverityFilter>("all");
+  const [showResolved, setShowResolved] = useState(false);
+
+  const active = useMemo(
+    () => incidents.filter((i) => i.status !== "resolved"),
+    [incidents]
+  );
+  const resolved = useMemo(
+    () => incidents.filter((i) => i.status === "resolved"),
+    [incidents]
+  );
+
+  const filteredActive = useMemo(
+    () => severityFilter === "all" ? active : active.filter((i) => i.severity === severityFilter),
+    [active, severityFilter]
+  );
+  const filteredResolved = useMemo(
+    () => severityFilter === "all" ? resolved : resolved.filter((i) => i.severity === severityFilter),
+    [resolved, severityFilter]
+  );
+
+  const criticalCount = active.filter((i) => i.severity === "critical").length;
 
   // Update "ago" text every 30s
   const [, setTick] = useState(0);
@@ -111,6 +131,13 @@ const RCSidebar = ({
     const id = setInterval(() => setTick((t) => t + 1), 30000);
     return () => clearInterval(id);
   }, [lastScanTime]);
+
+  const severityFilters: { value: SeverityFilter; label: string }[] = [
+    { value: "all", label: "Все" },
+    { value: "critical", label: "Crit" },
+    { value: "high", label: "High" },
+    { value: "medium", label: "Med" },
+  ];
 
   return (
     <motion.aside
@@ -246,23 +273,74 @@ const RCSidebar = ({
         }} />
       </div>
 
+      {/* Severity filter chips */}
+      <div className="relative z-10 px-3 pt-2 pb-1.5 flex items-center gap-1.5">
+        <Filter className="w-3 h-3 text-muted-foreground/50 shrink-0" />
+        {severityFilters.map((f) => (
+          <button
+            key={f.value}
+            onClick={() => setSeverityFilter(f.value)}
+            className={cn(
+              "text-[10px] font-medium px-2 py-1 rounded-md transition-all duration-200",
+              severityFilter === f.value
+                ? "bg-primary/15 text-primary"
+                : "text-muted-foreground/60 hover:text-muted-foreground hover:bg-surface-1"
+            )}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
       {/* Incident list */}
       <div className="relative z-10 flex-1 overflow-y-auto px-3 pb-3 scrollbar-thin">
-        <p className="px-1 pt-2 pb-2 text-[10px] font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+        {/* Active incidents */}
+        <p className="px-1 pt-1 pb-2 text-[10px] font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
           <Activity className="w-3 h-3" />
-          Инциденты
+          Активные ({filteredActive.length})
         </p>
         <div className="space-y-1">
-          <AnimatePresence>
-            {active.map((inc, idx) => (
-              <motion.div key={inc.id}
-                initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05, duration: 0.3 }}>
-                <IncidentCard incident={inc} isSelected={selectedId === inc.id} onClick={() => onSelect(inc.id)} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          {filteredActive.map((inc, idx) => (
+            <motion.div key={inc.id}
+              initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.04, duration: 0.25 }}>
+              <IncidentCard incident={inc} isSelected={selectedId === inc.id} onClick={() => onSelect(inc.id)} />
+            </motion.div>
+          ))}
+          {filteredActive.length === 0 && (
+            <p className="text-[11px] text-muted-foreground/40 px-2 py-4 text-center">
+              Нет инцидентов
+            </p>
+          )}
         </div>
+
+        {/* Resolved — collapsible */}
+        {filteredResolved.length > 0 && (
+          <div className="mt-3">
+            <button
+              onClick={() => setShowResolved(!showResolved)}
+              className="w-full flex items-center gap-2 px-1 py-2 text-[10px] font-medium text-muted-foreground/60 uppercase tracking-widest hover:text-muted-foreground transition-colors"
+            >
+              <ChevronDown className={cn("w-3 h-3 transition-transform duration-200", showResolved && "rotate-180")} />
+              Решённые ({filteredResolved.length})
+            </button>
+            <AnimatePresence>
+              {showResolved && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden space-y-1"
+                >
+                  {filteredResolved.map((inc) => (
+                    <IncidentCard key={inc.id} incident={inc} isSelected={selectedId === inc.id} onClick={() => onSelect(inc.id)} />
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
 
       {/* Bottom status */}
@@ -289,12 +367,14 @@ function IncidentCard({ incident, isSelected, onClick }: {
 }) {
   const colors = getSeverityColor(incident.severity);
   const isCritical = incident.severity === "critical";
+  const isResolved = incident.status === "resolved";
 
   return (
     <motion.button whileHover={{ x: 2 }} onClick={onClick}
       className={cn(
         "w-full text-left px-3 py-2.5 rounded-xl transition-all duration-200 relative overflow-hidden group",
-        isSelected ? "ring-1" : ""
+        isSelected ? "ring-1" : "",
+        isResolved && "opacity-60"
       )}
       style={{
         background: isSelected ? "hsl(var(--primary) / 0.08)" : "transparent",
@@ -322,6 +402,9 @@ function IncidentCard({ incident, isSelected, onClick }: {
               <span className="animate-ping absolute h-full w-full rounded-full bg-red-400 opacity-75" />
               <span className="relative rounded-full h-1.5 w-1.5 bg-red-400" />
             </span>
+          )}
+          {isResolved && (
+            <span className="text-[9px] text-primary/60 ml-auto">✓</span>
           )}
         </div>
         <p className={cn("text-[13px] leading-snug truncate", isSelected ? "text-foreground font-medium" : "text-foreground/80")}>
