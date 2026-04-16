@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, AlertTriangle, Clock, Server } from "lucide-react";
+import { Search, X, Clock, Server } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Incident,
@@ -19,15 +19,45 @@ interface RCSearchModalProps {
 const RCSearchModal = ({ open, onClose, incidents, onSelect }: RCSearchModalProps) => {
   const [query, setQuery] = useState("");
   const [severity, setSeverity] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const filtered = incidents.filter((inc) => {
+    const matchesQuery =
+      !query ||
+      inc.title.toLowerCase().includes(query.toLowerCase()) ||
+      inc.id.toLowerCase().includes(query.toLowerCase()) ||
+      inc.service.toLowerCase().includes(query.toLowerCase());
+    const matchesSeverity = !severity || inc.severity === severity;
+    return matchesQuery && matchesSeverity;
+  });
 
   useEffect(() => {
     if (open) {
       setQuery("");
       setSeverity(null);
+      setActiveIndex(0);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [open]);
+
+  // Reset active index when filter changes
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [query, severity]);
+
+  // Scroll active item into view
+  useEffect(() => {
+    if (!listRef.current) return;
+    const activeEl = listRef.current.querySelector(`[data-index="${activeIndex}"]`);
+    activeEl?.scrollIntoView({ block: "nearest" });
+  }, [activeIndex]);
+
+  const handleSelect = useCallback((id: string) => {
+    onSelect(id);
+    onClose();
+  }, [onSelect, onClose]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -41,15 +71,18 @@ const RCSearchModal = ({ open, onClose, incidents, onSelect }: RCSearchModalProp
     return () => window.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
-  const filtered = incidents.filter((inc) => {
-    const matchesQuery =
-      !query ||
-      inc.title.toLowerCase().includes(query.toLowerCase()) ||
-      inc.id.toLowerCase().includes(query.toLowerCase()) ||
-      inc.service.toLowerCase().includes(query.toLowerCase());
-    const matchesSeverity = !severity || inc.severity === severity;
-    return matchesQuery && matchesSeverity;
-  });
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((prev) => Math.min(prev + 1, filtered.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((prev) => Math.max(prev - 1, 0));
+    } else if (e.key === "Enter" && filtered.length > 0) {
+      e.preventDefault();
+      handleSelect(filtered[activeIndex].id);
+    }
+  };
 
   const severities = ["critical", "high", "medium", "low"] as const;
 
@@ -57,7 +90,6 @@ const RCSearchModal = ({ open, onClose, incidents, onSelect }: RCSearchModalProp
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -66,7 +98,6 @@ const RCSearchModal = ({ open, onClose, incidents, onSelect }: RCSearchModalProp
             onClick={onClose}
           />
 
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -82,6 +113,7 @@ const RCSearchModal = ({ open, onClose, incidents, onSelect }: RCSearchModalProp
                   ref={inputRef}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   placeholder="Поиск по ID, названию или сервису..."
                   className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
                 />
@@ -95,9 +127,7 @@ const RCSearchModal = ({ open, onClose, incidents, onSelect }: RCSearchModalProp
 
               {/* Severity filters */}
               <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/50">
-                <span className="text-[11px] text-muted-foreground mr-1">
-                  Severity:
-                </span>
+                <span className="text-[11px] text-muted-foreground mr-1">Severity:</span>
                 {severities.map((s) => {
                   const colors = getSeverityColor(s);
                   return (
@@ -118,51 +148,42 @@ const RCSearchModal = ({ open, onClose, incidents, onSelect }: RCSearchModalProp
               </div>
 
               {/* Results */}
-              <div className="max-h-[400px] overflow-y-auto">
+              <div ref={listRef} className="max-h-[400px] overflow-y-auto">
                 {filtered.length === 0 ? (
                   <div className="py-12 text-center text-sm text-muted-foreground">
                     Инциденты не найдены
                   </div>
                 ) : (
                   <div className="p-2">
-                    {filtered.map((inc) => {
+                    {filtered.map((inc, idx) => {
                       const colors = getSeverityColor(inc.severity);
+                      const isActive = idx === activeIndex;
                       return (
                         <button
                           key={inc.id}
-                          onClick={() => {
-                            onSelect(inc.id);
-                            onClose();
-                          }}
-                          className="w-full text-left px-3 py-3 rounded-lg hover:bg-surface-1 transition-colors group"
+                          data-index={idx}
+                          onClick={() => handleSelect(inc.id)}
+                          onMouseEnter={() => setActiveIndex(idx)}
+                          className={cn(
+                            "w-full text-left px-3 py-3 rounded-lg transition-colors group",
+                            isActive ? "bg-surface-1" : "hover:bg-surface-1"
+                          )}
                         >
                           <div className="flex items-start gap-3">
                             <div className="mt-1">
-                              <div
-                                className={cn("w-2.5 h-2.5 rounded-full", colors.dot)}
-                              />
+                              <div className={cn("w-2.5 h-2.5 rounded-full", colors.dot)} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-mono text-muted-foreground">
-                                  {inc.id}
-                                </span>
-                                <span
-                                  className={cn(
-                                    "text-[9px] font-medium uppercase px-1.5 py-0.5 rounded-full",
-                                    colors.bg,
-                                    colors.text
-                                  )}
-                                >
+                                <span className="text-xs font-mono text-muted-foreground">{inc.id}</span>
+                                <span className={cn("text-[9px] font-medium uppercase px-1.5 py-0.5 rounded-full", colors.bg, colors.text)}>
                                   {inc.severity}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground ml-auto">
                                   {getStatusLabel(inc.status)}
                                 </span>
                               </div>
-                              <p className="text-sm text-foreground mt-1 truncate">
-                                {inc.title}
-                              </p>
+                              <p className="text-sm text-foreground mt-1 truncate">{inc.title}</p>
                               <div className="flex items-center gap-3 mt-1.5 text-[10px] text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                   <Server className="w-3 h-3" />
@@ -187,16 +208,13 @@ const RCSearchModal = ({ open, onClose, incidents, onSelect }: RCSearchModalProp
                 <span>{filtered.length} инцидентов</span>
                 <div className="flex items-center gap-3">
                   <span>
-                    <kbd className="bg-surface-2 px-1 py-0.5 rounded font-mono">↑↓</kbd>{" "}
-                    навигация
+                    <kbd className="bg-surface-2 px-1 py-0.5 rounded font-mono">↑↓</kbd>{" "}навигация
                   </span>
                   <span>
-                    <kbd className="bg-surface-2 px-1 py-0.5 rounded font-mono">Enter</kbd>{" "}
-                    выбрать
+                    <kbd className="bg-surface-2 px-1 py-0.5 rounded font-mono">Enter</kbd>{" "}выбрать
                   </span>
                   <span>
-                    <kbd className="bg-surface-2 px-1 py-0.5 rounded font-mono">Esc</kbd>{" "}
-                    закрыть
+                    <kbd className="bg-surface-2 px-1 py-0.5 rounded font-mono">Esc</kbd>{" "}закрыть
                   </span>
                 </div>
               </div>
