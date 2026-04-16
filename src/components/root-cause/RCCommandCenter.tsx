@@ -215,14 +215,14 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
   );
 }
 
-/* ── Stagger children wrapper ── */
+/* ── Simple fade-in stagger ── */
 const stagger = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.6 } },
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.4 } },
 };
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { ...gentleSpring } },
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
 };
 
 const RCCommandCenter = ({
@@ -332,9 +332,7 @@ const RCCommandCenter = ({
           {/* Scan System */}
           <motion.button variants={fadeUp}
             onClick={onStartScan}
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            className="group w-full relative rounded-xl overflow-hidden text-left"
+            className="group w-full relative rounded-xl overflow-hidden text-left transition-transform duration-200 hover:-translate-y-0.5 active:scale-[0.99]"
           >
             <div className="absolute inset-0 rounded-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"
               style={{
@@ -390,9 +388,7 @@ const RCCommandCenter = ({
             ) : (
               <motion.button key="button" variants={fadeUp}
                 onClick={() => setShowInput(true)}
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="group w-full flex items-center gap-4 px-5 py-4 rounded-xl bg-surface-1/50 hover:bg-surface-1/80 backdrop-blur-sm border border-border/20 hover:border-border/40 transition-all duration-300 text-left"
+                className="group w-full flex items-center gap-4 px-5 py-4 rounded-xl bg-surface-1/50 hover:bg-surface-1/80 backdrop-blur-sm border border-border/20 hover:border-border/40 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99] text-left"
               >
                 <div className="w-10 h-10 rounded-lg bg-surface-2/60 flex items-center justify-center shrink-0 group-hover:bg-surface-2 transition-colors duration-300">
                   <Hash className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
@@ -409,9 +405,7 @@ const RCCommandCenter = ({
           {/* Browse */}
           <motion.button variants={fadeUp}
             onClick={onHighlightSidebar}
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            className="group w-full flex items-center gap-4 px-5 py-4 rounded-xl bg-surface-1/50 hover:bg-surface-1/80 backdrop-blur-sm border border-border/20 hover:border-border/40 transition-all duration-300 text-left"
+            className="group w-full flex items-center gap-4 px-5 py-4 rounded-xl bg-surface-1/50 hover:bg-surface-1/80 backdrop-blur-sm border border-border/20 hover:border-border/40 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99] text-left"
           >
             <div className="w-10 h-10 rounded-lg bg-surface-2/60 flex items-center justify-center shrink-0 group-hover:bg-surface-2 transition-colors duration-300">
               <Search className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
