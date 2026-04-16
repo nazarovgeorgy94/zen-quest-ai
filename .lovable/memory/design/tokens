@@ -1,13 +1,13 @@
 ---
-name: Design Tokens — Cosmic Mint
+name: Design Tokens — Cosmic Mint on Graphite
 description: Full color palette, severity tokens, surface elevation, gradient tokens
 type: design
 ---
-## Theme: Cosmic Mint
+## Theme: Cosmic Mint on Warm Graphite
 
 Primary: #16FFBB → 156 100% 54% (electric mint)
 Accent: #29DDDA → 179 70% 51% (vivid cyan)
-Background: #0A081B → 247 53% 7% (cosmic navy)
+Background: #0C0C0E → 240 4% 5% (warm graphite, neutral dark gray, NO blue tint)
 
-Surfaces use hue 245 with increasing lightness (7% → 20%).
+Surfaces use hue 240 with very low saturation (3-4%) and increasing lightness (5% → 18%).
 All hardcoded colors replaced with CSS variables for easy theming.
