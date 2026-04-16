@@ -126,13 +126,13 @@
     --shadow-info: 0 4px 20px -4px hsl(210 60% 50% / 0.2);
 
     /* ── Sidebar ── */
-    --sidebar-background: 240 4% 4%;
-    --sidebar-foreground: 220 5% 65%;
+    --sidebar-background: 228 22% 5%;
+    --sidebar-foreground: 225 8% 68%;
     --sidebar-primary: 156 100% 54%;
-    --sidebar-primary-foreground: 240 4% 5%;
-    --sidebar-accent: 240 3% 10%;
-    --sidebar-accent-foreground: 220 8% 80%;
-    --sidebar-border: 240 3% 12%;
+    --sidebar-primary-foreground: 228 20% 7%;
+    --sidebar-accent: 228 14% 11%;
+    --sidebar-accent-foreground: 220 10% 80%;
+    --sidebar-border: 228 14% 13%;
     --sidebar-ring: 156 100% 54%;
   }
 
