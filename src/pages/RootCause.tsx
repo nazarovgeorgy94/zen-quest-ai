@@ -76,27 +76,56 @@ const RootCause = () => {
           isScanning={mode === "discovery"}
         />
 
-        {mode === "empty" && (
-          <RCCommandCenter
-            onStartScan={handleStartScan}
-            onSelectIncident={handleSelectIncident}
-            onHighlightSidebar={() => setSearchOpen(true)}
-          />
-        )}
-        {mode === "discovery" && (
-          <RCDiscovery
-            onSelectIncident={handleSelectIncident}
-            onCancel={handleNewChat}
-            onScanComplete={handleScanComplete}
-          />
-        )}
-        {mode === "diagnosis" && (
-          <RCChat
-            incident={selectedIncident}
-            onStartScan={handleStartScan}
-            onSelectIncident={handleSelectIncident}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {mode === "empty" && (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex-1"
+            >
+              <RCCommandCenter
+                onStartScan={handleStartScan}
+                onSelectIncident={handleSelectIncident}
+                onHighlightSidebar={() => setSearchOpen(true)}
+              />
+            </motion.div>
+          )}
+          {mode === "discovery" && (
+            <motion.div
+              key="discovery"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex-1"
+            >
+              <RCDiscovery
+                onSelectIncident={handleSelectIncident}
+                onCancel={handleNewChat}
+                onScanComplete={handleScanComplete}
+              />
+            </motion.div>
+          )}
+          {mode === "diagnosis" && (
+            <motion.div
+              key="diagnosis"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex-1"
+            >
+              <RCChat
+                incident={selectedIncident}
+                onStartScan={handleStartScan}
+                onSelectIncident={handleSelectIncident}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <RCSearchModal
