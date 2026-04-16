@@ -58,6 +58,19 @@
     --emerald-dim: 160 45% 28%;     /* Приглушённый изумрудный */
     --emerald-subtle: 160 35% 14%;  /* Еле заметный фон-акцент */
 
+    /* ── Severity semantic tokens ── */
+    --warning: 45 93% 47%;
+    --warning-foreground: 45 10% 10%;
+    --success: 158 72% 42%;
+    --success-foreground: 160 20% 5%;
+    --info: 210 60% 50%;
+    --info-foreground: 210 10% 95%;
+
+    /* ── Extended primary shades ── */
+    --primary-hover: 158 72% 48%;
+    --primary-muted: 158 40% 25%;
+    --primary-subtle: 158 25% 15%;
+
     /* ── Многослойные поверхности (Elevation) ──
        Каждый уровень чуть светлее предыдущего.
        Используй: bg-surface-0 … bg-surface-4
@@ -132,6 +145,9 @@
     --shadow-md: 0 8px 24px -8px hsl(var(--background) / 0.6);
     --shadow-lg: 0 16px 48px -12px hsl(var(--background) / 0.7);
     --shadow-glow: 0 0 20px -5px hsl(var(--primary) / 0.3);
+    --shadow-critical: 0 4px 20px -4px hsl(0 68% 52% / 0.25);
+    --shadow-warning: 0 4px 20px -4px hsl(45 93% 47% / 0.2);
+    --shadow-info: 0 4px 20px -4px hsl(210 60% 50% / 0.2);
 
     /* ── Sidebar ── */
     --sidebar-background: 160 18% 4%;
