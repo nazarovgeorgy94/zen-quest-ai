@@ -393,7 +393,7 @@
       transparent 100%
     );
     transform: translateX(-100%);
-    animation: shimmer-sweep 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: shimmer-sweep 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     animation-play-state: paused;
   }
 
@@ -421,7 +421,7 @@
     filter: blur(5px);
     opacity: 0.6;
     transform: translateX(-100%);
-    animation: shimmer-sweep 3s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.4s;
+    animation: shimmer-sweep 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite 0.35s;
     animation-play-state: paused;
   }
 
@@ -430,9 +430,8 @@
   }
 
   @keyframes shimmer-sweep {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(150%); }
-    100% { transform: translateX(280%); }
+    0% { transform: translateX(-110%); }
+    100% { transform: translateX(130%); }
   }
 
   /* ── Aurora mesh background ── */
