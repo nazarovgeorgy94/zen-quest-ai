@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { GitBranch, ArrowRight, Zap } from "lucide-react";
+import { GitBranch, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Incident, getSeverityColor } from "@/lib/mockIncidents";
 
