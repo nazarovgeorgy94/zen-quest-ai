@@ -69,8 +69,10 @@ const RootCause = () => {
         />
         {/* Animated mesh gradient orbs */}
         <motion.div
-          className="absolute w-[700px] h-[700px] rounded-full blur-[150px]"
+          className="absolute rounded-full blur-[150px]"
           style={{
+            width: "clamp(500px, 45vw, 1100px)",
+            height: "clamp(500px, 45vw, 1100px)",
             background: "conic-gradient(from 180deg, hsl(var(--primary) / 0.04), hsl(var(--accent) / 0.03), hsl(var(--cyan-pop) / 0.025), hsl(var(--primary) / 0.04))",
             top: "-25%", right: "-15%",
           }}
@@ -84,8 +86,10 @@ const RootCause = () => {
           }}
         />
         <motion.div
-          className="absolute w-[500px] h-[500px] rounded-full blur-[120px]"
+          className="absolute rounded-full blur-[120px]"
           style={{
+            width: "clamp(400px, 35vw, 850px)",
+            height: "clamp(400px, 35vw, 850px)",
             background: "radial-gradient(circle, hsl(var(--accent) / 0.03), hsl(var(--primary) / 0.015), transparent 70%)",
             bottom: "-20%", left: "-10%",
           }}

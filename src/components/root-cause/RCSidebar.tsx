@@ -144,8 +144,9 @@ const RCSidebar = ({
       initial={{ opacity: 0, x: -24 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="w-72 shrink-0 h-screen flex flex-col relative overflow-hidden"
+      className="shrink-0 h-screen flex flex-col relative overflow-hidden"
       style={{
+        width: "var(--sidebar-width, 18rem)",
         background: "hsl(var(--surface-0))",
         borderRight: "1px solid hsl(var(--border) / 0.5)",
       }}

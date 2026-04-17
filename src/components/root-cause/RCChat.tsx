@@ -286,7 +286,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       {/* Header */}
       <div className="shrink-0 border-b border-border bg-surface-0/70 backdrop-blur-md relative z-10">
         <div className={cn("h-[2px] w-full shimmer-line", isDiagnosing && "shimmer-active")} />
-        <div className="px-6 py-3">
+        <div className="px-6 py-3 mx-auto w-full max-w-3xl 2xl:max-w-4xl">
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className={cn("w-3 h-3 rounded-full", colors.dot)} />
@@ -352,7 +352,8 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       </div>
 
       {/* Chat area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-5 space-y-4 relative z-10">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto relative z-10">
+        <div className="mx-auto max-w-3xl 2xl:max-w-4xl px-6 py-5 space-y-4">
         {/* Incident brief card */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -438,6 +439,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
             />
           )}
         </AnimatePresence>
+        </div>
       </div>
 
       {/* Scroll to bottom button */}
