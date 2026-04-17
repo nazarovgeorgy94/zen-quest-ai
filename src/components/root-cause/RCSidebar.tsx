@@ -151,13 +151,14 @@ const RCSidebar = ({
         borderRight: "1px solid hsl(var(--border) / 0.5)",
       }}
     >
-      {/* Ambient */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-20 -left-20 w-60 h-60 rounded-full blur-[80px] opacity-30"
-          style={{ background: "hsl(var(--primary) / 0.15)" }} />
-        <div className="absolute bottom-0 right-0 w-40 h-40 rounded-full blur-[60px] opacity-20"
-          style={{ background: "hsl(var(--accent) / 0.1)" }} />
-      </div>
+      {/* Ambient — статичный градиент без blur (производительность) */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-60"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 30% at 0% 0%, hsl(var(--primary) / 0.06), transparent 70%), radial-gradient(ellipse 60% 30% at 100% 100%, hsl(var(--accent) / 0.04), transparent 70%)",
+        }}
+      />
 
       {/* Logo */}
       <div className="relative z-10 p-4 pb-3">
