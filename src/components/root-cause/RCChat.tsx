@@ -286,7 +286,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       {/* Header */}
       <div className="shrink-0 border-b border-border bg-surface-0/70 backdrop-blur-md relative z-10">
         <div className={cn("h-[2px] w-full shimmer-line", isDiagnosing && "shimmer-active")} />
-        <div className="px-6 py-3">
+        <div className="px-6 py-3 mx-auto w-full max-w-3xl 2xl:max-w-4xl">
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className={cn("w-3 h-3 rounded-full", colors.dot)} />
