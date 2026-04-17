@@ -228,8 +228,8 @@
   :root {
     color-scheme: dark;
 
-    /* Адаптивный sidebar: 280px @ 1440 → 360px @ 2560 */
-    --sidebar-width: clamp(17.5rem, 14rem + 4vw, 22.5rem);
+    /* Адаптивный sidebar: 288px @ 1280 → 416px @ 2560 (комфортно для длинных тайтлов) */
+    --sidebar-width: clamp(18rem, 12rem + 7vw, 26rem);
   }
 
   /* Fluid base: 14px @ 1440, 16.5px @ 1920, 18px @ 2560 — масштабирует rem-токены */

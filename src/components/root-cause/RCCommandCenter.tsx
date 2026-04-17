@@ -253,7 +253,7 @@ const RCCommandCenter = ({
           background: "radial-gradient(ellipse at 50% 40%, hsl(var(--primary) / 0.04) 0%, transparent 60%)",
         }} />
 
-      <div className="relative z-10 text-center max-w-md xl:max-w-lg 2xl:max-w-xl px-6 w-full">
+      <div className="relative z-10 text-center w-full px-6 max-w-md xl:max-w-xl 2xl:max-w-2xl [@media(min-width:2400px)]:max-w-3xl">
         {/* Orb */}
         <motion.div
           initial={{ opacity: 0, scale: 0.85 }}
