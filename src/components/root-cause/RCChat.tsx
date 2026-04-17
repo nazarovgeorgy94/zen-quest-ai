@@ -36,13 +36,13 @@ interface RCChatProps {
 function severityAmbient(severity: string) {
   switch (severity) {
     case "critical":
-      return "radial-gradient(ellipse at 50% 0%, hsl(0 60% 45% / 0.06) 0%, transparent 60%)";
+      return "radial-gradient(ellipse at 50% 0%, hsl(0 70% 50% / 0.14) 0%, transparent 65%)";
     case "high":
-      return "radial-gradient(ellipse at 50% 0%, hsl(25 70% 50% / 0.05) 0%, transparent 60%)";
+      return "radial-gradient(ellipse at 50% 0%, hsl(25 80% 55% / 0.12) 0%, transparent 65%)";
     case "medium":
-      return "radial-gradient(ellipse at 50% 0%, hsl(45 70% 50% / 0.04) 0%, transparent 60%)";
+      return "radial-gradient(ellipse at 50% 0%, hsl(45 80% 55% / 0.10) 0%, transparent 65%)";
     default:
-      return "radial-gradient(ellipse at 50% 0%, hsl(210 60% 50% / 0.03) 0%, transparent 60%)";
+      return "radial-gradient(ellipse at 50% 0%, hsl(210 70% 55% / 0.08) 0%, transparent 65%)";
   }
 }
 
