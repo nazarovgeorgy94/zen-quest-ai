@@ -14,35 +14,36 @@
        Background: #0A081B → 247 53% 7%
        ═══════════════════════════════════════════════════════════ */
 
-    /* ── Основные поверхности ── */
-    --background: 220 16% 6%;        /* #0D0F12 — прохладный оникс */
-    --foreground: 215 12% 92%;       /* Светлый текст */
+    /* ── Основные поверхности (повышенный контраст для офисных IPS) ── */
+    --background: 220 14% 9%;        /* #14171C — оникс с дыханием, не проваливается в чёрный */
+    --foreground: 210 16% 96%;       /* #F0F3F7 — почти-белый, чёткий на любом мониторе */
 
-    --card: 222 14% 9%;              /* #15171C */
-    --card-foreground: 215 12% 92%;
+    --card: 220 13% 13%;             /* #1C2026 — заметно отличается от bg */
+    --card-foreground: 210 16% 96%;
 
-    --popover: 222 14% 9%;
-    --popover-foreground: 215 12% 92%;
+    --popover: 220 13% 14%;
+    --popover-foreground: 210 16% 96%;
 
     /* ── Акцентные цвета ── */
     --primary: 156 100% 54%;         /* #16FFBB — электрический минт */
-    --primary-foreground: 220 16% 6%;
+    --primary-foreground: 220 14% 9%;
 
-    --accent: 179 70% 51%;           /* #29DDDA — яркий циан */
-    --accent-foreground: 215 12% 92%;
+    --accent: 179 75% 55%;           /* #29DDDA — яркий циан, чуть ярче для контраста */
+    --accent-foreground: 210 16% 96%;
 
-    --secondary: 220 12% 12%;        /* Нейтральный вторичный */
-    --secondary-foreground: 215 8% 75%;
+    --secondary: 220 12% 16%;        /* Нейтральный вторичный */
+    --secondary-foreground: 215 12% 82%;
 
-    --muted: 220 10% 16%;            /* Приглушённые элементы */
-    --muted-foreground: 215 6% 46%;
+    --muted: 220 11% 19%;            /* Приглушённые элементы */
+    --muted-foreground: 215 12% 65%;  /* WCAG AA: 5.2:1 на bg */
 
-    --destructive: 0 68% 52%;
+    --destructive: 0 75% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    /* ── Границы и формы ── */
-    --border: 220 10% 15%;
-    --input: 220 10% 15%;
+    /* ── Границы и формы (видны на любом мониторе) ── */
+    --border: 220 10% 22%;            /* было 15% → 22% — заметно на IPS */
+    --border-strong: 220 10% 30%;     /* для важных разделителей */
+    --input: 220 10% 24%;
     --ring: 156 100% 54%;
     --radius: 0.75rem;
 
@@ -66,15 +67,15 @@
     --primary-muted: 156 50% 30%;
     --primary-subtle: 220 10% 13%;
 
-    /* ── Многослойные поверхности (Elevation) ── */
-    --surface-0: 220 16% 6%;         /* = background */
-    --surface-1: 222 14% 9%;         /* карточки */
-    --surface-2: 220 12% 12%;        /* приподнятый */
-    --surface-3: 220 10% 15%;        /* поповеры */
-    --surface-4: 220 8% 19%;         /* модалки */
+    /* ── Многослойные поверхности (Elevation) — заметные ступени ── */
+    --surface-0: 220 14% 9%;          /* = background */
+    --surface-1: 220 13% 13%;         /* карточки (+4%) */
+    --surface-2: 220 12% 17%;         /* приподнятый (+4%) */
+    --surface-3: 220 11% 22%;         /* поповеры (+5%) */
+    --surface-4: 220 10% 27%;         /* модалки (+5%) */
 
-    --surface: 222 14% 9%;
-    --surface-elevated: 220 12% 12%;
+    --surface: 220 13% 13%;
+    --surface-elevated: 220 12% 17%;
 
     /* ══════════════════════════════════════════════════════════
        🌈 GRADIENT TOKENS
@@ -125,14 +126,14 @@
     --shadow-warning: 0 4px 20px -4px hsl(45 93% 47% / 0.2);
     --shadow-info: 0 4px 20px -4px hsl(210 60% 50% / 0.2);
 
-    /* ── Sidebar ── */
-    --sidebar-background: 220 18% 5%;
-    --sidebar-foreground: 215 6% 65%;
+    /* ── Sidebar (повышенный контраст) ── */
+    --sidebar-background: 220 16% 7%;       /* чуть темнее bg для разделения */
+    --sidebar-foreground: 215 12% 75%;      /* было 65% → 75% — читаемо на IPS */
     --sidebar-primary: 156 100% 54%;
-    --sidebar-primary-foreground: 220 16% 6%;
-    --sidebar-accent: 220 12% 10%;
-    --sidebar-accent-foreground: 215 8% 80%;
-    --sidebar-border: 220 10% 12%;
+    --sidebar-primary-foreground: 220 14% 9%;
+    --sidebar-accent: 220 13% 14%;
+    --sidebar-accent-foreground: 210 16% 92%;
+    --sidebar-border: 220 10% 18%;
     --sidebar-ring: 156 100% 54%;
   }
 
@@ -224,6 +225,10 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
   * {
     @apply border-border;
   }
@@ -231,6 +236,21 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Space Grotesk', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Усиленный контраст для пользователей с системной настройкой */
+  @media (prefers-contrast: more) {
+    :root {
+      --foreground: 0 0% 100%;
+      --muted-foreground: 215 15% 78%;
+      --border: 220 10% 32%;
+      --border-strong: 220 10% 42%;
+      --surface-1: 220 13% 16%;
+      --surface-2: 220 12% 20%;
+      --surface-3: 220 11% 25%;
+    }
   }
 
   /* AI response prose styling */
