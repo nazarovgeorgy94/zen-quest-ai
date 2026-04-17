@@ -57,53 +57,30 @@ const RootCause = () => {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      {/* Living background — noise + animated mesh + vignette */}
+      {/* Living background — статичные градиенты вместо blur+rotate (производительность) */}
       <div className="fixed inset-0 pointer-events-none z-0">
         {/* Noise texture */}
         <div
-          className="absolute inset-0 opacity-[0.025] mix-blend-overlay"
+          className="absolute inset-0 opacity-[0.02] mix-blend-overlay"
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
             backgroundSize: "256px 256px",
           }}
         />
-        {/* Animated mesh gradient orbs */}
-        <motion.div
-          className="absolute rounded-full blur-[150px]"
+        {/* Static aurora — без blur, без анимации, дёшево для GPU */}
+        <div
+          className="absolute inset-0"
           style={{
-            width: "clamp(500px, 45vw, 1100px)",
-            height: "clamp(500px, 45vw, 1100px)",
-            background: "conic-gradient(from 180deg, hsl(var(--primary) / 0.04), hsl(var(--accent) / 0.03), hsl(var(--cyan-pop) / 0.025), hsl(var(--primary) / 0.04))",
-            top: "-25%", right: "-15%",
+            background:
+              "radial-gradient(ellipse 60% 50% at 80% 0%, hsl(var(--primary) / 0.06), transparent 70%), radial-gradient(ellipse 50% 40% at 10% 100%, hsl(var(--accent) / 0.05), transparent 70%)",
           }}
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.05, 0.98, 1],
-          }}
-          transition={{
-            rotate: { duration: 60, repeat: Infinity, ease: "linear" },
-            scale: { duration: 20, repeat: Infinity, ease: "easeInOut" },
-          }}
-        />
-        <motion.div
-          className="absolute rounded-full blur-[120px]"
-          style={{
-            width: "clamp(400px, 35vw, 850px)",
-            height: "clamp(400px, 35vw, 850px)",
-            background: "radial-gradient(circle, hsl(var(--accent) / 0.03), hsl(var(--primary) / 0.015), transparent 70%)",
-            bottom: "-20%", left: "-10%",
-          }}
-          animate={{
-            x: [0, 30, -20, 0],
-            y: [0, -20, 15, 0],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
         />
         {/* Vignette */}
         <div
           className="absolute inset-0"
           style={{
-            background: "radial-gradient(ellipse at 50% 50%, transparent 40%, hsl(var(--background) / 0.6) 100%)",
+            background:
+              "radial-gradient(ellipse at 50% 50%, transparent 50%, hsl(var(--background) / 0.5) 100%)",
           }}
         />
       </div>

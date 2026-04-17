@@ -50,23 +50,13 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
         </svg>
       </motion.div>
 
-      {/* Conic sweep */}
-      <motion.div
-        className="absolute inset-[4px] rounded-full"
-        animate={{ rotate: 360 }}
-        transition={{ duration: isHovered ? 4 : 10, repeat: Infinity, ease: "linear" }}
-        style={{
-          background: "conic-gradient(from 0deg, transparent 0%, hsl(var(--primary) / 0.1) 15%, transparent 30%)",
-        }}
-      />
-
-      {/* Glass shell */}
+      {/* Glass shell — без backdrop-blur (дорого над анимированным фоном) */}
       <div
-        className="absolute inset-[6px] rounded-full backdrop-blur-md"
+        className="absolute inset-[6px] rounded-full"
         style={{
           background:
-            "radial-gradient(circle at 35% 35%, hsl(var(--primary) / 0.12), hsl(var(--accent) / 0.06), hsl(var(--background) / 0.9))",
-          border: "1px solid hsl(var(--primary) / 0.1)",
+            "radial-gradient(circle at 35% 35%, hsl(var(--primary) / 0.18), hsl(var(--accent) / 0.08), hsl(var(--surface-1)) 80%)",
+          border: "1px solid hsl(var(--primary) / 0.15)",
         }}
       />
 
@@ -253,7 +243,7 @@ const RCCommandCenter = ({
           background: "radial-gradient(ellipse at 50% 40%, hsl(var(--primary) / 0.04) 0%, transparent 60%)",
         }} />
 
-      <div className="relative z-10 text-center max-w-md xl:max-w-lg 2xl:max-w-xl px-6 w-full">
+      <div className="relative z-10 text-center w-full px-6 max-w-md xl:max-w-xl 2xl:max-w-2xl [@media(min-width:2400px)]:max-w-3xl">
         {/* Orb */}
         <motion.div
           initial={{ opacity: 0, scale: 0.85 }}
