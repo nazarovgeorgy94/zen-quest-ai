@@ -227,6 +227,17 @@
 @layer base {
   :root {
     color-scheme: dark;
+
+    /* Адаптивный sidebar: 280px @ 1440 → 360px @ 2560 */
+    --sidebar-width: clamp(17.5rem, 14rem + 4vw, 22.5rem);
+  }
+
+  /* Fluid base: 14px @ 1440, 16.5px @ 1920, 18px @ 2560 — масштабирует rem-токены */
+  @media (min-width: 1920px) {
+    html { font-size: 16.5px; }
+  }
+  @media (min-width: 2560px) {
+    html { font-size: 18px; }
   }
 
   * {
