@@ -20,10 +20,10 @@ interface RCSidebarProps {
 
 function SeverityIcon({ severity }: { severity: string }) {
   if (severity === "critical")
-    return <AlertTriangle className="w-3 h-3 text-red-400" />;
+    return <AlertTriangle className="w-3 h-3 text-destructive" />;
   if (severity === "high")
-    return <Activity className="w-3 h-3 text-orange-400" />;
-  return <Shield className="w-3 h-3 text-yellow-400" />;
+    return <Activity className="w-3 h-3 text-warning" />;
+  return <Shield className="w-3 h-3 text-info" />;
 }
 
 function NeuralShieldLogo() {
@@ -73,8 +73,8 @@ function NeuralShieldLogo() {
 function LiveDot() {
   return (
     <span className="relative flex h-2 w-2">
-      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+      <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
     </span>
   );
 }
@@ -153,11 +153,12 @@ const RCSidebar = ({
       initial={{ opacity: 0, x: -24 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="shrink-0 h-screen flex flex-col relative overflow-hidden"
+      className="shrink-0 h-screen flex flex-col relative overflow-hidden backdrop-blur-xl"
       style={{
         width: "var(--sidebar-width, 18rem)",
-        background: "hsl(var(--surface-0))",
-        borderRight: "1px solid hsl(var(--border) / 0.5)",
+        background: "linear-gradient(180deg, hsl(var(--sidebar-background) / 0.96), hsl(var(--surface-0) / 0.94))",
+        borderRight: "1px solid hsl(var(--sidebar-border) / 0.75)",
+        boxShadow: "24px 0 80px -48px hsl(var(--background) / 0.95)",
       }}
     >
       {/* Ambient — статичный градиент без blur (производительность) */}
@@ -171,32 +172,41 @@ const RCSidebar = ({
 
       {/* Logo */}
       <div className="relative z-10 p-4 pb-3">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-start gap-3">
           <NeuralShieldLogo />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-2">
+          <div className="w-full min-w-0 space-y-2">
+            <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground/55 mb-1">
+                <p className="forensic-label mb-1">
                   Incident Intel
                 </p>
-                <h1 className="text-sm font-semibold text-foreground tracking-tight truncate">
+                <h1 className="text-sm font-semibold text-foreground truncate">
                   Root Cause Agent
                 </h1>
+                <p className="mt-1 text-[11px] font-mono text-muted-foreground/72 uppercase tracking-[0.12em]">
+                  forensic diagnosis interface
+                </p>
               </div>
               <div
-                className="shrink-0 px-2 py-1 rounded-full text-[9px] font-medium"
+                className="shrink-0 rounded-full px-2 py-1 text-[9px] font-mono uppercase tracking-[0.16em]"
                 style={{
-                  background: "hsl(var(--surface-1))",
-                  border: "1px solid hsl(var(--border) / 0.35)",
+                  background: "hsl(var(--surface-1) / 0.72)",
+                  border: "1px solid hsl(var(--border) / 0.38)",
                   color: "hsl(var(--foreground) / 0.72)",
                 }}
               >
                 {active.length} live
               </div>
             </div>
-            <div className="flex items-center gap-1.5 mt-1.5">
+            <div className="glass-panel-subtle rounded-xl px-3 py-2">
+              <div className="flex items-center gap-1.5">
               <LiveDot />
-              <p className="text-[10px] text-muted-foreground">Мониторинг активен</p>
+                <p className="text-[10px] font-mono uppercase tracking-[0.14em] text-muted-foreground/88">Monitoring active</p>
+              </div>
+              <div className="mt-1.5 flex items-center justify-between gap-2 text-[10px] font-mono text-muted-foreground/70">
+                <span>signal mesh synced</span>
+                <span className="text-primary/85">ops / live</span>
+              </div>
             </div>
           </div>
         </div>
@@ -209,8 +219,9 @@ const RCSidebar = ({
           onClick={onNewChat}
           className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative overflow-hidden group"
           style={{
-            background: "linear-gradient(135deg, hsl(var(--primary) / 0.12), hsl(var(--accent) / 0.08))",
-            border: "1px solid hsl(var(--primary) / 0.2)",
+            background: "linear-gradient(135deg, hsl(var(--primary) / 0.14), hsl(var(--accent) / 0.1))",
+            border: "1px solid hsl(var(--primary) / 0.24)",
+            boxShadow: "inset 0 1px 0 hsl(var(--foreground) / 0.04), 0 12px 32px -20px hsl(var(--primary) / 0.35)",
           }}
         >
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -221,10 +232,9 @@ const RCSidebar = ({
 
         <button
           onClick={onOpenSearch}
-          className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors"
+          className="glass-panel-subtle w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-colors"
           style={{
-            background: "hsl(var(--surface-1))",
-            border: "1px solid hsl(var(--border) / 0.3)",
+            background: "linear-gradient(180deg, hsl(var(--surface-1) / 0.76), hsl(var(--surface-1) / 0.56))",
           }}
         >
           <Search className="w-3.5 h-3.5 text-muted-foreground" />
