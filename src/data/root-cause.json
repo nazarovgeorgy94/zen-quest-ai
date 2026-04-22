@@ -1,0 +1,269 @@
+{
+  "incidents": [
+    {
+      "id": "INC-4521",
+      "title": "Payment Gateway Timeout Spike",
+      "description": "Резкий рост таймаутов на платёжном шлюзе. P99 латентность превысила 12s. Затронуты 23% транзакций за последний час.",
+      "severity": "critical",
+      "status": "active",
+      "service": "payment-gateway",
+      "createdAtOffsetMinutes": 45,
+      "metrics": [
+        {
+          "label": "P99 Latency",
+          "value": "12.4s",
+          "sparkline": [0.5, 0.8, 1.2, 2.1, 4.5, 7.8, 10.2, 12.4],
+          "trend": "up",
+          "color": "hsl(0 68% 52%)"
+        },
+        {
+          "label": "Error Rate",
+          "value": "23.1%",
+          "sparkline": [2, 3, 5, 8, 12, 18, 21, 23.1],
+          "trend": "up",
+          "color": "hsl(25 95% 53%)"
+        },
+        {
+          "label": "Affected Txns",
+          "value": "1,847",
+          "sparkline": [120, 340, 580, 890, 1100, 1400, 1650, 1847],
+          "trend": "up"
+        }
+      ]
+    },
+    {
+      "id": "INC-4518",
+      "title": "AML Scoring Service Degradation",
+      "description": "AML scoring pipeline возвращает stale результаты. Feature store не обновлялся 3 часа.",
+      "severity": "high",
+      "status": "investigating",
+      "service": "aml-scoring",
+      "createdAtOffsetMinutes": 180,
+      "metrics": [
+        {
+          "label": "Staleness",
+          "value": "3h 12m",
+          "sparkline": [5, 15, 30, 60, 90, 120, 160, 192],
+          "trend": "up",
+          "color": "hsl(25 95% 53%)"
+        },
+        {
+          "label": "Affected Checks",
+          "value": "5,200",
+          "sparkline": [800, 1500, 2200, 3000, 3800, 4400, 4900, 5200],
+          "trend": "up"
+        }
+      ]
+    },
+    {
+      "id": "INC-4515",
+      "title": "Velocity Check False Positives",
+      "description": "Velocity rule `vel_24h_count > 5` блокирует легитимных пользователей из-за дублирования событий в Kafka.",
+      "severity": "medium",
+      "status": "active",
+      "service": "velocity-engine",
+      "createdAtOffsetMinutes": 360,
+      "metrics": [
+        {
+          "label": "False Positive Rate",
+          "value": "8.7%",
+          "sparkline": [2.1, 2.4, 3.2, 4.8, 5.9, 7.2, 8.1, 8.7],
+          "trend": "up",
+          "color": "hsl(45 93% 47%)"
+        },
+        {
+          "label": "Blocked Users",
+          "value": "342",
+          "sparkline": [40, 80, 130, 180, 230, 270, 310, 342],
+          "trend": "up"
+        }
+      ]
+    },
+    {
+      "id": "INC-4510",
+      "title": "Card BIN Database Sync Failure",
+      "description": "BIN database не синхронизировалась с upstream провайдером. Новые BIN-ы не распознаются.",
+      "severity": "low",
+      "status": "active",
+      "service": "bin-lookup",
+      "createdAtOffsetMinutes": 720
+    },
+    {
+      "id": "INC-4490",
+      "title": "Redis Cluster Memory Pressure",
+      "description": "Redis cluster достиг 92% memory usage. Eviction policy начала удалять горячие ключи сессий.",
+      "severity": "critical",
+      "status": "resolved",
+      "service": "session-store",
+      "createdAtOffsetMinutes": 2880,
+      "resolvedAtOffsetMinutes": 2160
+    },
+    {
+      "id": "INC-4485",
+      "title": "3DS Authentication Timeout",
+      "description": "3DS provider возвращает таймауты для Mastercard. Visa не затронута.",
+      "severity": "high",
+      "status": "resolved",
+      "service": "3ds-gateway",
+      "createdAtOffsetMinutes": 4320,
+      "resolvedAtOffsetMinutes": 4032
+    },
+    {
+      "id": "INC-4472",
+      "title": "Chargeback Webhook Delivery Failure",
+      "description": "Webhook endpoint для chargeback notifications недоступен. Накопилось 1,200 недоставленных уведомлений.",
+      "severity": "medium",
+      "status": "resolved",
+      "service": "webhook-dispatcher",
+      "createdAtOffsetMinutes": 7200,
+      "resolvedAtOffsetMinutes": 6480
+    }
+  ],
+  "services": [
+    { "name": "payment-gateway", "displayName": "Payment Gateway", "status": "degraded", "latency": "12.4s", "incidentIds": ["INC-4521"] },
+    { "name": "aml-scoring", "displayName": "AML Scoring", "status": "degraded", "latency": "340ms", "incidentIds": ["INC-4518"] },
+    { "name": "velocity-engine", "displayName": "Velocity Engine", "status": "degraded", "latency": "89ms", "incidentIds": ["INC-4515"] },
+    { "name": "bin-lookup", "displayName": "BIN Lookup", "status": "healthy", "latency": "12ms", "incidentIds": ["INC-4510"] },
+    { "name": "session-store", "displayName": "Session Store (Redis)", "status": "healthy", "latency": "2ms" },
+    { "name": "3ds-gateway", "displayName": "3DS Gateway", "status": "healthy", "latency": "45ms" },
+    { "name": "webhook-dispatcher", "displayName": "Webhook Dispatcher", "status": "healthy", "latency": "8ms" },
+    { "name": "fraud-scorer", "displayName": "Fraud Scorer ML", "status": "healthy", "latency": "67ms" },
+    { "name": "card-tokenizer", "displayName": "Card Tokenizer", "status": "healthy", "latency": "5ms" },
+    { "name": "kyc-service", "displayName": "KYC Service", "status": "healthy", "latency": "120ms" }
+  ],
+  "diagnosisSteps": [
+    { "label": "Сбор метрик", "detail": "Анализ логов, метрик и трейсов за последние 2 часа", "duration": 1500 },
+    { "label": "Корреляция событий", "detail": "Поиск паттернов и корреляций между сервисами", "duration": 2000 },
+    { "label": "Анализ зависимостей", "detail": "Проверка upstream/downstream сервисов", "duration": 1800 },
+    { "label": "Формирование гипотез", "detail": "Ранжирование возможных причин по вероятности", "duration": 2200 }
+  ],
+  "followUpSuggestions": {
+    "INC-4521": ["Показать dependency graph", "Проверить последние деплои", "Детализировать connection pool"],
+    "INC-4518": ["Показать Kafka consumer lag", "Проверить feature store pipeline", "Сравнить с предыдущими инцидентами"],
+    "INC-4515": ["Показать velocity rules", "Анализ дедупликации Kafka", "Проверить baseline метрики"],
+    "default": ["Показать зависимости сервиса", "Проверить последние изменения", "Сравнить с baseline"]
+  },
+  "hypotheses": {
+    "INC-4521": [
+      {
+        "title": "Connection Pool Exhaustion",
+        "confidence": 87,
+        "explanation": "Connection pool к PostgreSQL исчерпан. Текущий лимит 100 connections при пиковой нагрузке требует 180+. Все новые запросы ждут в очереди, что вызывает каскадные таймауты.",
+        "recommendation": "Увеличить `max_connections` до 250, включить PgBouncer в transaction mode. Краткосрочно — рестарт пула."
+      },
+      {
+        "title": "DNS Resolution Delay",
+        "confidence": 42,
+        "explanation": "Внутренний DNS resolver показывает повышенную латентность (p99 = 800ms vs нормальных 5ms). Возможно связано с обновлением CoreDNS.",
+        "recommendation": "Проверить логи CoreDNS, откатить последний деплой DNS если подтвердится."
+      }
+    ],
+    "INC-4518": [
+      {
+        "title": "Kafka Consumer Lag",
+        "confidence": 91,
+        "explanation": "Consumer group `aml-feature-updater` имеет lag > 500K сообщений. Причина — OOM kill одного из consumer pods 3 часа назад.",
+        "recommendation": "Рестартовать consumer pod, увеличить memory limit до 4Gi. Проверить retention policy."
+      }
+    ],
+    "default": [
+      {
+        "title": "Resource Constraint",
+        "confidence": 72,
+        "explanation": "Анализ указывает на ресурсное ограничение в одном из компонентов системы.",
+        "recommendation": "Проверить потребление ресурсов и масштабировать при необходимости."
+      }
+    ]
+  },
+  "aiResponses": {
+    "INC-4521": [
+      "На основе анализа метрик, **основная причина** — исчерпание пула соединений к PostgreSQL.\n\n### Ключевые индикаторы:\n- `pg_active_connections`: 100/100 (лимит достигнут)\n- `pg_waiting_queries`: 80+ в очереди\n- Корреляция: рост латентности совпадает с пиком трафика в 14:23 UTC\n\n### Рекомендации:\n1. **Немедленно**: Рестарт connection pool\n2. **Краткосрочно**: Увеличить `max_connections` до 250\n3. **Долгосрочно**: Внедрить PgBouncer",
+      "Анализ dependency graph показывает, что **payment-gateway** зависит от 3 downstream сервисов:\n\n| Сервис | Статус | Латентность |\n|--------|--------|-------------|\n| `pg-primary` | ⚠️ Degraded | 12.4s p99 |\n| `redis-sessions` | ✅ Healthy | 2ms p99 |\n| `fraud-scorer` | ✅ Healthy | 45ms p99 |\n\nПроблема изолирована на уровне PostgreSQL."
+    ],
+    "default": [
+      "Проведён анализ доступных данных по инциденту.\n\n### Наблюдения:\n- Аномалия обнаружена в метриках сервиса\n- Корреляция с недавними изменениями конфигурации\n- Паттерн указывает на ресурсное ограничение\n\nДля более точной диагностики рекомендую проверить:\n1. Логи за период возникновения\n2. Последние деплои\n3. Capacity планирование"
+    ]
+  },
+  "correlations": [
+    {
+      "fromId": "INC-4521",
+      "toId": "INC-4518",
+      "reason": "Общий Kafka кластер — consumer lag влияет на оба сервиса",
+      "confidence": 78,
+      "sharedComponent": "kafka-cluster-01"
+    },
+    {
+      "fromId": "INC-4521",
+      "toId": "INC-4515",
+      "reason": "Payment Gateway таймауты генерируют ложные velocity alerts",
+      "confidence": 65,
+      "sharedComponent": "event-pipeline"
+    },
+    {
+      "fromId": "INC-4518",
+      "toId": "INC-4515",
+      "reason": "Stale AML features вызывают пересчёт velocity rules",
+      "confidence": 52,
+      "sharedComponent": "feature-store"
+    }
+  ],
+  "scanLogs": {
+    "payment-gateway": [
+      "Connecting to payment-gateway:8443...",
+      "TLS handshake OK. Checking health endpoint...",
+      "⚠ P99 latency 12.4s — exceeds threshold (500ms)",
+      "→ Anomaly detected: connection pool saturation"
+    ],
+    "aml-scoring": [
+      "Connecting to aml-scoring:9090...",
+      "Health check passed. Validating feature store freshness...",
+      "⚠ Feature store stale: last update 3h 12m ago",
+      "→ Anomaly detected: Kafka consumer lag"
+    ],
+    "velocity-engine": [
+      "Connecting to velocity-engine:8080...",
+      "Health OK. Checking rule execution metrics...",
+      "⚠ False positive rate 8.7% — above baseline 2.1%",
+      "→ Anomaly detected: event deduplication failure"
+    ],
+    "bin-lookup": [
+      "Connecting to bin-lookup:8080...",
+      "Health OK. Verifying BIN database sync...",
+      "ℹ Last sync: 12h ago. Minor drift detected."
+    ],
+    "session-store": [
+      "Connecting to redis-cluster:6379...",
+      "Cluster health OK. Memory: 61% used.",
+      "✓ All nodes responsive."
+    ],
+    "3ds-gateway": [
+      "Connecting to 3ds-gateway:443...",
+      "Health OK. Checking provider connectivity...",
+      "✓ Visa OK, Mastercard OK."
+    ],
+    "webhook-dispatcher": [
+      "Connecting to webhook-dispatcher:8080...",
+      "Health OK. Queue depth: 0.",
+      "✓ All webhooks delivered."
+    ],
+    "fraud-scorer": [
+      "Connecting to fraud-scorer-ml:5000...",
+      "Model inference check OK. Latency: 67ms.",
+      "✓ Model v3.2.1 loaded."
+    ],
+    "card-tokenizer": [
+      "Connecting to card-tokenizer:8443...",
+      "HSM connectivity OK. Token generation: 5ms.",
+      "✓ PCI DSS compliance check passed."
+    ],
+    "kyc-service": [
+      "Connecting to kyc-service:8080...",
+      "Provider API check OK. Latency: 120ms.",
+      "✓ Document verification pipeline operational."
+    ],
+    "default": [
+      "Connecting to service...",
+      "✓ Health check passed."
+    ]
+  }
+}
