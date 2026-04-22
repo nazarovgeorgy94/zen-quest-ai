@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { type ReactNode, useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { Radar, Hash, ArrowRight, Search, AlertTriangle, Clock, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -209,7 +209,7 @@ function TacticalActionRow({
   highlighted = false,
 }: {
   index: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
   right?: React.ReactNode;
