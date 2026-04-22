@@ -17,6 +17,12 @@ import {
   SystemService,
   getSeverityColor,
 } from "@/lib/mockIncidents";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface RCDiscoveryProps {
   onSelectIncident: (id: string) => void;
@@ -32,21 +38,50 @@ function ScanRadar({
   scannedIndex,
   phase,
   activeIncidentIds,
+  serviceSeverityByName,
 }: {
   services: SystemService[];
   scannedIndex: number;
   phase: ScanPhase;
   activeIncidentIds: Set<string>;
+  serviceSeverityByName: Record<string, "critical" | "high" | "medium" | "low" | undefined>;
 }) {
   const isScanning = phase === "scanning";
   const size = 220;
   const cx = size / 2;
   const cy = size / 2;
   const rings = [30, 55, 80];
+  const zoneLabels = ["critical", "suspicious", "noise"];
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="absolute inset-0">
+    <TooltipProvider delayDuration={100}>
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="absolute inset-0">
+          <defs>
+            <radialGradient id="radar-zone-critical" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="hsl(var(--destructive) / 0.16)" />
+              <stop offset="100%" stopColor="hsl(var(--destructive) / 0)" />
+            </radialGradient>
+            <radialGradient id="radar-zone-suspicious" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stopColor="hsl(var(--accent) / 0.12)" />
+              <stop offset="100%" stopColor="hsl(var(--accent) / 0)" />
+            </radialGradient>
+            <radialGradient id="radar-zone-noise" cx="50%" cy="50%" r="70%">
+              <stop offset="0%" stopColor="hsl(var(--primary) / 0.08)" />
+              <stop offset="100%" stopColor="hsl(var(--primary) / 0)" />
+            </radialGradient>
+          </defs>
+
+          {rings.map((r, i) => (
+            <circle
+              key={`zone-${r}`}
+              cx={cx}
+              cy={cy}
+              r={r}
+              fill={i === 0 ? "url(#radar-zone-critical)" : i === 1 ? "url(#radar-zone-suspicious)" : "url(#radar-zone-noise)"}
+            />
+          ))}
+
         {/* Grid lines — crosshair */}
         <line x1={cx} y1={0} x2={cx} y2={size} stroke="hsl(var(--primary))" strokeOpacity={0.06} strokeWidth={1} />
         <line x1={0} y1={cy} x2={size} y2={cy} stroke="hsl(var(--primary))" strokeOpacity={0.06} strokeWidth={1} />
@@ -60,42 +95,84 @@ function ScanRadar({
         ))}
 
         {/* Ring labels */}
-        <text x={cx + rings[0] + 3} y={cy - 3} fill="hsl(var(--primary))" fillOpacity={0.2} fontSize={7} fontFamily="monospace">CORE</text>
-        <text x={cx + rings[1] + 3} y={cy - 3} fill="hsl(var(--primary))" fillOpacity={0.2} fontSize={7} fontFamily="monospace">MID</text>
-        <text x={cx + rings[2] + 3} y={cy - 3} fill="hsl(var(--primary))" fillOpacity={0.2} fontSize={7} fontFamily="monospace">EDGE</text>
-      </svg>
+        {rings.map((r, i) => (
+          <text
+            key={`label-${r}`}
+            x={cx + r + 3}
+            y={cy - 3}
+            fill="hsl(var(--primary))"
+            fillOpacity={0.24}
+            fontSize={7}
+            fontFamily="monospace"
+          >
+            {zoneLabels[i].toUpperCase()}
+          </text>
+        ))}
+        </svg>
 
       {/* Sweep beam — conic gradient */}
       {isScanning && (
-        <motion.div
-          className="absolute rounded-full"
-          style={{
-            inset: cx - rings[2],
-            width: rings[2] * 2,
-            height: rings[2] * 2,
-            top: cy - rings[2],
-            left: cx - rings[2],
-            background: `conic-gradient(from 0deg, transparent 0deg, hsl(var(--primary) / 0.12) 20deg, hsl(var(--primary) / 0.04) 50deg, transparent 80deg)`,
-          }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-        />
+        <>
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              inset: cx - rings[2],
+              width: rings[2] * 2,
+              height: rings[2] * 2,
+              top: cy - rings[2],
+              left: cx - rings[2],
+              background: `conic-gradient(from 0deg, transparent 0deg, hsl(var(--primary) / 0.18) 18deg, hsl(var(--accent) / 0.08) 36deg, transparent 72deg)`,
+              filter: "blur(1px)",
+            }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div
+            className="absolute rounded-full"
+            style={{
+              inset: cx - rings[2],
+              width: rings[2] * 2,
+              height: rings[2] * 2,
+              top: cy - rings[2],
+              left: cx - rings[2],
+              background: `conic-gradient(from 0deg, transparent 0deg, hsl(var(--primary) / 0.06) 12deg, transparent 52deg)`,
+            }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 3.6, repeat: Infinity, ease: "linear" }}
+          />
+        </>
       )}
 
       {/* Sweep line */}
       {isScanning && (
-        <motion.div
-          className="absolute origin-bottom"
-          style={{
-            width: 2,
-            height: rings[2],
-            left: cx - 1,
-            top: cy - rings[2],
-            background: "linear-gradient(to top, hsl(var(--primary) / 0.5), hsl(var(--primary) / 0.05))",
-          }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-        />
+        <>
+          <motion.div
+            className="absolute origin-bottom"
+            style={{
+              width: 2,
+              height: rings[2],
+              left: cx - 1,
+              top: cy - rings[2],
+              background: "linear-gradient(to top, hsl(var(--primary) / 0.75), hsl(var(--accent) / 0.08))",
+              boxShadow: "0 0 10px hsl(var(--primary) / 0.35)",
+            }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.div
+            className="absolute origin-bottom"
+            style={{
+              width: 10,
+              height: rings[2],
+              left: cx - 5,
+              top: cy - rings[2],
+              background: "linear-gradient(to top, hsl(var(--primary) / 0.14), transparent)",
+              filter: "blur(4px)",
+            }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          />
+        </>
       )}
 
       {/* Center core */}
@@ -114,6 +191,7 @@ function ScanRadar({
       {/* Service nodes */}
       {services.map((svc, i) => {
         const isScanned = i <= scannedIndex;
+        const isCurrentSweep = i === scannedIndex && isScanning;
         const angle = (i / services.length) * 360 - 90;
         const ringIdx = i % 3;
         const radius = rings[ringIdx] + (i % 2 === 0 ? -5 : 5);
@@ -121,8 +199,20 @@ function ScanRadar({
         const y = cy + Math.sin((angle * Math.PI) / 180) * radius;
         const hasActiveIncident = Boolean(svc.incidentIds?.some((id) => activeIncidentIds.has(id)));
         const hasAnyIncident = Boolean(svc.incidentIds?.length);
+        const severity = serviceSeverityByName[svc.name];
+        const severityColor = severity ? getSeverityColor(severity).stripe : undefined;
         const isAlerted = isScanned && hasActiveIncident;
         const nodeSize = isAlerted || (svc.status !== "healthy" && isScanned) ? 10 : 7;
+        const nodeColor = !isScanned
+          ? "hsl(var(--muted-foreground) / 0.2)"
+          : severityColor
+            ? severityColor
+            : svc.status === "healthy"
+              ? "hsl(var(--primary))"
+              : svc.status === "degraded"
+                ? "hsl(45 93% 47%)"
+                : "hsl(var(--destructive))";
+        const tooltipTone = severityColor ?? "hsl(var(--primary))";
 
         return (
           <motion.div
@@ -151,15 +241,7 @@ function ScanRadar({
                 <motion.line
                   x1={0} y1={0}
                   x2={cx - x} y2={cy - y}
-                  stroke={
-                    hasActiveIncident
-                      ? "hsl(0 68% 52%)"
-                      : svc.status === "healthy"
-                      ? "hsl(var(--primary))"
-                      : svc.status === "degraded"
-                      ? "hsl(45 93% 47%)"
-                      : "hsl(0 68% 52%)"
-                  }
+                  stroke={nodeColor}
                   strokeOpacity={0.12}
                   strokeWidth={0.75}
                   initial={{ pathLength: 0 }}
@@ -169,30 +251,95 @@ function ScanRadar({
               </svg>
             )}
 
-            {/* Node */}
-            <div
-              className="rounded-full transition-all duration-500 relative"
-              style={{
-                width: nodeSize,
-                height: nodeSize,
-                background: !isScanned
-                  ? "hsl(var(--muted-foreground) / 0.2)"
-                  : hasActiveIncident
-                  ? "hsl(0 68% 52%)"
-                  : svc.status === "healthy"
-                  ? "hsl(var(--primary))"
-                  : svc.status === "degraded"
-                  ? "hsl(45 93% 47%)"
-                  : "hsl(0 68% 52%)",
-                boxShadow: isAlerted
-                  ? "0 0 14px hsl(0 68% 52% / 0.55)"
-                  : isScanned && svc.status !== "healthy"
-                  ? `0 0 12px ${svc.status === "degraded" ? "hsl(45 93% 47% / 0.4)" : "hsl(0 68% 52% / 0.5)"}`
-                  : isScanned
-                  ? "0 0 8px hsl(var(--primary) / 0.3)"
-                  : "none",
-              }}
-            />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="relative block rounded-full focus:outline-none" aria-label={svc.displayName}>
+                  <div
+                    className="rounded-full transition-all duration-500 relative"
+                    style={{
+                      width: nodeSize,
+                      height: nodeSize,
+                      background: nodeColor,
+                      boxShadow: isAlerted
+                        ? `0 0 16px ${nodeColor}`
+                        : isScanned && svc.status !== "healthy"
+                          ? `0 0 12px ${nodeColor}`
+                          : isScanned
+                            ? "0 0 8px hsl(var(--primary) / 0.3)"
+                            : "none",
+                    }}
+                  />
+
+                  {isScanned && (
+                    <motion.div
+                      className="absolute rounded-full"
+                      style={{
+                        inset: -3,
+                        border: `1px solid ${nodeColor}`,
+                        opacity: hasAnyIncident ? 0.42 : 0.18,
+                      }}
+                      animate={{ scale: [1, 1.55, 1.8], opacity: hasAnyIncident ? [0.42, 0.14, 0] : [0.18, 0.08, 0] }}
+                      transition={{ duration: hasAnyIncident ? 2.2 : 3.4, repeat: Infinity, delay: i * 0.12 }}
+                    />
+                  )}
+
+                  {isScanned && hasAnyIncident && (
+                    <motion.div
+                      className="absolute rounded-full"
+                      style={{
+                        inset: -7,
+                        border: `1px solid ${nodeColor}`,
+                      }}
+                      animate={{ scale: [1, 1.9], opacity: [0.22, 0] }}
+                      transition={{ duration: 2.8, repeat: Infinity, delay: 0.45 + i * 0.1 }}
+                    />
+                  )}
+
+                  {isCurrentSweep && hasAnyIncident && (
+                    <motion.div
+                      className="absolute"
+                      style={{ inset: -11 }}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: [0, 1, 0.72, 1], scale: [0.8, 1.08, 1] }}
+                      transition={{ duration: 0.55, ease: "easeOut" }}
+                    >
+                      {[
+                        "left-0 top-0 border-l border-t",
+                        "right-0 top-0 border-r border-t",
+                        "left-0 bottom-0 border-l border-b",
+                        "right-0 bottom-0 border-r border-b",
+                      ].map((corner) => (
+                        <div
+                          key={corner}
+                          className={cn("absolute h-2.5 w-2.5", corner)}
+                          style={{ borderColor: tooltipTone }}
+                        />
+                      ))}
+                    </motion.div>
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                className="min-w-[170px] border-border/60 bg-surface-0/95 text-foreground backdrop-blur-sm"
+                side="top"
+              >
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full" style={{ background: tooltipTone }} />
+                    <span className="text-xs font-medium">{svc.displayName}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 text-[10px] font-mono text-muted-foreground">
+                    <span>{severity ? severity.toUpperCase() : svc.status.toUpperCase()}</span>
+                    <span>{svc.latency}</span>
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {hasAnyIncident
+                      ? `${svc.incidentIds?.length} сигнал(ов) — объект требует проверки`
+                      : "Стабильный узел, отмечен как шумовой фон"}
+                  </div>
+                </div>
+              </TooltipContent>
+            </Tooltip>
 
             {/* Alert pulse for incidents */}
             {isScanned && hasAnyIncident && (
@@ -200,7 +347,7 @@ function ScanRadar({
                 className="absolute rounded-full"
                 style={{
                   inset: -4,
-                  border: `1.5px solid ${hasActiveIncident ? "hsl(0 68% 52% / 0.55)" : svc.status === "degraded" ? "hsl(45 93% 47% / 0.5)" : "hsl(0 68% 52% / 0.32)"}`,
+                  border: `1.5px solid color-mix(in srgb, ${nodeColor} 65%, transparent)`,
                 }}
                 animate={{ scale: [1, 1.8, 1], opacity: [0.6, 0, 0.6] }}
                 transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }}
@@ -215,11 +362,7 @@ function ScanRadar({
                   top: nodeSize + 4,
                   left: "50%",
                   transform: "translateX(-50%)",
-                  color: hasActiveIncident
-                    ? "hsl(0 68% 52%)"
-                    : svc.status !== "healthy"
-                    ? svc.status === "degraded" ? "hsl(45 93% 47%)" : "hsl(0 68% 52%)"
-                    : "hsl(var(--muted-foreground) / 0.5)",
+                  color: hasAnyIncident ? nodeColor : "hsl(var(--muted-foreground) / 0.5)",
                 }}
                 initial={{ opacity: 0, y: -3 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -250,7 +393,8 @@ function ScanRadar({
           </div>
         </motion.div>
       )}
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }
 
@@ -332,6 +476,14 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
     (i) => i.status !== "resolved" && discoveredIncidents.includes(i.id)
   );
   const activeIncidentIds = new Set(activeIncidents.map((incident) => incident.id));
+  const serviceSeverityByName = activeIncidents.reduce<Record<string, "critical" | "high" | "medium" | "low">>((acc, incident) => {
+    const rank = { critical: 4, high: 3, medium: 2, low: 1 } as const;
+    const current = acc[incident.service];
+    if (!current || rank[incident.severity] > rank[current]) {
+      acc[incident.service] = incident.severity;
+    }
+    return acc;
+  }, {});
 
   const degradedCount = mockServices.filter((svc) => svc.status === "degraded").length;
   const failedCount = mockServices.filter((svc) => svc.status === "down").length;
@@ -400,6 +552,7 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
                   scannedIndex={scannedIndex}
                   phase={phase}
                   activeIncidentIds={activeIncidentIds}
+                  serviceSeverityByName={serviceSeverityByName}
                 />
               </div>
             </div>
