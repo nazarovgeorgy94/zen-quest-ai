@@ -24,10 +24,11 @@ const FollowUpSuggestions = ({ suggestions, onSelect }: FollowUpSuggestionsProps
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4 + i * 0.08, duration: 0.3 }}
           onClick={() => onSelect(s)}
-          className="group relative px-3 py-1.5 rounded-lg text-[11px] font-medium text-foreground/70 hover:text-foreground transition-all duration-200 overflow-hidden"
+          className="group relative px-3 py-1.5 rounded-lg text-[11px] font-medium text-foreground/70 hover:text-foreground transition-all duration-200 overflow-hidden hover:-translate-y-0.5"
           style={{
             background: "hsl(var(--surface-1) / 0.6)",
             border: "1px solid hsl(var(--border) / 0.25)",
+            boxShadow: "0 6px 18px -14px hsl(var(--background) / 0.7)",
           }}
           whileHover={{ scale: 1.03, y: -1 }}
           whileTap={{ scale: 0.97 }}
@@ -39,7 +40,10 @@ const FollowUpSuggestions = ({ suggestions, onSelect }: FollowUpSuggestionsProps
               background: "linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--accent) / 0.05))",
             }}
           />
-          <span className="relative z-10">{s}</span>
+          <span className="relative z-10 flex items-center gap-1.5">
+            <span>{s}</span>
+            <span className="opacity-0 transition-opacity duration-200 group-hover:opacity-70 text-primary">↗</span>
+          </span>
         </motion.button>
       ))}
     </motion.div>
