@@ -57,13 +57,13 @@ const ChatMessageList = ({ messages, isTyping }: ChatMessageListProps) => {
               <Bot className="w-3.5 h-3.5 text-primary" />
             </div>
           )}
-          <div className={cn("space-y-1", msg.role === "user" ? "max-w-[72%]" : "max-w-[80%]")}>
+          <div className={cn("space-y-1", msg.role === "user" ? "max-w-[75%]" : "max-w-[82%]")}>
             <div
               className={cn(
-                "relative overflow-hidden rounded-2xl text-sm",
+                "rounded-2xl text-sm",
                 msg.role === "user"
-                  ? "rounded-br-md px-4 py-2.5"
-                  : "rounded-bl-md border border-border/15 bg-surface-1/60 px-4 py-3 text-foreground backdrop-blur-sm"
+                  ? "px-4 py-2.5 rounded-br-md"
+                  : "px-4 py-3 rounded-bl-md bg-surface-1/60 backdrop-blur-sm border border-border/15 text-foreground"
               )}
               style={
                 msg.role === "user"
@@ -77,7 +77,6 @@ const ChatMessageList = ({ messages, isTyping }: ChatMessageListProps) => {
             >
               {msg.role === "assistant" ? (
                 <div className="prose prose-sm prose-invert max-w-none [&_table]:text-xs [&_th]:px-2.5 [&_td]:px-2.5 [&_th]:py-1.5 [&_td]:py-1.5 [&_th]:border-b [&_th]:border-border/30 [&_th]:text-left [&_th]:font-semibold [&_th]:text-foreground/80 [&_td]:border-b [&_td]:border-border/10 [&_p]:leading-relaxed [&_li]:leading-relaxed [&_code]:text-primary [&_code]:bg-primary/8 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:text-xs [&_code]:font-mono [&_pre]:bg-surface-2/60 [&_pre]:border [&_pre]:border-border/20 [&_pre]:rounded-lg [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_h2]:text-sm [&_h2]:font-semibold [&_h2]:text-foreground [&_h2]:mt-3 [&_h2]:mb-1.5 [&_h3]:text-[13px] [&_h3]:font-semibold [&_h3]:text-foreground/90 [&_h3]:mt-2.5 [&_h3]:mb-1 [&_ul]:pl-4 [&_ol]:pl-4 [&_li]:text-foreground/75 [&_strong]:text-foreground/95">
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/35 to-transparent" />
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
                   {msg.isStreaming && (
                     <motion.span
@@ -88,7 +87,7 @@ const ChatMessageList = ({ messages, isTyping }: ChatMessageListProps) => {
                   )}
                 </div>
               ) : (
-                <span className="text-foreground/90 leading-relaxed">{msg.content}</span>
+                <span className="text-foreground/90">{msg.content}</span>
               )}
             </div>
             <div className={cn("flex items-center gap-1 px-1", msg.role === "user" ? "justify-end" : "justify-start")}>
