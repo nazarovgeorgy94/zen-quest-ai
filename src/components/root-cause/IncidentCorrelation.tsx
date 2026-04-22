@@ -1,39 +1,7 @@
 import { motion } from "framer-motion";
 import { GitBranch, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Incident, getSeverityColor } from "@/lib/mockIncidents";
-
-interface CorrelationLink {
-  fromId: string;
-  toId: string;
-  reason: string;
-  confidence: number;
-  sharedComponent: string;
-}
-
-const mockCorrelations: CorrelationLink[] = [
-  {
-    fromId: "INC-4521",
-    toId: "INC-4518",
-    reason: "Общий Kafka кластер — consumer lag влияет на оба сервиса",
-    confidence: 78,
-    sharedComponent: "kafka-cluster-01",
-  },
-  {
-    fromId: "INC-4521",
-    toId: "INC-4515",
-    reason: "Payment Gateway таймауты генерируют ложные velocity alerts",
-    confidence: 65,
-    sharedComponent: "event-pipeline",
-  },
-  {
-    fromId: "INC-4518",
-    toId: "INC-4515",
-    reason: "Stale AML features вызывают пересчёт velocity rules",
-    confidence: 52,
-    sharedComponent: "feature-store",
-  },
-];
+import { Incident, getSeverityColor, mockCorrelations } from "@/lib/mockIncidents";
 
 interface IncidentCorrelationProps {
   currentIncidentId: string;
