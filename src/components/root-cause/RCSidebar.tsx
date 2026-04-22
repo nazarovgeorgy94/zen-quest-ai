@@ -123,6 +123,15 @@ const RCSidebar = ({
   );
 
   const criticalCount = active.filter((i) => i.severity === "critical").length;
+  const severityStats = useMemo(
+    () => ({
+      critical: active.filter((i) => i.severity === "critical").length,
+      high: active.filter((i) => i.severity === "high").length,
+      medium: active.filter((i) => i.severity === "medium").length,
+      resolved: resolved.length,
+    }),
+    [active, resolved]
+  );
 
   // Update "ago" text every 30s
   const [, setTick] = useState(0);
@@ -132,11 +141,11 @@ const RCSidebar = ({
     return () => clearInterval(id);
   }, [lastScanTime]);
 
-  const severityFilters: { value: SeverityFilter; label: string }[] = [
-    { value: "all", label: "Все" },
-    { value: "critical", label: "Crit" },
-    { value: "high", label: "High" },
-    { value: "medium", label: "Med" },
+  const severityFilters: { value: SeverityFilter; label: string; count: number }[] = [
+    { value: "all", label: "Все", count: active.length },
+    { value: "critical", label: "Crit", count: severityStats.critical },
+    { value: "high", label: "High", count: severityStats.high },
+    { value: "medium", label: "Med", count: severityStats.medium },
   ];
 
   return (
@@ -165,10 +174,27 @@ const RCSidebar = ({
         <div className="flex items-center gap-3">
           <NeuralShieldLogo />
           <div className="flex-1 min-w-0">
-            <h1 className="text-sm font-semibold text-foreground tracking-tight">
-              Root Cause Agent
-            </h1>
-            <div className="flex items-center gap-1.5 mt-0.5">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground/55 mb-1">
+                  Incident Intel
+                </p>
+                <h1 className="text-sm font-semibold text-foreground tracking-tight truncate">
+                  Root Cause Agent
+                </h1>
+              </div>
+              <div
+                className="shrink-0 px-2 py-1 rounded-full text-[9px] font-medium"
+                style={{
+                  background: "hsl(var(--surface-1))",
+                  border: "1px solid hsl(var(--border) / 0.35)",
+                  color: "hsl(var(--foreground) / 0.72)",
+                }}
+              >
+                {active.length} live
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1.5">
               <LiveDot />
               <p className="text-[10px] text-muted-foreground">Мониторинг активен</p>
             </div>
@@ -238,6 +264,31 @@ const RCSidebar = ({
           </div>
         </div>
 
+        <div className="grid grid-cols-4 gap-1.5">
+          {[
+            { label: "Crit", value: severityStats.critical, tone: "hsl(0 68% 52%)" },
+            { label: "High", value: severityStats.high, tone: "hsl(25 95% 53%)" },
+            { label: "Med", value: severityStats.medium, tone: "hsl(45 93% 47%)" },
+            { label: "Done", value: severityStats.resolved, tone: "hsl(var(--primary))" },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="rounded-lg px-2 py-2"
+              style={{
+                background: "hsl(var(--surface-1) / 0.72)",
+                border: "1px solid hsl(var(--border) / 0.24)",
+                boxShadow: `inset 0 1px 0 hsl(var(--foreground) / 0.02), inset 0 0 0 1px ${item.value > 0 ? item.tone.replace(")", " / 0.08)") : "transparent"}`,
+              }}
+            >
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground/55">{item.label}</span>
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: item.tone, opacity: item.value > 0 ? 1 : 0.35 }} />
+              </div>
+              <div className="mt-1 text-sm font-semibold text-foreground leading-none">{item.value}</div>
+            </div>
+          ))}
+        </div>
+
         {/* Last scan status */}
         <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
           style={{ background: "hsl(var(--surface-1) / 0.6)", border: "1px solid hsl(var(--border) / 0.2)" }}>
@@ -283,13 +334,20 @@ const RCSidebar = ({
             key={f.value}
             onClick={() => setSeverityFilter(f.value)}
             className={cn(
-              "text-[10px] font-medium px-2 py-1 rounded-md transition-all duration-200",
+              "text-[10px] font-medium px-2 py-1 rounded-lg transition-all duration-200 flex items-center gap-1.5",
               severityFilter === f.value
-                ? "bg-primary/15 text-primary"
-                : "text-muted-foreground/60 hover:text-muted-foreground hover:bg-surface-1"
+                ? "text-primary"
+                : "text-muted-foreground/60 hover:text-muted-foreground"
             )}
+            style={{
+              background: severityFilter === f.value ? "hsl(var(--primary) / 0.12)" : "hsl(var(--surface-1) / 0.55)",
+              border: severityFilter === f.value
+                ? "1px solid hsl(var(--primary) / 0.2)"
+                : "1px solid hsl(var(--border) / 0.22)",
+            }}
           >
             {f.label}
+            <span className="text-[9px] opacity-70">{f.count}</span>
           </button>
         ))}
       </div>
@@ -297,10 +355,13 @@ const RCSidebar = ({
       {/* Incident list */}
       <div className="relative z-10 flex-1 overflow-y-auto px-3 pb-3 scrollbar-thin">
         {/* Active incidents */}
-        <p className="px-1 pt-1 pb-2 text-[10px] font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-          <Activity className="w-3 h-3" />
-          Активные ({filteredActive.length})
-        </p>
+        <div className="px-1 pt-1 pb-2 flex items-center justify-between gap-2">
+          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+            <Activity className="w-3 h-3" />
+            Очередь расследования
+          </p>
+          <span className="text-[10px] font-mono text-muted-foreground/65">{filteredActive.length}</span>
+        </div>
         <div className="space-y-1">
           {filteredActive.map((inc, idx) => (
             <motion.div key={inc.id}
@@ -350,13 +411,29 @@ const RCSidebar = ({
         <div className="h-px mb-3" style={{
           background: "linear-gradient(90deg, transparent, hsl(var(--border) / 0.5), transparent)"
         }} />
-        <div className="flex items-center gap-2 px-1">
-          <div className="flex -space-x-1">
-            {["bg-emerald-500", "bg-teal-500", "bg-cyan-500"].map((c, i) => (
-              <div key={i} className={cn("w-2 h-2 rounded-full border border-background", c)} />
+        <div
+          className="rounded-xl px-3 py-2.5"
+          style={{
+            background: "hsl(var(--surface-1) / 0.65)",
+            border: "1px solid hsl(var(--border) / 0.22)",
+          }}
+        >
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/55">Контур аналитики</span>
+            <span className="text-[10px] font-mono text-primary/80">online</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { label: "Rules", tone: "hsl(var(--primary))" },
+              { label: "Graph", tone: "hsl(var(--accent))" },
+              { label: "AI", tone: "hsl(179 70% 51%)" },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-1.5 min-w-0">
+                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: item.tone }} />
+                <span className="text-[10px] text-muted-foreground truncate">{item.label}</span>
+              </div>
             ))}
           </div>
-          <span className="text-[10px] text-muted-foreground">3 агента на связи</span>
         </div>
       </div>
     </motion.aside>
