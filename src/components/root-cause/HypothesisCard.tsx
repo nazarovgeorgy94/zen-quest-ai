@@ -106,7 +106,7 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
           }}
         />
 
-        <div className={cn("relative", isTop ? "p-4.5" : "p-4")}>
+        <div className={cn("relative", isTop ? "p-5" : "p-4")}>
           {/* Title row */}
           <div className="flex items-start gap-3">
             <div

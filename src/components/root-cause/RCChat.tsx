@@ -428,53 +428,6 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       {/* Chat area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto relative z-10">
         <div className="w-full px-6 py-5 space-y-4">
-        {/* Executive brief */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-2xl border border-border/40 bg-surface-1/65"
-        >
-          <div
-            className="absolute inset-0 opacity-75"
-            style={{
-              background: `linear-gradient(135deg, ${colors.ambient} 0%, transparent 52%), linear-gradient(180deg, hsl(var(--surface-1) / 0.2), transparent)`,
-            }}
-          />
-          <div className="relative grid gap-3 p-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.9fr)] lg:items-start">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                <span className="text-primary/90">Incident Brief</span>
-                <span className="text-border">•</span>
-                <span>{isDiagnosing ? "Forensic pass running" : "Investigation ready"}</span>
-              </div>
-              <div className="grid gap-2.5 sm:grid-cols-3">
-                <div className="rounded-xl border border-border/30 bg-surface-2/55 px-3 py-2.5">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Suspected Cause</p>
-                  <p className="mt-1 text-sm font-medium text-foreground">{hypotheses[0]?.title || "Signal isolation in progress"}</p>
-                </div>
-                <div className="rounded-xl border border-border/30 bg-surface-2/55 px-3 py-2.5">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Impact</p>
-                  <p className="mt-1 text-sm font-medium text-foreground">
-                    {incident.metrics?.[1]?.value ? `${incident.metrics[1].value} degraded traffic` : `${incident.severity} operational anomaly`}
-                  </p>
-                </div>
-                <div className="rounded-xl border border-border/30 bg-surface-2/55 px-3 py-2.5">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Affected Scope</p>
-                  <p className="mt-1 text-sm font-medium text-foreground">{incident.service}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-border/30 bg-surface-2/50 p-3">
-              <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-                <span>Operator Summary</span>
-                <span className={colors.text}>{incident.status}</span>
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-foreground/78">{incident.description}</p>
-            </div>
-          </div>
-        </motion.div>
-
         {/* Diagnosis timeline */}
         {(isDiagnosing || hypotheses.length > 0) && (
           <DiagnosisTimeline
@@ -491,7 +444,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="space-y-3"
+              className="space-y-3 pt-1"
             >
               <div className="flex items-center gap-2 mt-2">
                 <TrendingUp className="w-3.5 h-3.5 text-primary" />
