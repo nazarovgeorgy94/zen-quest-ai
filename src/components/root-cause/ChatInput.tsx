@@ -62,10 +62,10 @@ const ChatInput = ({
       <div className="flex items-center gap-3">
         <button
           onClick={onStartScan}
-          className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-surface-1/60 backdrop-blur-sm border border-border/30 text-muted-foreground hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all"
+          className="group shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-surface-1/60 backdrop-blur-sm border border-border/30 text-muted-foreground hover:text-primary hover:border-primary/20 hover:bg-primary/5 transition-all hover:-translate-y-0.5"
           title="Сканировать систему"
         >
-          <Radar className="w-4 h-4" />
+          <Radar className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
         </button>
 
         <div className="flex-1 relative group">
@@ -81,7 +81,7 @@ const ChatInput = ({
             }
             disabled={isDiagnosing}
             rows={1}
-            className="w-full resize-none rounded-xl bg-surface-1/60 backdrop-blur-sm border border-border/40 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/15 transition-all disabled:opacity-40"
+            className="w-full resize-none rounded-xl bg-surface-1/60 backdrop-blur-sm border border-border/40 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/15 transition-all disabled:opacity-40 hover:border-border/60"
             style={{ maxHeight: 120 }}
           />
           <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-primary/0 to-transparent group-focus-within:via-primary/40 transition-all duration-500" />
@@ -94,7 +94,7 @@ const ChatInput = ({
             animate={{ scale: 1, opacity: 1 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-all"
+            className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-destructive/15 border border-destructive/30 text-destructive hover:bg-destructive/25 transition-all hover:-translate-y-0.5"
             title="Остановить генерацию"
           >
             <Square className="w-4 h-4 fill-current" />
@@ -115,7 +115,7 @@ const ChatInput = ({
               input.trim() && !isDiagnosing
                 ? {
                     background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))",
-                    boxShadow: "0 4px 15px -3px hsl(var(--primary) / 0.35)",
+                    boxShadow: "0 10px 22px -10px hsl(var(--primary) / 0.45)",
                   }
                 : undefined
             }

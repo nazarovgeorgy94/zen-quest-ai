@@ -42,6 +42,7 @@ function ConfidenceBar({ value }: { value: number }) {
 
 const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProps) => {
   const [expanded, setExpanded] = useState(isTop);
+  const confidenceTone = hyp.confidence >= 80 ? "High confidence" : hyp.confidence >= 50 ? "Moderate confidence" : "Weak signal";
 
   return (
     <motion.div
@@ -61,12 +62,12 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
       )}
 
       {/* Glass container */}
-      <div
+        <div
         className={cn(
           "relative rounded-xl overflow-hidden transition-all duration-300",
           isTop
-            ? "shadow-[0_8px_32px_-8px_hsl(var(--primary)/0.15)]"
-            : "hover:shadow-[0_4px_20px_-6px_hsl(var(--primary)/0.1)]"
+              ? "shadow-[0_10px_34px_-10px_hsl(var(--primary)/0.16)]"
+              : "hover:shadow-[0_6px_22px_-8px_hsl(var(--primary)/0.1)]"
         )}
         style={{
           background: isTop
@@ -105,7 +106,7 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
           }}
         />
 
-        <div className="relative p-4">
+        <div className={cn("relative", isTop ? "p-4.5" : "p-4")}>
           {/* Title row */}
           <div className="flex items-start gap-3">
             <div
@@ -122,20 +123,21 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
               <Lightbulb className={cn("w-3.5 h-3.5 relative z-10", isTop ? "text-primary" : "text-muted-foreground")} />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-foreground">{hyp.title}</h3>
-                {isTop && (
-                  <span
-                    className="text-[9px] uppercase px-1.5 py-0.5 rounded-full font-semibold"
-                    style={{
-                      background: "linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.12))",
-                      color: "hsl(var(--primary))",
-                      border: "1px solid hsl(var(--primary) / 0.15)",
-                    }}
-                  >
-                    Top
-                  </span>
-                )}
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className={cn("font-semibold text-foreground", isTop ? "text-base" : "text-sm")}>{hyp.title}</h3>
+                <span
+                  className="text-[9px] uppercase px-1.5 py-0.5 rounded-full font-semibold"
+                  style={{
+                    background: isTop
+                      ? "linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.12))"
+                      : "hsl(var(--surface-2) / 0.8)",
+                    color: isTop ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+                    border: isTop ? "1px solid hsl(var(--primary) / 0.15)" : "1px solid hsl(var(--border) / 0.2)",
+                  }}
+                >
+                  {isTop ? "Lead" : "Alt"}
+                </span>
+                <span className="text-[10px] text-muted-foreground">{confidenceTone}</span>
               </div>
               <div className="mt-2">
                 <ConfidenceBar value={hyp.confidence} />
@@ -144,7 +146,9 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
           </div>
 
           {/* Explanation */}
-          <p className="text-[13px] text-foreground/60 mt-3 leading-relaxed pl-10">{hyp.explanation}</p>
+          <p className={cn("mt-3 leading-relaxed pl-10", isTop ? "text-[13px] text-foreground/72" : "text-[12px] text-foreground/58")}>
+            {hyp.explanation}
+          </p>
 
           {/* Expandable recommendation */}
           <div className="mt-3 pl-10">
@@ -153,7 +157,7 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
               className="flex items-center gap-1.5 text-[11px] text-primary/70 hover:text-primary font-medium transition-colors"
             >
               <ArrowRight className="w-3 h-3" />
-              Рекомендация
+              {isTop ? "Priority recommendation" : "Recommendation"}
               <ChevronDown
                 className={cn("w-3 h-3 transition-transform duration-200", expanded && "rotate-180")}
               />
