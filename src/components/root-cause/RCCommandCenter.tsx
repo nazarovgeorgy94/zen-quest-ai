@@ -199,6 +199,57 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
 };
 
+function TacticalActionRow({
+  index,
+  icon,
+  title,
+  description,
+  right,
+  onClick,
+  highlighted = false,
+}: {
+  index: string;
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  right?: React.ReactNode;
+  onClick?: () => void;
+  highlighted?: boolean;
+}) {
+  const Comp = onClick ? "button" : "div";
+
+  return (
+    <Comp
+      onClick={onClick}
+      className={cn(
+        "group relative flex w-full items-center gap-4 px-4 py-4 text-left transition-all duration-300",
+        onClick && "hover:bg-surface-2/45 active:scale-[0.995]",
+        highlighted && "bg-surface-2/30",
+      )}
+    >
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border/40 bg-surface-2/70 text-muted-foreground transition-colors duration-300 group-hover:border-primary/35 group-hover:text-primary">
+        {icon}
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-mono uppercase tracking-[0.24em] text-muted-foreground/55">
+            {index}
+          </span>
+          <p className="text-sm font-semibold text-foreground">{title}</p>
+        </div>
+        <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+          {description}
+        </p>
+      </div>
+
+      {right ?? (
+        <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground/35 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary" />
+      )}
+    </Comp>
+  );
+}
+
 const RCCommandCenter = ({
   onStartScan,
   onSelectIncident,
@@ -277,94 +328,96 @@ const RCCommandCenter = ({
           </motion.div>
         </motion.div>
 
-        {/* Action cards */}
+        {/* Command monolith */}
         <motion.div
           variants={stagger}
           initial="hidden"
           animate="visible"
-          className="space-y-2"
+          className="overflow-hidden rounded-2xl border border-border/25 bg-surface-1/55 shadow-[0_24px_80px_-40px_hsl(var(--background)/0.95)] backdrop-blur-md"
         >
-          {/* Scan System — primary CTA */}
-          <motion.button variants={fadeUp}
-            onClick={onStartScan}
-            className="group w-full relative rounded-xl overflow-hidden text-left transition-transform duration-200 hover:-translate-y-0.5 active:scale-[0.99]"
-          >
-            <div className="absolute inset-0 rounded-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"
-              style={{
-                background: "linear-gradient(135deg, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.15), hsl(var(--cyan-pop) / 0.2))",
-              }} />
-            <div className="absolute inset-[1px] rounded-[11px] bg-surface-0/95 group-hover:bg-surface-0/90 transition-colors duration-300" />
-            <div className="relative flex items-center gap-4 px-5 py-3.5">
-              <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-primary/20 group-hover:border-primary/40 transition-colors duration-300"
-                style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--accent) / 0.08))" }}>
-                <Radar className="w-4.5 h-4.5 text-primary" />
+          <motion.div variants={fadeUp} className="px-4 py-3 text-left">
+            <div className="flex items-center justify-between gap-3 border-b border-border/20 pb-3">
+              <div>
+                <p className="text-[10px] font-mono uppercase tracking-[0.28em] text-muted-foreground/55">
+                  Tactical stack
+                </p>
+                <p className="mt-1 text-sm font-medium text-foreground/88">
+                  Три команды в едином command monolith
+                </p>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">Сканировать систему</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Глубокий анализ всех сервисов</p>
+              <div className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[10px] font-mono uppercase tracking-[0.2em] text-primary">
+                Ready
               </div>
-              <ArrowRight className="w-4 h-4 text-primary/40 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
             </div>
-          </motion.button>
+          </motion.div>
 
-          {/* Enter Incident ID */}
-          <motion.div variants={fadeUp}
-            className="w-full rounded-xl bg-surface-1/40 backdrop-blur-sm border border-border/15 hover:border-border/30 transition-all duration-200 overflow-hidden"
-          >
+          <div className="divide-y divide-border/15">
+            <motion.div variants={fadeUp}>
+              <TacticalActionRow
+                index="01"
+                icon={<Radar className="h-4 w-4" />}
+                title="Scan system"
+                description="Глубокий проход по сервисам, цепочкам сигналов и аномалиям в реальном времени"
+                onClick={onStartScan}
+                highlighted
+              />
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="bg-surface-1/20">
             {showInput ? (
-              <div className="flex items-center gap-2 px-4 py-3">
-                <Hash className="w-4 h-4 text-primary/60 shrink-0" />
-                <input ref={inputRef} value={incidentInput}
+              <div className="flex items-center gap-3 px-4 py-4">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border/40 bg-surface-2/70 text-primary">
+                  <Hash className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.24em] text-muted-foreground/55">02</span>
+                    <p className="text-sm font-semibold text-foreground">Open incident</p>
+                  </div>
+                  <input ref={inputRef} value={incidentInput}
                   onChange={(e) => { setIncidentInput(e.target.value.toUpperCase()); setInputError(""); }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleSubmitId();
                     if (e.key === "Escape") { setShowInput(false); setIncidentInput(""); setInputError(""); }
                   }}
                   placeholder="INC-XXXX"
-                  className="flex-1 bg-transparent text-sm text-foreground font-mono placeholder:text-muted-foreground/50 outline-none"
+                  className="w-full border-0 bg-transparent p-0 text-sm text-foreground font-mono placeholder:text-muted-foreground/45 outline-none"
                 />
+                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                    Прямой вход в диагностику по точному номеру инцидента
+                  </p>
+                  {inputError && <p className="pt-2 text-xs text-destructive">{inputError}</p>}
+                </div>
                 <button onClick={handleSubmitId} disabled={!incidentInput.trim()}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-primary-foreground disabled:opacity-30 transition-all"
+                  className="rounded-lg border border-primary/30 bg-primary/12 px-3 py-2 text-xs font-medium text-primary disabled:opacity-30 transition-all hover:bg-primary/18"
                   style={{
-                    background: incidentInput.trim()
-                      ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))"
-                      : "hsl(var(--border))",
+                    boxShadow: incidentInput.trim() ? "var(--shadow-glow)" : "none",
                   }}>
                   Найти
                 </button>
               </div>
             ) : (
-              <button
+              <TacticalActionRow
+                index="02"
+                icon={<Hash className="h-4 w-4" />}
+                title="Open incident"
+                description="Прямой переход в карточку расследования по номеру инцидента"
                 onClick={() => setShowInput(true)}
-                className="group w-full flex items-center gap-4 px-5 py-3.5 text-left"
-              >
-                <div className="w-9 h-9 rounded-lg bg-surface-2/60 flex items-center justify-center shrink-0 group-hover:bg-surface-2 transition-colors duration-200">
-                  <Hash className="w-4.5 h-4.5 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">Ввести ID инцидента</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">Прямой переход по номеру INC-XXXX</p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-foreground/60 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
-              </button>
+              />
             )}
-            {inputError && <p className="text-xs text-destructive px-5 pb-2">{inputError}</p>}
-          </motion.div>
+            </motion.div>
 
-          {/* Browse */}
-          <motion.button variants={fadeUp}
-            onClick={onHighlightSidebar}
-            className="group w-full flex items-center gap-4 px-5 py-3.5 rounded-xl bg-surface-1/40 hover:bg-surface-1/60 backdrop-blur-sm border border-border/15 hover:border-border/30 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.99] text-left"
-          >
-            <div className="w-9 h-9 rounded-lg bg-surface-2/60 flex items-center justify-center shrink-0 group-hover:bg-surface-2 transition-colors duration-300">
-              <Search className="w-4.5 h-4.5 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground">Найти инцидент</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">Поиск и фильтрация по всем инцидентам</p>
-            </div>
-            <kbd className="text-[10px] text-muted-foreground/60 bg-surface-2/50 px-1.5 py-0.5 rounded font-mono shrink-0 border border-border/20">⌘K</kbd>
-          </motion.button>
+            <motion.div variants={fadeUp}>
+              <TacticalActionRow
+                index="03"
+                icon={<Search className="h-4 w-4" />}
+                title="Search archive"
+                description="Поиск по истории инцидентов, фильтрам и заархивированным расследованиям"
+                onClick={onHighlightSidebar}
+                right={<kbd className="shrink-0 rounded border border-border/20 bg-surface-2/50 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/60">⌘K</kbd>}
+              />
+            </motion.div>
+          </div>
         </motion.div>
 
         {/* Recent incidents */}
