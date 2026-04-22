@@ -73,8 +73,14 @@ function NeuralShieldLogo() {
 function LiveDot() {
   return (
     <span className="relative flex h-2 w-2">
-      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+      <span
+        className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+        style={{ background: "hsl(var(--primary))" }}
+      />
+      <span
+        className="relative inline-flex rounded-full h-2 w-2"
+        style={{ background: "hsl(var(--primary))" }}
+      />
     </span>
   );
 }
@@ -171,17 +177,27 @@ const RCSidebar = ({
 
       {/* Logo */}
       <div className="relative z-10 p-4 pb-3">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-start gap-3">
           <NeuralShieldLogo />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-[9px] uppercase tracking-[0.24em] text-muted-foreground/55 mb-1">
-                  Incident Intel
+          <div className="w-full min-w-0 space-y-2.5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 space-y-1">
+                <p className="text-[9px] font-mono uppercase tracking-[0.32em] text-muted-foreground/55">
+                  INCIDENT INTEL // RCA-01
                 </p>
-                <h1 className="text-sm font-semibold text-foreground tracking-tight truncate">
-                  Root Cause Agent
-                </h1>
+                <div className="space-y-0.5">
+                  <h1 className="text-[15px] font-semibold uppercase tracking-[0.18em] text-foreground leading-none">
+                    ROOT CAUSE
+                  </h1>
+                  <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.24em] text-muted-foreground/78">
+                    <span>AGENT</span>
+                    <span
+                      className="h-px flex-1"
+                      style={{ background: "linear-gradient(90deg, hsl(var(--primary) / 0.5), hsl(var(--accent) / 0.08))" }}
+                    />
+                    <span>ACTIVE</span>
+                  </div>
+                </div>
               </div>
               <div
                 className="shrink-0 px-2 py-1 rounded-full text-[9px] font-medium"
@@ -194,9 +210,11 @@ const RCSidebar = ({
                 {active.length} live
               </div>
             </div>
-            <div className="flex items-center gap-1.5 mt-1.5">
+            <div className="flex items-center gap-1.5">
               <LiveDot />
-              <p className="text-[10px] text-muted-foreground">Мониторинг активен</p>
+              <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-muted-foreground">
+                MONITORING ACTIVE
+              </p>
             </div>
           </div>
         </div>
