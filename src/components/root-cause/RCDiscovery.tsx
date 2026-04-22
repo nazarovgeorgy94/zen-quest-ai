@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import {
   mockServices,
   mockIncidents,
+  scanLogs,
   SystemService,
   getSeverityColor,
 } from "@/lib/mockIncidents";
@@ -24,62 +25,6 @@ interface RCDiscoveryProps {
 }
 
 type ScanPhase = "scanning" | "complete";
-
-const scanLogs: Record<string, string[]> = {
-  "payment-gateway": [
-    "Connecting to payment-gateway:8443...",
-    "TLS handshake OK. Checking health endpoint...",
-    "⚠ P99 latency 12.4s — exceeds threshold (500ms)",
-    "→ Anomaly detected: connection pool saturation",
-  ],
-  "aml-scoring": [
-    "Connecting to aml-scoring:9090...",
-    "Health check passed. Validating feature store freshness...",
-    "⚠ Feature store stale: last update 3h 12m ago",
-    "→ Anomaly detected: Kafka consumer lag",
-  ],
-  "velocity-engine": [
-    "Connecting to velocity-engine:8080...",
-    "Health OK. Checking rule execution metrics...",
-    "⚠ False positive rate 8.7% — above baseline 2.1%",
-    "→ Anomaly detected: event deduplication failure",
-  ],
-  "bin-lookup": [
-    "Connecting to bin-lookup:8080...",
-    "Health OK. Verifying BIN database sync...",
-    "ℹ Last sync: 12h ago. Minor drift detected.",
-  ],
-  "session-store": [
-    "Connecting to redis-cluster:6379...",
-    "Cluster health OK. Memory: 61% used.",
-    "✓ All nodes responsive.",
-  ],
-  "3ds-gateway": [
-    "Connecting to 3ds-gateway:443...",
-    "Health OK. Checking provider connectivity...",
-    "✓ Visa OK, Mastercard OK.",
-  ],
-  "webhook-dispatcher": [
-    "Connecting to webhook-dispatcher:8080...",
-    "Health OK. Queue depth: 0.",
-    "✓ All webhooks delivered.",
-  ],
-  "fraud-scorer": [
-    "Connecting to fraud-scorer-ml:5000...",
-    "Model inference check OK. Latency: 67ms.",
-    "✓ Model v3.2.1 loaded.",
-  ],
-  "card-tokenizer": [
-    "Connecting to card-tokenizer:8443...",
-    "HSM connectivity OK. Token generation: 5ms.",
-    "✓ PCI DSS compliance check passed.",
-  ],
-  "kyc-service": [
-    "Connecting to kyc-service:8080...",
-    "Provider API check OK. Latency: 120ms.",
-    "✓ Document verification pipeline operational.",
-  ],
-};
 
 /* ── Advanced Radar ── */
 function ScanRadar({
