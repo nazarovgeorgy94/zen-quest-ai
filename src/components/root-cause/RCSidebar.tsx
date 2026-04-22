@@ -16,7 +16,6 @@ interface RCSidebarProps {
   onOpenSearch: () => void;
   lastScanTime: Date | null;
   isScanning: boolean;
-  isInitiating?: boolean;
 }
 
 function SeverityIcon({ severity }: { severity: string }) {
@@ -101,7 +100,6 @@ const RCSidebar = ({
   onOpenSearch,
   lastScanTime,
   isScanning,
-  isInitiating = false,
 }: RCSidebarProps) => {
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>("all");
   const [showResolved, setShowResolved] = useState(false);
@@ -153,19 +151,13 @@ const RCSidebar = ({
   return (
     <motion.aside
       initial={{ opacity: 0, x: -24 }}
-      animate={{
-        opacity: 1,
-        x: 0,
-        scaleX: isInitiating ? [1, 1.01, 1] : 1,
-        filter: isInitiating ? ["brightness(0.92)", "brightness(1.08)", "brightness(1)"] : "brightness(1)",
-      }}
-      transition={{ duration: isInitiating ? 0.8 : 0.5, ease: [0.16, 1, 0.3, 1] }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="shrink-0 h-screen flex flex-col relative overflow-hidden"
       style={{
         width: "var(--sidebar-width, 18rem)",
         background: "hsl(var(--surface-0))",
         borderRight: "1px solid hsl(var(--border) / 0.5)",
-        transformOrigin: "left center",
       }}
     >
       {/* Ambient — статичный градиент без blur (производительность) */}
@@ -176,30 +168,6 @@ const RCSidebar = ({
             "radial-gradient(ellipse 80% 30% at 0% 0%, hsl(var(--primary) / 0.06), transparent 70%), radial-gradient(ellipse 60% 30% at 100% 100%, hsl(var(--accent) / 0.04), transparent 70%)",
         }}
       />
-      {isInitiating && (
-        <motion.div
-          className="absolute inset-0 pointer-events-none z-0"
-          style={{
-            background:
-              "linear-gradient(180deg, hsl(var(--primary) / 0.08), transparent 22%, transparent 78%, hsl(var(--accent) / 0.06))",
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.65, 0.14] }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        />
-      )}
-      {isInitiating && (
-        <motion.div
-          className="absolute left-0 top-0 bottom-0 w-px pointer-events-none z-0"
-          style={{
-            background: "linear-gradient(180deg, transparent, hsl(var(--primary) / 0.9), transparent)",
-            boxShadow: "0 0 14px hsl(var(--primary) / 0.35)",
-          }}
-          initial={{ opacity: 0, y: -32 }}
-          animate={{ opacity: [0, 1, 0.15], y: [-32, 24, 120] }}
-          transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
-        />
-      )}
 
       {/* Logo */}
       <div className="relative z-10 p-4 pb-3">
