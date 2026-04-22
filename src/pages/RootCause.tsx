@@ -124,6 +124,7 @@ const RootCause = () => {
   const [lastScanTime, setLastScanTime] = useState<Date | null>(null);
   const [scanComplete, setScanComplete] = useState(false);
   const [isInitiatingScan, setIsInitiatingScan] = useState(false);
+  const discoveryActivated = mode === "discovery" && !isInitiatingScan;
 
   const selectedIncident =
     mockIncidents.find((i) => i.id === selectedId) || null;
@@ -240,15 +241,16 @@ const RootCause = () => {
             <motion.div
               key="discovery"
               initial={{ opacity: 0, x: 18, scale: 0.985 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
+              animate={{ opacity: discoveryActivated ? 1 : 0.24, x: discoveryActivated ? 0 : 12, scale: discoveryActivated ? 1 : 0.992 }}
               exit={{ opacity: 0, x: -30 }}
-              transition={{ duration: 0.55, delay: isInitiatingScan ? 0.2 : 0, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.55, delay: discoveryActivated ? 0.08 : 0, ease: [0.16, 1, 0.3, 1] }}
               className="flex-1"
             >
               <RCDiscovery
                 onSelectIncident={handleSelectIncident}
                 onCancel={handleNewChat}
                 onScanComplete={handleScanComplete}
+                isActivated={discoveryActivated}
               />
             </motion.div>
           )}
