@@ -123,6 +123,8 @@ const RCSidebar = ({
   );
 
   const criticalCount = active.filter((i) => i.severity === "critical").length;
+  const highCount = active.filter((i) => i.severity === "high").length;
+  const selectedIncident = incidents.find((incident) => incident.id === selectedId) ?? null;
 
   // Update "ago" text every 30s
   const [, setTick] = useState(0);
@@ -162,15 +164,37 @@ const RCSidebar = ({
 
       {/* Logo */}
       <div className="relative z-10 p-4 pb-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 rounded-2xl border border-border/30 bg-surface-1/55 px-3 py-3 backdrop-blur-sm shadow-[0_10px_30px_-18px_hsl(var(--foreground)/0.35)]">
           <NeuralShieldLogo />
           <div className="flex-1 min-w-0">
-            <h1 className="text-sm font-semibold text-foreground tracking-tight">
-              Root Cause Agent
-            </h1>
+            <div className="flex items-center justify-between gap-2">
+              <h1 className="text-sm font-semibold text-foreground tracking-tight">
+                Root Cause Agent
+              </h1>
+              <span className="rounded-full border border-border/30 bg-surface-2/75 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.18em] text-muted-foreground">
+                Live
+              </span>
+            </div>
             <div className="flex items-center gap-1.5 mt-0.5">
               <LiveDot />
               <p className="text-[10px] text-muted-foreground">Мониторинг активен</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="rounded-xl border border-border/25 bg-surface-1/45 px-3 py-2.5">
+            <p className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Critical</p>
+            <div className="mt-1 flex items-end justify-between gap-2">
+              <span className="text-lg font-mono font-semibold leading-none text-foreground">{criticalCount}</span>
+              <span className="text-[10px] text-muted-foreground">live</span>
+            </div>
+          </div>
+          <div className="rounded-xl border border-border/25 bg-surface-1/45 px-3 py-2.5">
+            <p className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Selected</p>
+            <div className="mt-1 flex items-end justify-between gap-2">
+              <span className="max-w-[5.5rem] truncate text-sm font-mono font-semibold leading-none text-foreground">{selectedIncident?.id ?? "—"}</span>
+              <span className="text-[10px] text-muted-foreground">{selectedIncident?.severity ?? "none"}</span>
             </div>
           </div>
         </div>
@@ -238,6 +262,17 @@ const RCSidebar = ({
           </div>
         </div>
 
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-xl border border-border/20 bg-surface-1/40 px-3 py-2">
+            <p className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">High</p>
+            <p className="mt-1 text-sm font-mono font-semibold text-foreground">{highCount}</p>
+          </div>
+          <div className="rounded-xl border border-border/20 bg-surface-1/40 px-3 py-2">
+            <p className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">Coverage</p>
+            <p className="mt-1 text-sm font-mono font-semibold text-foreground">{Math.min(100, Math.round((active.length / 8) * 100))}%</p>
+          </div>
+        </div>
+
         {/* Last scan status */}
         <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
           style={{ background: "hsl(var(--surface-1) / 0.6)", border: "1px solid hsl(var(--border) / 0.2)" }}>
@@ -276,16 +311,16 @@ const RCSidebar = ({
       </div>
 
       {/* Severity filter chips */}
-      <div className="relative z-10 px-3 pt-2 pb-1.5 flex items-center gap-1.5">
-        <Filter className="w-3 h-3 text-muted-foreground/50 shrink-0" />
+      <div className="relative z-10 px-3 pt-2 pb-1.5 flex items-center gap-1.5 rounded-xl mx-3 bg-surface-1/30 border border-border/15">
+        <Filter className="w-3 h-3 text-muted-foreground/50 shrink-0 ml-2" />
         {severityFilters.map((f) => (
           <button
             key={f.value}
             onClick={() => setSeverityFilter(f.value)}
             className={cn(
-              "text-[10px] font-medium px-2 py-1 rounded-md transition-all duration-200",
+              "text-[10px] font-medium px-2 py-1 rounded-lg transition-all duration-200 my-1",
               severityFilter === f.value
-                ? "bg-primary/15 text-primary"
+                ? "bg-primary/15 text-primary shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.18)]"
                 : "text-muted-foreground/60 hover:text-muted-foreground hover:bg-surface-1"
             )}
           >
