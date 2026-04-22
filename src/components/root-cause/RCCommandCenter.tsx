@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Radar, Hash, ArrowRight, Search, AlertTriangle, Clock, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mockIncidents, getSeverityColor, getRelativeTime } from "@/lib/mockIncidents";
@@ -208,7 +208,10 @@ const RCCommandCenter = ({
   const [showInput, setShowInput] = useState(false);
   const [inputError, setInputError] = useState("");
   const [orbHovered, setOrbHovered] = useState(false);
+  const [panelPinned, setPanelPinned] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const panelExpanded = orbHovered || panelPinned || showInput || Boolean(incidentInput.trim());
 
   useEffect(() => {
     if (showInput) inputRef.current?.focus();
@@ -243,37 +246,116 @@ const RCCommandCenter = ({
           background: "radial-gradient(ellipse at 50% 40%, hsl(var(--primary) / 0.04) 0%, transparent 60%)",
         }} />
 
-      <div className="relative z-10 text-center w-full px-6 max-w-md xl:max-w-xl 2xl:max-w-2xl [@media(min-width:2400px)]:max-w-3xl">
-        {/* Orb */}
+      <div className="relative z-10 w-full px-6 max-w-md xl:max-w-xl 2xl:max-w-2xl [@media(min-width:2400px)]:max-w-3xl">
         <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, scale: 0.92, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           onMouseEnter={() => setOrbHovered(true)}
           onMouseLeave={() => setOrbHovered(false)}
-          className="cursor-pointer"
+          className="mb-5"
         >
-          <HeroOrb isHovered={orbHovered} />
-        </motion.div>
+          <motion.div
+            layout
+            transition={{ layout: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } }}
+            className="relative overflow-hidden border border-border/20 bg-surface-1/35"
+            animate={{
+              borderRadius: panelExpanded ? 28 : 999,
+              paddingTop: panelExpanded ? 18 : 0,
+              paddingRight: panelExpanded ? 18 : 0,
+              paddingBottom: panelExpanded ? 18 : 0,
+              paddingLeft: panelExpanded ? 18 : 0,
+            }}
+            style={{
+              boxShadow: panelExpanded
+                ? "0 18px 48px -24px hsl(var(--primary) / 0.35), inset 0 1px 0 hsl(var(--border) / 0.18)"
+                : "0 0 0 1px hsl(var(--border) / 0.06)",
+            }}
+          >
+            <div
+              className="absolute inset-0 opacity-90 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 18%, hsl(var(--primary) / 0.16) 0%, transparent 34%), linear-gradient(135deg, hsl(var(--surface-1) / 0.84), hsl(var(--surface-0) / 0.94))",
+              }}
+            />
+            <div
+              className="absolute inset-0 opacity-70 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(135deg, hsl(var(--primary) / 0.08), transparent 34%, transparent 72%, hsl(var(--accent) / 0.08))",
+              }}
+            />
 
-        {/* Title + Stats */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          animate="visible"
-          className="mt-6 mb-6"
-        >
-          <motion.h2 variants={fadeUp}
-            className="text-xl font-bold text-foreground tracking-tight">
-            Root Cause Agent
-          </motion.h2>
-          <motion.p variants={fadeUp}
-            className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-sm mx-auto">
-            AI-диагностика инцидентов и анализ первопричин
-          </motion.p>
+            <div className={cn("relative", panelExpanded ? "text-left" : "text-center") }>
+              <motion.div
+                layout
+                transition={{ layout: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } }}
+                className={cn(
+                  "flex items-center gap-4",
+                  panelExpanded ? "justify-start" : "justify-center"
+                )}
+              >
+                <motion.button
+                  type="button"
+                  onClick={() => setPanelPinned((prev) => !prev)}
+                  className="relative shrink-0 cursor-pointer rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  animate={{ scale: panelExpanded ? 0.9 : 1 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                >
+                  <HeroOrb isHovered={panelExpanded} />
+                </motion.button>
 
-          <motion.div variants={fadeUp} className="mt-4">
-            <QuickStats />
+                <AnimatePresence initial={false}>
+                  {panelExpanded && (
+                    <motion.div
+                      key="orb-panel-copy"
+                      initial={{ opacity: 0, x: 16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 8 }}
+                      transition={{ duration: 0.28, ease: "easeOut" }}
+                      className="min-w-0 flex-1"
+                    >
+                      <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                        <span className="text-primary/90">Command Panel</span>
+                        <span className="text-border">•</span>
+                        <span>Orb synced</span>
+                      </div>
+                      <h2 className="mt-2 text-xl font-bold tracking-tight text-foreground">
+                        Root Cause Agent
+                      </h2>
+                      <p className="mt-1 max-w-md text-sm leading-relaxed text-muted-foreground">
+                        AI-диагностика инцидентов и анализ первопричин
+                      </p>
+                      <div className="mt-4 rounded-2xl border border-border/20 bg-surface-2/45 px-4 py-3">
+                        <QuickStats />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              <AnimatePresence initial={false}>
+                {!panelExpanded && (
+                  <motion.div
+                    key="orb-caption"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.24, ease: "easeOut" }}
+                    className="mt-6 text-center"
+                  >
+                    <p className="text-xl font-bold tracking-tight text-foreground">Root Cause Agent</p>
+                    <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-muted-foreground">
+                      AI-диагностика инцидентов и анализ первопричин
+                    </p>
+                    <p className="mt-3 text-[10px] uppercase tracking-[0.2em] text-primary/70">
+                      Hover or tap the orb
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </motion.div>
         </motion.div>
 
