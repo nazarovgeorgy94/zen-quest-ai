@@ -31,10 +31,12 @@ function ScanRadar({
   services,
   scannedIndex,
   phase,
+  activeIncidentIds,
 }: {
   services: SystemService[];
   scannedIndex: number;
   phase: ScanPhase;
+  activeIncidentIds: Set<string>;
 }) {
   const isScanning = phase === "scanning";
   const size = 220;
@@ -117,8 +119,10 @@ function ScanRadar({
         const radius = rings[ringIdx] + (i % 2 === 0 ? -5 : 5);
         const x = cx + Math.cos((angle * Math.PI) / 180) * radius;
         const y = cy + Math.sin((angle * Math.PI) / 180) * radius;
-        const nodeSize = svc.status !== "healthy" && isScanned ? 10 : 7;
-        const hasIncident = svc.incidentIds && svc.incidentIds.length > 0;
+        const hasActiveIncident = Boolean(svc.incidentIds?.some((id) => activeIncidentIds.has(id)));
+        const hasAnyIncident = Boolean(svc.incidentIds?.length);
+        const isAlerted = isScanned && hasActiveIncident;
+        const nodeSize = isAlerted || (svc.status !== "healthy" && isScanned) ? 10 : 7;
 
         return (
           <motion.div
@@ -148,7 +152,9 @@ function ScanRadar({
                   x1={0} y1={0}
                   x2={cx - x} y2={cy - y}
                   stroke={
-                    svc.status === "healthy"
+                    hasActiveIncident
+                      ? "hsl(0 68% 52%)"
+                      : svc.status === "healthy"
                       ? "hsl(var(--primary))"
                       : svc.status === "degraded"
                       ? "hsl(45 93% 47%)"
@@ -171,12 +177,16 @@ function ScanRadar({
                 height: nodeSize,
                 background: !isScanned
                   ? "hsl(var(--muted-foreground) / 0.2)"
+                  : hasActiveIncident
+                  ? "hsl(0 68% 52%)"
                   : svc.status === "healthy"
                   ? "hsl(var(--primary))"
                   : svc.status === "degraded"
                   ? "hsl(45 93% 47%)"
                   : "hsl(0 68% 52%)",
-                boxShadow: isScanned && svc.status !== "healthy"
+                boxShadow: isAlerted
+                  ? "0 0 14px hsl(0 68% 52% / 0.55)"
+                  : isScanned && svc.status !== "healthy"
                   ? `0 0 12px ${svc.status === "degraded" ? "hsl(45 93% 47% / 0.4)" : "hsl(0 68% 52% / 0.5)"}`
                   : isScanned
                   ? "0 0 8px hsl(var(--primary) / 0.3)"
@@ -185,12 +195,12 @@ function ScanRadar({
             />
 
             {/* Alert pulse for incidents */}
-            {isScanned && hasIncident && (
+            {isScanned && hasAnyIncident && (
               <motion.div
                 className="absolute rounded-full"
                 style={{
                   inset: -4,
-                  border: `1.5px solid ${svc.status === "degraded" ? "hsl(45 93% 47% / 0.5)" : "hsl(0 68% 52% / 0.5)"}`,
+                  border: `1.5px solid ${hasActiveIncident ? "hsl(0 68% 52% / 0.55)" : svc.status === "degraded" ? "hsl(45 93% 47% / 0.5)" : "hsl(0 68% 52% / 0.32)"}`,
                 }}
                 animate={{ scale: [1, 1.8, 1], opacity: [0.6, 0, 0.6] }}
                 transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }}
@@ -205,7 +215,9 @@ function ScanRadar({
                   top: nodeSize + 4,
                   left: "50%",
                   transform: "translateX(-50%)",
-                  color: svc.status !== "healthy"
+                  color: hasActiveIncident
+                    ? "hsl(0 68% 52%)"
+                    : svc.status !== "healthy"
                     ? svc.status === "degraded" ? "hsl(45 93% 47%)" : "hsl(0 68% 52%)"
                     : "hsl(var(--muted-foreground) / 0.5)",
                 }}
