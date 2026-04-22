@@ -283,66 +283,141 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
         style={{ background: severityAmbient(incident.severity) }}
       />
 
-      {/* Header */}
-      <div className="shrink-0 border-b border-border bg-surface-0/70 backdrop-blur-md relative z-10">
+      {/* Hero Incident Strip */}
+      <div className="shrink-0 border-b border-border/60 bg-surface-0/80 backdrop-blur-md relative z-10 overflow-hidden">
         <div className={cn("h-[2px] w-full shimmer-line", isDiagnosing && "shimmer-active")} />
-        <div className="px-6 py-3 w-full">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className={cn("w-3 h-3 rounded-full", colors.dot)} />
-              {incident.status === "active" && (
-                <div className={cn("absolute inset-[-3px] rounded-full animate-ping opacity-30", colors.dot)} />
-              )}
+        <div
+          className="absolute inset-0 opacity-90"
+          style={{
+            background: `linear-gradient(90deg, ${colors.ambient} 0%, transparent 38%, transparent 62%, ${colors.ambient} 100%)`,
+          }}
+        />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-border/40" />
+
+        <div className="relative px-6 py-4 lg:py-5">
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(26rem,0.95fr)] xl:items-stretch">
+            <div
+              className="relative overflow-hidden rounded-2xl border border-border/40 bg-surface-1/70"
+              style={{ boxShadow: `inset 0 1px 0 hsl(var(--border) / 0.1), 0 0 0 1px hsl(var(--background) / 0.3)` }}
+            >
               <div
-                className="absolute inset-[-8px] rounded-full blur-md opacity-40"
+                className="absolute inset-0 opacity-80"
                 style={{
-                  backgroundColor:
-                    incident.severity === "critical"
-                      ? "hsl(0 60% 50%)"
-                      : incident.severity === "high"
-                      ? "hsl(25 70% 50%)"
-                      : "transparent",
+                  background: `linear-gradient(135deg, ${colors.ambient} 0%, transparent 48%), radial-gradient(circle at 0% 50%, ${colors.ambient} 0%, transparent 45%)`,
                 }}
               />
-            </div>
+              <div className="absolute left-0 top-0 h-full w-px bg-border/60" />
+              <div className="relative p-4 lg:p-5">
+                <div className="flex flex-wrap items-start gap-4">
+                  <div className="relative mt-0.5 shrink-0">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border/40 bg-surface-2/80">
+                      <div className="relative">
+                        <div className={cn("h-3.5 w-3.5 rounded-full", colors.dot)} />
+                        {incident.status === "active" && (
+                          <div className={cn("absolute inset-[-4px] rounded-full animate-ping opacity-25", colors.dot)} />
+                        )}
+                      </div>
+                    </div>
+                    <div
+                      className="absolute inset-[-14px] rounded-[1.35rem] opacity-70"
+                      style={{ background: `radial-gradient(circle, ${colors.ambient} 0%, transparent 72%)` }}
+                    />
+                  </div>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h2 className="text-sm font-semibold text-foreground font-mono">{incident.id}</h2>
-                <span className={cn("text-[9px] font-medium uppercase px-2 py-0.5 rounded-full", colors.bg, colors.text)}>
-                  {incident.severity}
-                </span>
-                <div className="flex items-center gap-1 text-[10px] text-muted-foreground ml-2">
-                  <Clock className="w-3 h-3" />
-                  {getRelativeTime(incident.createdAt)}
+                  <div className="min-w-0 flex-1 space-y-3">
+                    <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                      <span className="text-primary/90">Active Incident</span>
+                      <span className="text-border">•</span>
+                      <span className="font-mono text-foreground/80">{incident.id}</span>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <h2 className="text-lg font-semibold leading-tight text-foreground lg:text-xl xl:text-2xl">
+                          {incident.title}
+                        </h2>
+                        <span className={cn("rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em]", colors.bg, colors.text)}>
+                          {incident.severity}
+                        </span>
+                      </div>
+                      <p className="max-w-4xl text-sm leading-relaxed text-foreground/78 lg:text-[15px]">
+                        {incident.description}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2.5 text-[11px] text-muted-foreground">
+                      <div className="flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2.5 py-1.5">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span>{getRelativeTime(incident.createdAt)}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2.5 py-1.5">
+                        <Server className="h-3.5 w-3.5" />
+                        <span className="font-mono text-foreground/80">{incident.service}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2.5 py-1.5">
+                        <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                        <span>{incident.metrics?.length ? `${incident.metrics.length} live metrics` : "Monitoring active"}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                  <Server className="w-3 h-3" />
-                  {incident.service}
+
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    <span>Anomaly Signal</span>
+                    <span>{isDiagnosing ? "Analysis in progress" : "Incident context locked"}</span>
+                  </div>
+                  <div className="relative h-2 overflow-hidden rounded-full bg-surface-3/80">
+                    <div
+                      className="absolute inset-y-0 left-0 rounded-full"
+                      style={{
+                        width: incident.severity === "critical" ? "88%" : incident.severity === "high" ? "74%" : incident.severity === "medium" ? "56%" : "34%",
+                        background: `linear-gradient(90deg, hsl(var(--primary) / 0.35), ${colors.stripe})`,
+                      }}
+                    />
+                    <div
+                      className="absolute inset-y-0 w-24 opacity-80"
+                      style={{
+                        left: incident.severity === "critical" ? "72%" : incident.severity === "high" ? "60%" : incident.severity === "medium" ? "42%" : "22%",
+                        background: "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.22), transparent)",
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-0.5 truncate">{incident.title}</p>
             </div>
 
-            {incident.metrics && (
-              <div className="flex items-center gap-2">
+            {incident.metrics && incident.metrics.length > 0 && (
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-3">
                 {incident.metrics.map((m) => (
                   <div
                     key={m.label}
-                    className="px-3 py-1.5 rounded-lg bg-surface-1/60 backdrop-blur-sm border border-border/20 flex items-center gap-2.5"
+                    className="relative overflow-hidden rounded-2xl border border-border/40 bg-surface-1/70 px-4 py-3.5"
                   >
-                    <div>
-                      <p className="text-[9px] text-muted-foreground">{m.label}</p>
-                      <p className="text-xs font-mono font-bold text-foreground">{m.value}</p>
+                    <div
+                      className="absolute inset-0 opacity-70"
+                      style={{ background: `linear-gradient(135deg, ${colors.ambient} 0%, transparent 55%)` }}
+                    />
+                    <div className="relative flex items-center gap-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                          {m.label}
+                        </p>
+                        <p className="mt-1 text-xl font-bold font-mono leading-none text-foreground">
+                          {m.value}
+                        </p>
+                      </div>
+                      {m.sparkline && (
+                        <div className="rounded-xl border border-border/30 bg-surface-2/60 px-2.5 py-2">
+                          <Sparkline
+                            data={m.sparkline}
+                            width={74}
+                            height={24}
+                            color={m.color || "hsl(var(--primary))"}
+                          />
+                        </div>
+                      )}
                     </div>
-                    {m.sparkline && (
-                      <Sparkline
-                        data={m.sparkline}
-                        width={52}
-                        height={18}
-                        color={m.color || "hsl(var(--primary))"}
-                      />
-                    )}
                   </div>
                 ))}
               </div>
@@ -354,40 +429,6 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
       {/* Chat area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto relative z-10">
         <div className="w-full px-6 py-5 space-y-4">
-        {/* Incident brief card */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative p-4 rounded-xl overflow-hidden"
-        >
-          <div
-            className="absolute inset-0 rounded-xl opacity-60"
-            style={{
-              background: `linear-gradient(135deg, ${
-                incident.severity === "critical"
-                  ? "hsl(0 50% 40% / 0.15)"
-                  : incident.severity === "high"
-                  ? "hsl(25 60% 45% / 0.12)"
-                  : "hsl(var(--primary) / 0.08)"
-              }, transparent)`,
-            }}
-          />
-          <div className="absolute inset-[1px] rounded-[11px] bg-surface-1/90 backdrop-blur-sm" />
-          <div className="relative flex items-start gap-3">
-            <AlertCircle
-              className={cn(
-                "w-4 h-4 mt-0.5 shrink-0",
-                incident.severity === "critical"
-                  ? "text-destructive"
-                  : incident.severity === "high"
-                  ? "text-warning"
-                  : "text-primary"
-              )}
-            />
-            <p className="text-sm text-foreground/80 leading-relaxed">{incident.description}</p>
-          </div>
-        </motion.div>
-
         {/* Diagnosis timeline */}
         {(isDiagnosing || hypotheses.length > 0) && (
           <DiagnosisTimeline
