@@ -293,8 +293,8 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
         />
         <div className="absolute inset-x-0 bottom-0 h-px bg-border/40" />
 
-        <div className="relative px-6 py-3">
-          <div className="grid gap-3 xl:grid-cols-[minmax(0,1.6fr)_minmax(24rem,0.9fr)] xl:items-stretch">
+        <div className="relative px-3 py-2 sm:px-4 sm:py-2.5 lg:px-6 lg:py-3">
+          <div className="grid gap-2 lg:gap-3 xl:grid-cols-[minmax(0,1.6fr)_minmax(24rem,0.9fr)] xl:items-stretch">
             <div
               className="relative overflow-hidden rounded-2xl border border-border/40 bg-surface-1/70"
               style={{ boxShadow: `inset 0 1px 0 hsl(var(--border) / 0.1), 0 0 0 1px hsl(var(--background) / 0.3)` }}
@@ -306,10 +306,10 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                 }}
               />
               <div className="absolute left-0 top-0 h-full w-px bg-border/60" />
-              <div className="relative p-3.5 lg:p-4">
-                <div className="flex flex-wrap items-start gap-3">
+              <div className="relative p-2.5 sm:p-3 lg:p-4">
+                <div className="flex items-start gap-2.5 sm:gap-3">
                   <div className="relative mt-0.5 shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/40 bg-surface-2/80">
+                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-border/40 bg-surface-2/80">
                       <div className="relative">
                         <div className={cn("h-3 w-3 rounded-full", colors.dot)} />
                         {incident.status === "active" && (
@@ -323,28 +323,28 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                     />
                   </div>
 
-                  <div className="min-w-0 flex-1 space-y-2">
-                    <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <div className="min-w-0 flex-1 space-y-1.5 sm:space-y-2">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.18em] text-muted-foreground">
                       <span className="text-primary/90">Active Incident</span>
                       <span className="text-border">•</span>
                       <span className="font-mono text-foreground/80">{incident.id}</span>
                     </div>
 
-                    <div className="space-y-1.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-base font-semibold leading-tight text-foreground lg:text-lg xl:text-[1.35rem]">
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-start gap-1.5 sm:gap-2">
+                        <h2 className="text-[15px] font-semibold leading-[1.15] text-foreground sm:text-base lg:text-lg xl:text-[1.35rem]">
                           {incident.title}
                         </h2>
-                        <span className={cn("rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em]", colors.bg, colors.text)}>
+                        <span className={cn("rounded-full px-1.5 py-0.5 text-[8px] sm:text-[9px] font-semibold uppercase tracking-[0.16em] sm:tracking-[0.18em]", colors.bg, colors.text)}>
                           {incident.severity}
                         </span>
                       </div>
-                      <p className="max-w-4xl text-xs leading-relaxed text-foreground/78 line-clamp-2 lg:text-[13px]">
+                      <p className="max-w-4xl text-[11px] leading-relaxed text-foreground/78 line-clamp-2 sm:text-xs lg:text-[13px]">
                         {incident.description}
                       </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] text-muted-foreground">
                       <div className="flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2 py-1">
                         <Clock className="h-3 w-3" />
                         <span>{getRelativeTime(incident.createdAt)}</span>
@@ -353,7 +353,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                         <Server className="h-3 w-3" />
                         <span className="font-mono text-foreground/80">{incident.service}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2 py-1">
+                      <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2 py-1">
                         <TrendingUp className="h-3 w-3 text-primary" />
                         <span>{incident.metrics?.length ? `${incident.metrics.length} live metrics` : "Monitoring active"}</span>
                       </div>
@@ -361,10 +361,10 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                   </div>
                 </div>
 
-                <div className="mt-3 space-y-1.5">
-                  <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.18em] text-muted-foreground">
+                <div className="mt-2.5 space-y-1 sm:space-y-1.5">
+                  <div className="flex items-center justify-between gap-3 text-[8px] sm:text-[9px] uppercase tracking-[0.16em] sm:tracking-[0.18em] text-muted-foreground">
                     <span>Anomaly Signal</span>
-                    <span>{isDiagnosing ? "Analysis in progress" : "Incident context locked"}</span>
+                    <span className="truncate text-right">{isDiagnosing ? "Analysis in progress" : "Incident context locked"}</span>
                   </div>
                   <div className="relative h-1.5 overflow-hidden rounded-full bg-surface-3/80">
                     <div
@@ -387,11 +387,11 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
             </div>
 
             {incident.metrics && incident.metrics.length > 0 && (
-              <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-3">
+              <div className="grid gap-2 grid-cols-2 xl:grid-cols-1 2xl:grid-cols-3">
                 {incident.metrics.map((m) => (
                   <div
                     key={m.label}
-                    className="relative overflow-hidden rounded-xl border border-border/40 bg-surface-1/70 px-3 py-2.5"
+                    className="relative overflow-hidden rounded-xl border border-border/40 bg-surface-1/70 px-2.5 py-2 sm:px-3 sm:py-2.5"
                   >
                     <div
                       className="absolute inset-0 opacity-70"
@@ -399,18 +399,18 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
                     />
                     <div className="relative flex items-center gap-2.5">
                       <div className="min-w-0 flex-1">
-                        <p className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+                        <p className="text-[8px] sm:text-[9px] uppercase tracking-[0.14em] sm:tracking-[0.16em] text-muted-foreground">
                           {m.label}
                         </p>
-                        <p className="mt-0.5 text-lg font-bold font-mono leading-none text-foreground">
+                        <p className="mt-0.5 text-base sm:text-lg font-bold font-mono leading-none text-foreground">
                           {m.value}
                         </p>
                       </div>
                       {m.sparkline && (
-                        <div className="rounded-lg border border-border/30 bg-surface-2/60 px-2 py-1.5">
+                        <div className="rounded-lg border border-border/30 bg-surface-2/60 px-1.5 py-1 sm:px-2 sm:py-1.5">
                           <Sparkline
                             data={m.sparkline}
-                            width={64}
+                            width={52}
                             height={18}
                             color={m.color || "hsl(var(--primary))"}
                           />
