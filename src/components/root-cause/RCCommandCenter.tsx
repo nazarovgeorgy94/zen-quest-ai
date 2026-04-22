@@ -15,27 +15,30 @@ const smoothSpring = { type: "spring" as const, stiffness: 60, damping: 20, mass
 
 /* ── Hero Orb ── */
 function HeroOrb({ isHovered }: { isHovered: boolean }) {
+  const orbitNodes = [18, 142, 224, 304];
+  const spikeAngles = [22, 118, 198, 286];
+
   return (
-    <div className="relative w-28 h-28 mx-auto">
+    <div className="relative w-32 h-32 mx-auto">
       {/* Outer glow */}
       <motion.div
-        className="absolute inset-[-24px] rounded-full blur-[50px]"
+        className="absolute inset-[-26px] rounded-full blur-[54px]"
         style={{
           background:
             "radial-gradient(circle, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.08), transparent)",
         }}
         animate={{
-          scale: isHovered ? 1.25 : [1, 1.1, 1],
-          opacity: isHovered ? 1 : [0.5, 0.7, 0.5],
+          scale: isHovered ? 1.22 : [1, 1.08, 1],
+          opacity: isHovered ? 0.95 : [0.45, 0.68, 0.45],
         }}
         transition={isHovered ? { duration: 0.5 } : { duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Ring */}
+      {/* Reticle ring */}
       <motion.div
-        className="absolute inset-[-8px]"
+        className="absolute inset-[-10px]"
         animate={{ rotate: 360 }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
       >
         <svg viewBox="0 0 160 160" className="w-full h-full">
           <defs>
@@ -47,26 +50,104 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
           </defs>
           <circle cx="80" cy="80" r="76" fill="none" stroke="url(#orbRing)"
             strokeWidth={1} strokeDasharray="6 12 3 10" />
+          <circle cx="80" cy="80" r="62" fill="none" stroke="hsl(var(--border) / 0.28)"
+            strokeWidth={1} strokeDasharray="3 8" />
+          {spikeAngles.map((angle, i) => {
+            const radians = (angle * Math.PI) / 180;
+            const x1 = 80 + Math.cos(radians) * 66;
+            const y1 = 80 + Math.sin(radians) * 66;
+            const x2 = 80 + Math.cos(radians) * 80;
+            const y2 = 80 + Math.sin(radians) * 80;
+            return (
+              <line
+                key={i}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke={i % 2 === 0 ? "hsl(var(--primary) / 0.45)" : "hsl(var(--accent) / 0.35)"}
+                strokeWidth={1}
+                strokeLinecap="round"
+              />
+            );
+          })}
         </svg>
+      </motion.div>
+
+      {/* Orbit markers */}
+      <motion.div
+        className="absolute inset-0"
+        animate={{ rotate: -360 }}
+        transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+      >
+        {orbitNodes.map((angle, i) => {
+          const radians = (angle * Math.PI) / 180;
+          const radius = i % 2 === 0 ? 52 : 46;
+          const x = 64 + Math.cos(radians) * radius;
+          const y = 64 + Math.sin(radians) * radius;
+
+          return (
+            <motion.div
+              key={angle}
+              className="absolute"
+              style={{ left: x - 3, top: y - 3 }}
+              animate={{ scale: isHovered ? [1, 1.3, 1] : [0.9, 1.15, 0.9], opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 2.6, repeat: Infinity, delay: i * 0.35 }}
+            >
+              <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+            </motion.div>
+          );
+        })}
       </motion.div>
 
       {/* Glass shell — без backdrop-blur (дорого над анимированным фоном) */}
       <div
-        className="absolute inset-[6px] rounded-full"
+        className="absolute inset-[10px] rounded-full"
         style={{
           background:
-            "radial-gradient(circle at 35% 35%, hsl(var(--primary) / 0.18), hsl(var(--accent) / 0.08), hsl(var(--surface-1)) 80%)",
+            "radial-gradient(circle at 34% 32%, hsl(var(--primary) / 0.18), hsl(var(--accent) / 0.09), hsl(var(--surface-1)) 78%)",
           border: "1px solid hsl(var(--primary) / 0.15)",
         }}
       />
 
-      {/* Shield icon */}
+      <div
+        className="absolute inset-[22px] rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 50%, hsl(var(--primary) / 0.18), hsl(var(--surface-2) / 0.92) 62%, hsl(var(--surface-1)) 100%)",
+          border: "1px solid hsl(var(--border) / 0.28)",
+          boxShadow: "inset 0 1px 14px hsl(var(--primary) / 0.14)",
+        }}
+      />
+
+      {/* Crosshair */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="relative h-[72px] w-[72px] rounded-full border border-border/30">
+          <div className="absolute left-1/2 top-0 h-2 w-px -translate-x-1/2 bg-border/70" />
+          <div className="absolute left-1/2 bottom-0 h-2 w-px -translate-x-1/2 bg-border/70" />
+          <div className="absolute top-1/2 left-0 h-px w-2 -translate-y-1/2 bg-border/70" />
+          <div className="absolute top-1/2 right-0 h-px w-2 -translate-y-1/2 bg-border/70" />
+        </div>
+      </div>
+
+      {/* Diagnostic core */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <motion.svg viewBox="0 0 40 40" className="w-9 h-9" fill="none"
-          animate={{ scale: isHovered ? 1.06 : 1 }}
+        <motion.svg viewBox="0 0 48 48" className="w-12 h-12" fill="none"
+          animate={{ scale: isHovered ? 1.04 : 1 }}
           transition={{ duration: 0.3 }}>
+          <motion.circle
+            cx="24"
+            cy="24"
+            r="18"
+            stroke="hsl(var(--primary) / 0.18)"
+            strokeWidth="1"
+            strokeDasharray="3 5"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+            style={{ transformOrigin: "24px 24px" }}
+          />
           <motion.path
-            d="M20 4 L32 10 L32 22 C32 30 26 36 20 38 C14 36 8 30 8 22 L8 10 Z"
+            d="M24 8 L36 14 L36 24 C36 32 30 38 24 40 C18 38 12 32 12 24 L12 14 Z"
             stroke="hsl(var(--primary))"
             strokeWidth="1.5"
             strokeLinecap="round"
@@ -76,7 +157,7 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
             animate={{ pathLength: 1, opacity: 1 }}
             transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
           />
-          {[[20,12],[14,18],[26,18],[16,26],[24,26],[20,32]].map(([cx, cy], i) => (
+          {[[24,14],[17,20],[31,20],[19,29],[29,29],[24,34]].map(([cx, cy], i) => (
             <motion.circle key={i} cx={cx} cy={cy} r="1.5"
               fill="hsl(var(--primary))"
               initial={{ opacity: 0, scale: 0 }}
@@ -88,9 +169,9 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
             />
           ))}
           {[
-            "M20 12 L14 18","M20 12 L26 18","M14 18 L16 26",
-            "M26 18 L24 26","M14 18 L26 18","M16 26 L24 26",
-            "M16 26 L20 32","M24 26 L20 32",
+            "M24 14 L17 20","M24 14 L31 20","M17 20 L19 29",
+            "M31 20 L29 29","M17 20 L31 20","M19 29 L29 29",
+            "M19 29 L24 34","M29 29 L24 34",
           ].map((d, i) => (
             <motion.path key={i} d={d}
               stroke="hsl(var(--primary) / 0.35)"
@@ -100,6 +181,14 @@ function HeroOrb({ isHovered }: { isHovered: boolean }) {
               transition={{ duration: 0.6, delay: 2 + i * 0.08 }}
             />
           ))}
+          <motion.circle
+            cx="24"
+            cy="24"
+            r="3.5"
+            fill="hsl(var(--primary))"
+            animate={{ opacity: [0.5, 1, 0.5], scale: isHovered ? [1, 1.2, 1] : [1, 1.08, 1] }}
+            transition={{ duration: 1.8, repeat: Infinity }}
+          />
         </motion.svg>
       </div>
     </div>
