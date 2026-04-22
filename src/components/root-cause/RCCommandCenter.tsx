@@ -420,8 +420,10 @@ const RCCommandCenter = ({
             <div className="absolute inset-x-12 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), transparent)" }} />
             <div className="relative flex items-center gap-4 px-5 py-4">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors duration-300 group-hover:border-primary/40"
-                style={{ borderColor: "hsl(var(--primary) / 0.22)" }}
-                style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--accent) / 0.08))" }}>
+                style={{
+                  borderColor: "hsl(var(--primary) / 0.22)",
+                  background: "linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--accent) / 0.08))",
+                }}>
                 <Radar className="w-4.5 h-4.5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
