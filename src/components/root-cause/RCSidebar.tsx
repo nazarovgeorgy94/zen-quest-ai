@@ -451,18 +451,18 @@ function IncidentCard({ incident, isSelected, onClick }: {
           </span>
           {isCritical && incident.status === "active" && (
             <span className="relative flex h-1.5 w-1.5 ml-auto">
-              <span className="animate-ping absolute h-full w-full rounded-full bg-red-400 opacity-75" />
-              <span className="relative rounded-full h-1.5 w-1.5 bg-red-400" />
+              <span className="animate-ping absolute h-full w-full rounded-full bg-destructive opacity-75" />
+              <span className="relative rounded-full h-1.5 w-1.5 bg-destructive" />
             </span>
           )}
           {isResolved && (
             <span className="text-[9px] text-primary/60 ml-auto">✓</span>
           )}
         </div>
-        <p className={cn("text-[13px] leading-snug truncate", isSelected ? "text-foreground font-medium" : "text-foreground/80")}>
+        <p className={cn("text-[13px] leading-snug truncate pr-2", isSelected ? "text-foreground font-medium" : "text-foreground/80")}>
           {incident.title}
         </p>
-        <div className="flex items-center gap-1.5 mt-1.5">
+        <div className="flex items-center gap-1.5 mt-1.5 rounded-lg bg-surface-1/35 px-1.5 py-1">
           <Clock className="w-3 h-3 text-muted-foreground/50" />
           <span className="text-[10px] text-muted-foreground/60">{getRelativeTime(incident.createdAt)}</span>
           <span className="text-muted-foreground/30">·</span>
