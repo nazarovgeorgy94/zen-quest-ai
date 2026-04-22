@@ -47,6 +47,7 @@ function ScanRadar({
   serviceSeverityByName: Record<string, "critical" | "high" | "medium" | "low" | undefined>;
 }) {
   const isScanning = phase === "scanning";
+  const isStaticResult = phase === "complete";
   const size = 220;
   const cx = size / 2;
   const cy = size / 2;
@@ -270,7 +271,7 @@ function ScanRadar({
                     }}
                   />
 
-                  {isScanned && (
+                  {isScanned && isScanning && (
                     <motion.div
                       className="absolute rounded-full"
                       style={{
@@ -283,7 +284,7 @@ function ScanRadar({
                     />
                   )}
 
-                  {isScanned && hasAnyIncident && (
+                  {isScanned && hasAnyIncident && isScanning && (
                     <motion.div
                       className="absolute rounded-full"
                       style={{
@@ -342,7 +343,7 @@ function ScanRadar({
             </Tooltip>
 
             {/* Alert pulse for incidents */}
-            {isScanned && hasAnyIncident && (
+            {isScanned && hasAnyIncident && isScanning && (
               <motion.div
                 className="absolute rounded-full"
                 style={{
@@ -370,6 +371,17 @@ function ScanRadar({
               >
                 {svc.displayName.length > 10 ? svc.displayName.slice(0, 8) + "…" : svc.displayName}
               </motion.div>
+            )}
+
+            {isStaticResult && isScanned && hasAnyIncident && (
+              <div
+                className="absolute rounded-full"
+                style={{
+                  inset: -4,
+                  border: `1px solid ${nodeColor}`,
+                  opacity: 0.24,
+                }}
+              />
             )}
           </motion.div>
         );
