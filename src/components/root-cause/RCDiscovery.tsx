@@ -31,10 +31,12 @@ function ScanRadar({
   services,
   scannedIndex,
   phase,
+  activeIncidentIds,
 }: {
   services: SystemService[];
   scannedIndex: number;
   phase: ScanPhase;
+  activeIncidentIds: Set<string>;
 }) {
   const isScanning = phase === "scanning";
   const size = 220;
@@ -117,8 +119,10 @@ function ScanRadar({
         const radius = rings[ringIdx] + (i % 2 === 0 ? -5 : 5);
         const x = cx + Math.cos((angle * Math.PI) / 180) * radius;
         const y = cy + Math.sin((angle * Math.PI) / 180) * radius;
-        const nodeSize = svc.status !== "healthy" && isScanned ? 10 : 7;
-        const hasIncident = svc.incidentIds && svc.incidentIds.length > 0;
+        const hasActiveIncident = Boolean(svc.incidentIds?.some((id) => activeIncidentIds.has(id)));
+        const hasAnyIncident = Boolean(svc.incidentIds?.length);
+        const isAlerted = isScanned && hasActiveIncident;
+        const nodeSize = isAlerted || (svc.status !== "healthy" && isScanned) ? 10 : 7;
 
         return (
           <motion.div
@@ -148,7 +152,9 @@ function ScanRadar({
                   x1={0} y1={0}
                   x2={cx - x} y2={cy - y}
                   stroke={
-                    svc.status === "healthy"
+                    hasActiveIncident
+                      ? "hsl(0 68% 52%)"
+                      : svc.status === "healthy"
                       ? "hsl(var(--primary))"
                       : svc.status === "degraded"
                       ? "hsl(45 93% 47%)"
@@ -171,12 +177,16 @@ function ScanRadar({
                 height: nodeSize,
                 background: !isScanned
                   ? "hsl(var(--muted-foreground) / 0.2)"
+                  : hasActiveIncident
+                  ? "hsl(0 68% 52%)"
                   : svc.status === "healthy"
                   ? "hsl(var(--primary))"
                   : svc.status === "degraded"
                   ? "hsl(45 93% 47%)"
                   : "hsl(0 68% 52%)",
-                boxShadow: isScanned && svc.status !== "healthy"
+                boxShadow: isAlerted
+                  ? "0 0 14px hsl(0 68% 52% / 0.55)"
+                  : isScanned && svc.status !== "healthy"
                   ? `0 0 12px ${svc.status === "degraded" ? "hsl(45 93% 47% / 0.4)" : "hsl(0 68% 52% / 0.5)"}`
                   : isScanned
                   ? "0 0 8px hsl(var(--primary) / 0.3)"
@@ -185,12 +195,12 @@ function ScanRadar({
             />
 
             {/* Alert pulse for incidents */}
-            {isScanned && hasIncident && (
+            {isScanned && hasAnyIncident && (
               <motion.div
                 className="absolute rounded-full"
                 style={{
                   inset: -4,
-                  border: `1.5px solid ${svc.status === "degraded" ? "hsl(45 93% 47% / 0.5)" : "hsl(0 68% 52% / 0.5)"}`,
+                  border: `1.5px solid ${hasActiveIncident ? "hsl(0 68% 52% / 0.55)" : svc.status === "degraded" ? "hsl(45 93% 47% / 0.5)" : "hsl(0 68% 52% / 0.32)"}`,
                 }}
                 animate={{ scale: [1, 1.8, 1], opacity: [0.6, 0, 0.6] }}
                 transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }}
@@ -205,7 +215,9 @@ function ScanRadar({
                   top: nodeSize + 4,
                   left: "50%",
                   transform: "translateX(-50%)",
-                  color: svc.status !== "healthy"
+                  color: hasActiveIncident
+                    ? "hsl(0 68% 52%)"
+                    : svc.status !== "healthy"
                     ? svc.status === "degraded" ? "hsl(45 93% 47%)" : "hsl(0 68% 52%)"
                     : "hsl(var(--muted-foreground) / 0.5)",
                 }}
@@ -319,6 +331,7 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
   const activeIncidents = mockIncidents.filter(
     (i) => i.status !== "resolved" && discoveredIncidents.includes(i.id)
   );
+  const activeIncidentIds = new Set(activeIncidents.map((incident) => incident.id));
 
   const degradedCount = mockServices.filter((svc) => svc.status === "degraded").length;
   const failedCount = mockServices.filter((svc) => svc.status === "down").length;
@@ -382,7 +395,12 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
                 <span>{phase === "scanning" ? "Live Sweep" : "Locked"}</span>
               </div>
               <div className="relative mt-4">
-                <ScanRadar services={mockServices} scannedIndex={scannedIndex} phase={phase} />
+                <ScanRadar
+                  services={mockServices}
+                  scannedIndex={scannedIndex}
+                  phase={phase}
+                  activeIncidentIds={activeIncidentIds}
+                />
               </div>
             </div>
 
@@ -391,6 +409,7 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
               {mockServices.map((svc, i) => {
                 const isScanned = i <= scannedIndex;
                 const isActive = i === scannedIndex && phase === "scanning";
+                const hasActiveIncident = Boolean(svc.incidentIds?.some((id) => activeIncidentIds.has(id)));
                 const hasIncident = Boolean(svc.incidentIds?.length);
                 return (
                   <motion.div key={svc.name}
@@ -405,7 +424,7 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
                     <div className={cn(
                       "absolute left-0 top-1.5 bottom-1.5 w-px rounded-full opacity-0 transition-opacity duration-300",
                       isActive && "opacity-100 bg-primary",
-                      hasIncident && isScanned && !isActive && "opacity-70 bg-destructive/70"
+                      hasActiveIncident && isScanned && !isActive && "opacity-100 bg-destructive"
                     )} />
                     {isScanned ? getStatusIcon(svc) : isActive ? (
                       <motion.div className="w-3.5 h-3.5 rounded-full border-2 border-primary border-t-transparent"
@@ -417,11 +436,20 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
                     <span className={cn(
                       "truncate transition-colors duration-300",
                       isScanned
-                        ? svc.status !== "healthy" ? "text-foreground font-medium" : "text-foreground/70"
+                        ? hasActiveIncident
+                          ? "text-foreground font-medium"
+                          : svc.status !== "healthy"
+                            ? "text-foreground font-medium"
+                            : "text-foreground/70"
                         : "text-muted-foreground/50"
                     )}>{svc.displayName}</span>
                     {hasIncident && isScanned && (
-                      <span className="rounded-full border border-border/40 bg-surface-2/60 px-1.5 py-0.5 text-[9px] font-mono text-foreground/70">
+                      <span className={cn(
+                        "rounded-full border px-1.5 py-0.5 text-[9px] font-mono",
+                        hasActiveIncident
+                          ? "border-destructive/30 bg-destructive/10 text-destructive"
+                          : "border-border/40 bg-surface-2/60 text-foreground/70"
+                      )}>
                         {svc.incidentIds?.length} alert
                       </span>
                     )}
