@@ -28,7 +28,6 @@ interface RCDiscoveryProps {
   onSelectIncident: (id: string) => void;
   onCancel: () => void;
   onScanComplete?: () => void;
-  isActivated?: boolean;
 }
 
 type ScanPhase = "scanning" | "complete";
@@ -40,16 +39,14 @@ function ScanRadar({
   phase,
   activeIncidentIds,
   serviceSeverityByName,
-  isActivated,
 }: {
   services: SystemService[];
   scannedIndex: number;
   phase: ScanPhase;
   activeIncidentIds: Set<string>;
   serviceSeverityByName: Record<string, "critical" | "high" | "medium" | "low" | undefined>;
-  isActivated: boolean;
 }) {
-  const isScanning = phase === "scanning" && isActivated;
+  const isScanning = phase === "scanning";
   const size = 220;
   const cx = size / 2;
   const cy = size / 2;
@@ -401,7 +398,7 @@ function ScanRadar({
   );
 }
 
-const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete, isActivated = true }: RCDiscoveryProps) => {
+const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscoveryProps) => {
   const [phase, setPhase] = useState<ScanPhase>("scanning");
   const [scannedIndex, setScannedIndex] = useState(-1);
   const [discoveredIncidents, setDiscoveredIncidents] = useState<string[]>([]);
@@ -418,8 +415,6 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete, isActivated =
   }, [terminalLines]);
 
   useEffect(() => {
-    if (!isActivated) return;
-
     let cancelled = false;
 
     const addLine = (text: string, type: "info" | "warn" | "ok" | "header") => {
@@ -475,7 +470,7 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete, isActivated =
 
     runScan();
     return () => { cancelled = true; };
-  }, [isActivated, onScanComplete]);
+  }, []);
 
   const activeIncidents = mockIncidents.filter(
     (i) => i.status !== "resolved" && discoveredIncidents.includes(i.id)
@@ -558,7 +553,6 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete, isActivated =
                   phase={phase}
                   activeIncidentIds={activeIncidentIds}
                   serviceSeverityByName={serviceSeverityByName}
-                  isActivated={isActivated}
                 />
               </div>
             </div>
