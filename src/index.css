@@ -7,75 +7,75 @@
 @layer base {
   :root {
     /* ═══════════════════════════════════════════════════════════
-       🎨 DARK THEME — Forensic Premium
+       🎨 DARK THEME — Cosmic Mint
        ═══════════════════════════════════════════════════════════
-       Intelligence Mint: #51F7C9 → 162 91% 64%
-       Cyan Signal: #4FE7F2 → 184 85% 63%
-       Background: cool onyx glass → 220 17% 7%
+       Primary: #16FFBB → 156 100% 54%
+       Secondary: #29DDDA → 179 70% 51%
+       Background: #0A081B → 247 53% 7%
        ═══════════════════════════════════════════════════════════ */
 
     /* ── Основные поверхности (повышенный контраст для офисных IPS) ── */
-    --background: 220 17% 7%;        /* холодный forensic onyx */
-    --foreground: 210 18% 96%;       /* crisp evidence white */
+    --background: 220 14% 9%;        /* #14171C — оникс с дыханием, не проваливается в чёрный */
+    --foreground: 210 16% 96%;       /* #F0F3F7 — почти-белый, чёткий на любом мониторе */
 
-    --card: 220 18% 10%;             /* стеклянная панель */
+    --card: 220 13% 13%;             /* #1C2026 — заметно отличается от bg */
     --card-foreground: 210 16% 96%;
 
-    --popover: 220 18% 11%;
+    --popover: 220 13% 14%;
     --popover-foreground: 210 16% 96%;
 
     /* ── Акцентные цвета ── */
-    --primary: 162 91% 64%;          /* intelligence mint */
-    --primary-foreground: 220 18% 8%;
+    --primary: 156 100% 54%;         /* #16FFBB — электрический минт */
+    --primary-foreground: 220 14% 9%;
 
-    --accent: 184 85% 63%;           /* cyan signal */
-    --accent-foreground: 220 18% 8%;
+    --accent: 179 75% 55%;           /* #29DDDA — яркий циан, чуть ярче для контраста */
+    --accent-foreground: 210 16% 96%;
 
-    --secondary: 220 14% 14%;
-    --secondary-foreground: 212 15% 84%;
+    --secondary: 220 12% 16%;        /* Нейтральный вторичный */
+    --secondary-foreground: 215 12% 82%;
 
-    --muted: 220 12% 16%;
-    --muted-foreground: 214 12% 68%;
+    --muted: 220 11% 19%;            /* Приглушённые элементы */
+    --muted-foreground: 215 12% 65%;  /* WCAG AA: 5.2:1 на bg */
 
-    --destructive: 0 74% 58%;
+    --destructive: 0 75% 60%;
     --destructive-foreground: 0 0% 98%;
 
     /* ── Границы и формы (видны на любом мониторе) ── */
-    --border: 212 16% 20%;
-    --border-strong: 210 18% 29%;
-    --input: 214 16% 21%;
-    --ring: 162 91% 64%;
+    --border: 220 10% 22%;            /* было 15% → 22% — заметно на IPS */
+    --border-strong: 220 10% 30%;     /* для важных разделителей */
+    --input: 220 10% 24%;
+    --ring: 156 100% 54%;
     --radius: 0.75rem;
 
     /* ── Цветовые "всплески" для эффектов ── */
-    --teal-accent: 176 73% 54%;
-    --cyan-pop: 191 90% 67%;
-    --emerald-glow: 162 91% 64%;
-    --emerald-dim: 164 46% 34%;
-    --emerald-subtle: 220 17% 11%;
+    --teal-accent: 179 70% 51%;
+    --cyan-pop: 190 80% 55%;
+    --emerald-glow: 156 100% 54%;
+    --emerald-dim: 160 50% 30%;
+    --emerald-subtle: 220 12% 12%;
 
     /* ── Severity semantic tokens ── */
-    --warning: 36 96% 58%;
+    --warning: 45 93% 47%;
     --warning-foreground: 45 10% 10%;
-    --success: 162 91% 64%;
+    --success: 156 100% 54%;
     --success-foreground: 220 16% 6%;
-    --info: 191 76% 56%;
+    --info: 210 60% 50%;
     --info-foreground: 210 10% 95%;
 
     /* ── Extended primary shades ── */
-    --primary-hover: 162 94% 70%;
-    --primary-muted: 162 44% 35%;
-    --primary-subtle: 220 16% 12%;
+    --primary-hover: 156 100% 60%;
+    --primary-muted: 156 50% 30%;
+    --primary-subtle: 220 10% 13%;
 
     /* ── Многослойные поверхности (Elevation) — заметные ступени ── */
-    --surface-0: 220 17% 7%;
-    --surface-1: 220 18% 10%;
-    --surface-2: 220 18% 13%;
-    --surface-3: 220 17% 17%;
-    --surface-4: 220 17% 21%;
+    --surface-0: 220 14% 9%;          /* = background */
+    --surface-1: 220 13% 13%;         /* карточки (+4%) */
+    --surface-2: 220 12% 17%;         /* приподнятый (+4%) */
+    --surface-3: 220 11% 22%;         /* поповеры (+5%) */
+    --surface-4: 220 10% 27%;         /* модалки (+5%) */
 
-    --surface: 220 18% 10%;
-    --surface-elevated: 220 18% 13%;
+    --surface: 220 13% 13%;
+    --surface-elevated: 220 12% 17%;
 
     /* ══════════════════════════════════════════════════════════
        🌈 GRADIENT TOKENS
@@ -118,23 +118,23 @@
        🔲 SHADOW TOKENS
        ══════════════════════════════════════════════════════════ */
 
-    --shadow-sm: 0 2px 10px -2px hsl(var(--background) / 0.55);
-    --shadow-md: 0 12px 28px -10px hsl(var(--background) / 0.65);
-    --shadow-lg: 0 24px 60px -18px hsl(var(--background) / 0.78);
-    --shadow-glow: 0 0 24px -6px hsl(var(--primary) / 0.24);
-    --shadow-critical: 0 6px 24px -8px hsl(var(--destructive) / 0.3);
-    --shadow-warning: 0 6px 20px -8px hsl(var(--warning) / 0.22);
-    --shadow-info: 0 6px 20px -8px hsl(var(--info) / 0.22);
+    --shadow-sm: 0 2px 8px -2px hsl(var(--background) / 0.5);
+    --shadow-md: 0 8px 24px -8px hsl(var(--background) / 0.6);
+    --shadow-lg: 0 16px 48px -12px hsl(var(--background) / 0.7);
+    --shadow-glow: 0 0 20px -5px hsl(var(--primary) / 0.3);
+    --shadow-critical: 0 4px 20px -4px hsl(0 68% 52% / 0.25);
+    --shadow-warning: 0 4px 20px -4px hsl(45 93% 47% / 0.2);
+    --shadow-info: 0 4px 20px -4px hsl(210 60% 50% / 0.2);
 
     /* ── Sidebar (повышенный контраст) ── */
-    --sidebar-background: 220 20% 8%;
-    --sidebar-foreground: 212 15% 78%;
-    --sidebar-primary: 162 91% 64%;
-    --sidebar-primary-foreground: 220 18% 8%;
-    --sidebar-accent: 220 18% 11%;
+    --sidebar-background: 220 16% 7%;       /* чуть темнее bg для разделения */
+    --sidebar-foreground: 215 12% 75%;      /* было 65% → 75% — читаемо на IPS */
+    --sidebar-primary: 156 100% 54%;
+    --sidebar-primary-foreground: 220 14% 9%;
+    --sidebar-accent: 220 13% 14%;
     --sidebar-accent-foreground: 210 16% 92%;
-    --sidebar-border: 212 16% 18%;
-    --sidebar-ring: 162 91% 64%;
+    --sidebar-border: 220 10% 18%;
+    --sidebar-ring: 156 100% 54%;
   }
 
   .light {
@@ -251,15 +251,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    letter-spacing: 0;
-  }
-
   /* Усиленный контраст для пользователей с системной настройкой */
   @media (prefers-contrast: more) {
     :root {
@@ -301,36 +292,6 @@
     letter-spacing: -0.02em;
     color: hsl(var(--foreground) / 0.95);
     margin: 1.2em 0 0.4em;
-  }
-
-  .forensic-label {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: hsl(var(--muted-foreground) / 0.72);
-  }
-
-  .forensic-value {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .glass-panel {
-    background: linear-gradient(180deg, hsl(var(--surface-1) / 0.84), hsl(var(--surface-1) / 0.64));
-    border: 1px solid hsl(var(--border) / 0.42);
-    box-shadow:
-      inset 0 1px 0 hsl(var(--foreground) / 0.04),
-      inset 0 0 0 1px hsl(var(--primary) / 0.03),
-      0 16px 40px -20px hsl(var(--background) / 0.88);
-    backdrop-filter: blur(20px) saturate(1.15);
-  }
-
-  .glass-panel-subtle {
-    background: linear-gradient(180deg, hsl(var(--surface-1) / 0.68), hsl(var(--surface-1) / 0.5));
-    border: 1px solid hsl(var(--border) / 0.28);
-    box-shadow: inset 0 1px 0 hsl(var(--foreground) / 0.03);
-    backdrop-filter: blur(16px) saturate(1.08);
   }
 
   /* Custom scrollbar for widget */
