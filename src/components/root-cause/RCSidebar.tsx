@@ -20,10 +20,10 @@ interface RCSidebarProps {
 
 function SeverityIcon({ severity }: { severity: string }) {
   if (severity === "critical")
-    return <AlertTriangle className="w-3 h-3 text-red-400" />;
+    return <AlertTriangle className="w-3 h-3 text-destructive" />;
   if (severity === "high")
-    return <Activity className="w-3 h-3 text-orange-400" />;
-  return <Shield className="w-3 h-3 text-yellow-400" />;
+    return <Activity className="w-3 h-3 text-warning" />;
+  return <Shield className="w-3 h-3 text-primary" />;
 }
 
 function NeuralShieldLogo() {
@@ -73,8 +73,8 @@ function NeuralShieldLogo() {
 function LiveDot() {
   return (
     <span className="relative flex h-2 w-2">
-      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-success" />
+      <span className="relative inline-flex rounded-full h-2 w-2 bg-success" />
     </span>
   );
 }
@@ -239,7 +239,7 @@ const RCSidebar = ({
           <div className="flex-1">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Threat Level</span>
-              <span className={cn("text-[10px] font-mono font-semibold", criticalCount > 0 ? "text-red-400" : "text-primary")}>
+              <span className={cn("text-[10px] font-mono font-semibold", criticalCount > 0 ? "text-destructive" : "text-primary")}>
                 {criticalCount > 0 ? "CRITICAL" : "NOMINAL"}
               </span>
             </div>
@@ -332,10 +332,15 @@ const RCSidebar = ({
       {/* Incident list */}
       <div className="relative z-10 flex-1 overflow-y-auto px-3 pb-3 scrollbar-thin">
         {/* Active incidents */}
-        <p className="px-1 pt-1 pb-2 text-[10px] font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-          <Activity className="w-3 h-3" />
-          Активные ({filteredActive.length})
-        </p>
+        <div className="mb-2 rounded-xl border border-border/20 bg-surface-1/35 px-2.5 py-2">
+          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+            <Activity className="w-3 h-3" />
+            Активные ({filteredActive.length})
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground/60">
+            {severityFilter === "all" ? "Все текущие сигналы" : `Фильтр: ${severityFilter}`}
+          </p>
+        </div>
         <div className="space-y-1">
           {filteredActive.map((inc, idx) => (
             <motion.div key={inc.id}
