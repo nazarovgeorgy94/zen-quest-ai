@@ -333,36 +333,58 @@ const RCCommandCenter = ({
         }} />
 
       <div className="relative z-10 text-center w-full px-6 max-w-md xl:max-w-xl 2xl:max-w-2xl [@media(min-width:2400px)]:max-w-3xl">
-        {/* Orb */}
+        {/* Orb + Wordmark */}
         <motion.div
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           onMouseEnter={() => setOrbHovered(true)}
           onMouseLeave={() => setOrbHovered(false)}
-          className="cursor-pointer"
+          className="mb-6 flex flex-col items-center justify-center gap-4 text-center sm:flex-row sm:items-center sm:gap-5 sm:text-left"
         >
-          <HeroOrb isHovered={orbHovered} />
-        </motion.div>
+          <div className="cursor-pointer shrink-0">
+            <HeroOrb isHovered={orbHovered} />
+          </div>
 
-        {/* Title + Stats */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          animate="visible"
-          className="mt-6 mb-6"
-        >
-          <motion.h2 variants={fadeUp}
-            className="text-xl font-bold text-foreground tracking-tight">
-            Root Cause Agent
-          </motion.h2>
-          <motion.p variants={fadeUp}
-            className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-sm mx-auto">
-            AI-диагностика инцидентов и анализ первопричин
-          </motion.p>
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="visible"
+            className="min-w-0"
+          >
+            <motion.p
+              variants={fadeUp}
+              className="text-[10px] font-medium uppercase tracking-[0.28em] text-muted-foreground/70"
+            >
+              Incident Intelligence Console
+            </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              className="mt-1 text-[1.75rem] font-semibold leading-none tracking-[0.02em] text-foreground sm:text-[2rem]"
+            >
+              <span
+                className="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--primary)) 55%, hsl(var(--accent)) 100%)",
+                }}
+              >
+                Root Cause
+              </span>
+              <span className="ml-2 inline-block font-mono text-sm align-middle text-primary/80 sm:text-base">
+                Agent
+              </span>
+            </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground"
+            >
+              AI-диагностика инцидентов и анализ первопричин
+            </motion.p>
 
-          <motion.div variants={fadeUp} className="mt-4">
-            <QuickStats />
+            <motion.div variants={fadeUp} className="mt-4">
+              <QuickStats />
+            </motion.div>
           </motion.div>
         </motion.div>
 
