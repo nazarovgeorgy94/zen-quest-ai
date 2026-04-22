@@ -10,7 +10,7 @@ interface DiagnosisTimelineProps {
   isDiagnosing: boolean;
 }
 
-const STEP_HEIGHT = 44; // fixed height per step in px
+const STEP_HEIGHT = 40; // fixed height per step in px
 
 const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimelineProps) => {
   const progress = isDiagnosing
@@ -28,7 +28,7 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-border/30 bg-surface-1/40 backdrop-blur-sm overflow-hidden"
+      className="overflow-hidden rounded-xl border border-border/30 bg-surface-1/35 backdrop-blur-sm"
     >
       {/* Progress bar at top */}
       <div className="h-[2px] bg-surface-2/30 relative overflow-hidden">
@@ -45,13 +45,13 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
         />
       </div>
 
-      <div className="p-4">
+      <div className="p-3.5">
         {/* Header */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
+        <div className="mb-3 flex items-center gap-2">
+          <div className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/10">
             <Activity className="w-3 h-3 text-primary" />
           </div>
-          <span className="text-[11px] font-semibold text-primary uppercase tracking-wider">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
             Диагностика
           </span>
           {isDiagnosing && (
@@ -64,7 +64,7 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
             </motion.span>
           )}
           {!isDiagnosing && (
-            <span className="text-[10px] text-primary/70 ml-auto font-mono">✓ завершено</span>
+            <span className="ml-auto font-mono text-[10px] text-primary/70">✓ завершено</span>
           )}
         </div>
 
@@ -123,12 +123,12 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1 min-w-0 mt-0.5">
+                  <div className="mt-0.5 min-w-0 flex-1">
                     <motion.span
                       animate={{ opacity: isDone || isActive ? 1 : 0.35 }}
                       transition={{ duration: 0.3 }}
                       className={cn(
-                        "text-xs font-medium block leading-tight",
+                        "block text-[12px] font-medium leading-tight",
                         isDone
                           ? "text-foreground/80"
                           : isActive
@@ -146,7 +146,7 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.2 }}
-                          className="text-[10px] text-muted-foreground mt-0.5 leading-snug truncate"
+                          className="mt-0.5 truncate text-[10px] leading-snug text-muted-foreground"
                         >
                           {step.detail}
                         </motion.p>

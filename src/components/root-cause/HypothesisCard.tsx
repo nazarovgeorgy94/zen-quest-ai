@@ -54,7 +54,7 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
       {/* Outer glow for top hypothesis */}
       {isTop && (
         <div
-          className="absolute -inset-[1px] rounded-xl opacity-60 blur-[1px]"
+          className="absolute -inset-[1px] rounded-xl opacity-70 blur-[1px]"
           style={{
             background: "linear-gradient(135deg, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.15), hsl(var(--primary) / 0.2))",
           }}
@@ -106,7 +106,20 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
           }}
         />
 
-        <div className={cn("relative", isTop ? "p-5" : "p-4")}>
+        <div className={cn("relative", isTop ? "p-4.5" : "p-3.5")}>
+          {isTop && (
+            <div className="mb-3 flex items-center justify-between gap-3 rounded-lg border border-primary/10 bg-primary/5 px-3 py-2">
+              <div>
+                <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-primary/80">Primary hypothesis</p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">Highest-confidence root-cause candidate</p>
+              </div>
+              <div className="rounded-md border border-primary/15 bg-surface-0/70 px-2 py-1 text-right">
+                <p className="text-[8px] uppercase tracking-[0.16em] text-muted-foreground">Confidence</p>
+                <p className="mt-0.5 font-mono text-sm font-bold text-primary">{hyp.confidence}%</p>
+              </div>
+            </div>
+          )}
+
           {/* Title row */}
           <div className="flex items-start gap-3">
             <div
@@ -124,7 +137,7 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className={cn("font-semibold text-foreground", isTop ? "text-base" : "text-sm")}>{hyp.title}</h3>
+                <h3 className={cn("font-semibold text-foreground", isTop ? "text-[15px]" : "text-sm")}>{hyp.title}</h3>
                 <span
                   className="text-[9px] uppercase px-1.5 py-0.5 rounded-full font-semibold"
                   style={{
@@ -139,14 +152,14 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
                 </span>
                 <span className="text-[10px] text-muted-foreground">{confidenceTone}</span>
               </div>
-              <div className="mt-2">
+              <div className="mt-1.5">
                 <ConfidenceBar value={hyp.confidence} />
               </div>
             </div>
           </div>
 
           {/* Explanation */}
-          <p className={cn("mt-3 leading-relaxed pl-10", isTop ? "text-[13px] text-foreground/72" : "text-[12px] text-foreground/58")}>
+          <p className={cn("mt-2.5 leading-relaxed pl-10", isTop ? "text-[13px] text-foreground/78" : "text-[12px] text-foreground/60")}>
             {hyp.explanation}
           </p>
 
@@ -172,14 +185,13 @@ const HypothesisCard = ({ hypothesis: hyp, index: i, isTop }: HypothesisCardProp
                   className="overflow-hidden"
                 >
                   <div
-                    className="mt-2 p-3 rounded-lg"
+                    className="mt-2 rounded-lg border border-primary/10 bg-primary/5 p-3"
                     style={{
-                      background: "hsl(var(--primary) / 0.04)",
-                      border: "1px solid hsl(var(--primary) / 0.1)",
                       backdropFilter: "blur(8px)",
                     }}
                   >
-                    <p className="text-xs text-foreground/70 leading-relaxed">{hyp.recommendation}</p>
+                    <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-primary/75">Recommended action</p>
+                    <p className="text-xs text-foreground/72 leading-relaxed">{hyp.recommendation}</p>
                   </div>
                 </motion.div>
               )}
