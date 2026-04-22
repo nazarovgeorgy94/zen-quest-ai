@@ -293,134 +293,88 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
         />
         <div className="absolute inset-x-0 bottom-0 h-px bg-border/40" />
 
-        <div className="relative px-3 py-2 sm:px-4 sm:py-2.5 lg:px-6 lg:py-3">
-          <div className="grid gap-2 lg:gap-3 xl:grid-cols-[minmax(0,1.6fr)_minmax(24rem,0.9fr)] xl:items-stretch">
+        <div className="relative px-3 py-2 sm:px-4 lg:px-6">
+          <div
+            className="relative overflow-hidden rounded-xl border border-border/40 bg-surface-1/70"
+            style={{ boxShadow: `inset 0 1px 0 hsl(var(--border) / 0.1), 0 0 0 1px hsl(var(--background) / 0.3)` }}
+          >
             <div
-              className="relative overflow-hidden rounded-2xl border border-border/40 bg-surface-1/70"
-              style={{ boxShadow: `inset 0 1px 0 hsl(var(--border) / 0.1), 0 0 0 1px hsl(var(--background) / 0.3)` }}
-            >
-              <div
-                className="absolute inset-0 opacity-80"
-                style={{
-                  background: `linear-gradient(135deg, ${colors.ambient} 0%, transparent 48%), radial-gradient(circle at 0% 50%, ${colors.ambient} 0%, transparent 45%)`,
-                }}
-              />
-              <div className="absolute left-0 top-0 h-full w-px bg-border/60" />
-              <div className="relative p-2.5 sm:p-3 lg:p-4">
-                <div className="flex items-start gap-2.5 sm:gap-3">
-                  <div className="relative mt-0.5 shrink-0">
-                    <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-border/40 bg-surface-2/80">
-                      <div className="relative">
-                        <div className={cn("h-3 w-3 rounded-full", colors.dot)} />
-                        {incident.status === "active" && (
-                          <div className={cn("absolute inset-[-4px] rounded-full animate-ping opacity-25", colors.dot)} />
-                        )}
-                      </div>
-                    </div>
-                    <div
-                      className="absolute inset-[-14px] rounded-[1.35rem] opacity-70"
-                      style={{ background: `radial-gradient(circle, ${colors.ambient} 0%, transparent 72%)` }}
-                    />
-                  </div>
-
-                  <div className="min-w-0 flex-1 space-y-1.5 sm:space-y-2">
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.18em] text-muted-foreground">
+              className="absolute inset-0 opacity-80"
+              style={{
+                background: `linear-gradient(135deg, ${colors.ambient} 0%, transparent 48%), radial-gradient(circle at 0% 50%, ${colors.ambient} 0%, transparent 45%)`,
+              }}
+            />
+            <div className="relative px-3 py-2.5 sm:px-3.5 sm:py-3">
+              <div className="flex min-w-0 flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
+                <div className="min-w-0 flex-1">
+                  <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[9px] uppercase tracking-[0.16em] text-muted-foreground sm:text-[10px]">
+                    <span className="flex items-center gap-1.5">
+                      <span className={cn("h-2 w-2 rounded-full", colors.dot)} />
                       <span className="text-primary/90">Active Incident</span>
-                      <span className="text-border">•</span>
-                      <span className="font-mono text-foreground/80">{incident.id}</span>
-                    </div>
+                    </span>
+                    <span className="font-mono text-foreground/80">{incident.id}</span>
+                    <span className="hidden sm:inline text-border">•</span>
+                    <span className="truncate">{isDiagnosing ? "Analysis in progress" : "Incident context locked"}</span>
+                  </div>
 
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-start gap-1.5 sm:gap-2">
-                        <h2 className="text-[15px] font-semibold leading-[1.15] text-foreground sm:text-base lg:text-lg xl:text-[1.35rem]">
-                          {incident.title}
-                        </h2>
-                        <span className={cn("rounded-full px-1.5 py-0.5 text-[8px] sm:text-[9px] font-semibold uppercase tracking-[0.16em] sm:tracking-[0.18em]", colors.bg, colors.text)}>
-                          {incident.severity}
-                        </span>
-                      </div>
-                      <p className="max-w-4xl text-[11px] leading-relaxed text-foreground/78 line-clamp-2 sm:text-xs lg:text-[13px]">
-                        {incident.description}
-                      </p>
-                    </div>
+                  <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-2">
+                    <h2 className="min-w-0 flex-1 truncate text-[15px] font-semibold leading-none text-foreground sm:text-base lg:text-[1.05rem]">
+                      {incident.title}
+                    </h2>
+                    <span className={cn("shrink-0 rounded-full px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-[0.16em] sm:text-[9px]", colors.bg, colors.text)}>
+                      {incident.severity}
+                    </span>
+                  </div>
 
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] text-muted-foreground">
-                      <div className="flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2 py-1">
-                        <Clock className="h-3 w-3" />
-                        <span>{getRelativeTime(incident.createdAt)}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2 py-1">
-                        <Server className="h-3 w-3" />
-                        <span className="font-mono text-foreground/80">{incident.service}</span>
-                      </div>
-                      <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2 py-1">
-                        <TrendingUp className="h-3 w-3 text-primary" />
-                        <span>{incident.metrics?.length ? `${incident.metrics.length} live metrics` : "Monitoring active"}</span>
-                      </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[9px] text-muted-foreground sm:text-[10px]">
+                    <div className="flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2 py-1">
+                      <Server className="h-3 w-3" />
+                      <span className="font-mono text-foreground/80">{incident.service}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 rounded-full border border-border/30 bg-surface-2/70 px-2 py-1">
+                      <Clock className="h-3 w-3" />
+                      <span>{getRelativeTime(incident.createdAt)}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-2.5 space-y-1 sm:space-y-1.5">
-                  <div className="flex items-center justify-between gap-3 text-[8px] sm:text-[9px] uppercase tracking-[0.16em] sm:tracking-[0.18em] text-muted-foreground">
-                    <span>Anomaly Signal</span>
-                    <span className="truncate text-right">{isDiagnosing ? "Analysis in progress" : "Incident context locked"}</span>
+                {incident.metrics && incident.metrics.length > 0 && (
+                  <div className="grid grid-cols-2 gap-1.5 xl:w-auto xl:min-w-[17rem]">
+                    {incident.metrics.slice(0, 2).map((m) => (
+                      <div
+                        key={m.label}
+                        className="relative overflow-hidden rounded-lg border border-border/35 bg-surface-2/65 px-2 py-1.5"
+                      >
+                        <div
+                          className="absolute inset-0 opacity-70"
+                          style={{ background: `linear-gradient(135deg, ${colors.ambient} 0%, transparent 58%)` }}
+                        />
+                        <div className="relative flex items-center gap-2">
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-[8px] uppercase tracking-[0.14em] text-muted-foreground sm:text-[9px]">
+                              {m.label}
+                            </p>
+                            <p className="mt-0.5 text-[13px] font-bold font-mono leading-none text-foreground sm:text-[15px]">
+                              {m.value}
+                            </p>
+                          </div>
+                          {m.sparkline && (
+                            <div className="hidden sm:block rounded-md border border-border/30 bg-surface-3/55 px-1 py-0.5">
+                              <Sparkline
+                                data={m.sparkline}
+                                width={38}
+                                height={14}
+                                color={m.color || "hsl(var(--primary))"}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="relative h-1.5 overflow-hidden rounded-full bg-surface-3/80">
-                    <div
-                      className="absolute inset-y-0 left-0 rounded-full"
-                      style={{
-                        width: incident.severity === "critical" ? "88%" : incident.severity === "high" ? "74%" : incident.severity === "medium" ? "56%" : "34%",
-                        background: `linear-gradient(90deg, hsl(var(--primary) / 0.35), ${colors.stripe})`,
-                      }}
-                    />
-                    <div
-                      className="absolute inset-y-0 w-24 opacity-80"
-                      style={{
-                        left: incident.severity === "critical" ? "72%" : incident.severity === "high" ? "60%" : incident.severity === "medium" ? "42%" : "22%",
-                        background: "linear-gradient(90deg, transparent, hsl(var(--foreground) / 0.22), transparent)",
-                      }}
-                    />
-                  </div>
-                </div>
+                )}
               </div>
             </div>
-
-            {incident.metrics && incident.metrics.length > 0 && (
-              <div className="grid gap-2 grid-cols-2 xl:grid-cols-1 2xl:grid-cols-3">
-                {incident.metrics.map((m) => (
-                  <div
-                    key={m.label}
-                    className="relative overflow-hidden rounded-xl border border-border/40 bg-surface-1/70 px-2.5 py-2 sm:px-3 sm:py-2.5"
-                  >
-                    <div
-                      className="absolute inset-0 opacity-70"
-                      style={{ background: `linear-gradient(135deg, ${colors.ambient} 0%, transparent 55%)` }}
-                    />
-                    <div className="relative flex items-center gap-2.5">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[8px] sm:text-[9px] uppercase tracking-[0.14em] sm:tracking-[0.16em] text-muted-foreground">
-                          {m.label}
-                        </p>
-                        <p className="mt-0.5 text-base sm:text-lg font-bold font-mono leading-none text-foreground">
-                          {m.value}
-                        </p>
-                      </div>
-                      {m.sparkline && (
-                        <div className="rounded-lg border border-border/30 bg-surface-2/60 px-1.5 py-1 sm:px-2 sm:py-1.5">
-                          <Sparkline
-                            data={m.sparkline}
-                            width={52}
-                            height={18}
-                            color={m.color || "hsl(var(--primary))"}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>
