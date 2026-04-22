@@ -340,7 +340,7 @@ const RCCommandCenter = ({
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           onMouseEnter={() => setOrbHovered(true)}
           onMouseLeave={() => setOrbHovered(false)}
-          className="mb-6 flex flex-col items-center justify-center gap-4 text-center sm:flex-row sm:items-center sm:gap-5 sm:text-left"
+          className="mb-6 flex flex-col items-center justify-center gap-4 text-center"
         >
           <div className="cursor-pointer shrink-0">
             <HeroOrb isHovered={orbHovered} />
@@ -371,7 +371,7 @@ const RCCommandCenter = ({
               >
                 Root Cause
               </span>
-              <span className="ml-2 inline-block font-mono text-sm align-middle text-primary/80 sm:text-base">
+              <span className="mt-1 block font-mono text-sm text-primary/80 sm:text-base">
                 Agent
               </span>
             </motion.h2>
