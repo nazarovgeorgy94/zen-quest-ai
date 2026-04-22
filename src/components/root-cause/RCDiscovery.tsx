@@ -320,6 +320,10 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
     (i) => i.status !== "resolved" && discoveredIncidents.includes(i.id)
   );
 
+  const degradedCount = mockServices.filter((svc) => svc.status === "degraded").length;
+  const failedCount = mockServices.filter((svc) => svc.status === "down").length;
+  const currentService = phase === "scanning" && scannedIndex >= 0 ? mockServices[scannedIndex] : null;
+
   const progress = phase === "complete" ? 100 : Math.round(((scannedIndex + 1) / mockServices.length) * 100);
 
   const getStatusIcon = (svc: SystemService) => {
@@ -347,11 +351,17 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
               <h2 className="text-sm font-semibold text-foreground">
                 {phase === "scanning" ? "Глубокое сканирование..." : "Сканирование завершено"}
               </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {phase === "scanning"
-                  ? `${scannedIndex + 1} из ${mockServices.length} сервисов`
-                  : `${activeIncidents.length} инцидентов обнаружено`}
-              </p>
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                <span>
+                  {phase === "scanning"
+                    ? `${scannedIndex + 1} из ${mockServices.length} сервисов`
+                    : `${activeIncidents.length} инцидентов обнаружено`}
+                </span>
+                <span className="hidden sm:inline text-border">•</span>
+                <span>Degraded {degradedCount}</span>
+                <span className="hidden sm:inline text-border">•</span>
+                <span>Down {failedCount}</span>
+              </div>
             </div>
           </div>
           <button onClick={onCancel}
@@ -365,24 +375,38 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
         {/* Radar + Services */}
         <div className="px-6 pt-6 pb-4 shrink-0">
           <div className="flex gap-6 items-start">
-            <div className="shrink-0">
-              <ScanRadar services={mockServices} scannedIndex={scannedIndex} phase={phase} />
+            <div className="shrink-0 relative overflow-hidden rounded-2xl border border-border/40 bg-surface-1/55 px-5 py-4">
+              <div className="absolute inset-0 opacity-70 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.10),transparent_68%)]" />
+              <div className="absolute inset-x-6 top-3 flex items-center justify-between text-[9px] uppercase tracking-[0.18em] text-muted-foreground/80">
+                <span>Threat Mesh</span>
+                <span>{phase === "scanning" ? "Live Sweep" : "Locked"}</span>
+              </div>
+              <div className="relative mt-4">
+                <ScanRadar services={mockServices} scannedIndex={scannedIndex} phase={phase} />
+              </div>
             </div>
 
             {/* Services list */}
-            <div className="flex-1 min-w-0 space-y-1 max-h-[220px] overflow-y-auto pr-1">
+            <div className="flex-1 min-w-0 rounded-2xl border border-border/40 bg-surface-1/45 p-2 max-h-[260px] overflow-y-auto pr-1">
               {mockServices.map((svc, i) => {
                 const isScanned = i <= scannedIndex;
                 const isActive = i === scannedIndex && phase === "scanning";
+                const hasIncident = Boolean(svc.incidentIds?.length);
                 return (
                   <motion.div key={svc.name}
                     initial={{ opacity: 0.25 }}
                     animate={{ opacity: isScanned ? 1 : 0.25 }}
                     transition={{ duration: 0.5 }}
                     className={cn(
-                      "flex items-center gap-2.5 px-3 py-1.5 rounded-md text-xs transition-colors duration-300",
-                      isActive && "bg-primary/5"
+                      "group relative mb-1 flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-xs transition-all duration-300",
+                      isActive && "border-primary/20 bg-primary/5 shadow-[0_0_0_1px_hsl(var(--primary)/0.08)]",
+                      isScanned && !isActive && "hover:border-border/50 hover:bg-surface-2/40"
                     )}>
+                    <div className={cn(
+                      "absolute left-0 top-1.5 bottom-1.5 w-px rounded-full opacity-0 transition-opacity duration-300",
+                      isActive && "opacity-100 bg-primary",
+                      hasIncident && isScanned && !isActive && "opacity-70 bg-destructive/70"
+                    )} />
                     {isScanned ? getStatusIcon(svc) : isActive ? (
                       <motion.div className="w-3.5 h-3.5 rounded-full border-2 border-primary border-t-transparent"
                         animate={{ rotate: 360 }}
@@ -396,6 +420,11 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
                         ? svc.status !== "healthy" ? "text-foreground font-medium" : "text-foreground/70"
                         : "text-muted-foreground/50"
                     )}>{svc.displayName}</span>
+                    {hasIncident && isScanned && (
+                      <span className="rounded-full border border-border/40 bg-surface-2/60 px-1.5 py-0.5 text-[9px] font-mono text-foreground/70">
+                        {svc.incidentIds?.length} alert
+                      </span>
+                    )}
                     {isScanned && (
                       <span className="ml-auto text-[10px] font-mono text-muted-foreground">{svc.latency}</span>
                     )}
@@ -406,7 +435,7 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
           </div>
 
           {/* Progress bar */}
-          <div className="mt-4">
+          <div className="mt-4 rounded-xl border border-border/40 bg-surface-1/45 p-3">
             <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1.5">
               <span>Прогресс сканирования</span>
               <span className="font-mono">{progress}%</span>
@@ -417,6 +446,16 @@ const RCDiscovery = ({ onSelectIncident, onCancel, onScanComplete }: RCDiscovery
                 initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.5, ease: "easeOut" }} />
+            </div>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[10px] text-muted-foreground">
+              <span>
+                {currentService
+                  ? `Scanning: ${currentService.displayName}`
+                  : phase === "complete"
+                    ? "All services indexed"
+                    : "Initializing scan graph"}
+              </span>
+              <span className="font-mono text-foreground/70">{activeIncidents.length} active incidents</span>
             </div>
           </div>
         </div>
