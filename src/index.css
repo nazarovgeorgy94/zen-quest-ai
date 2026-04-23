@@ -7,75 +7,75 @@
 @layer base {
   :root {
     /* ═══════════════════════════════════════════════════════════
-       🎨 DARK THEME — Cosmic Mint
+       🎨 DARK THEME — Emerald Noir / Tech Premium
        ═══════════════════════════════════════════════════════════
-       Primary: #16FFBB → 156 100% 54%
-       Secondary: #29DDDA → 179 70% 51%
-       Background: #0A081B → 247 53% 7%
+       Primary: глубокий emerald
+       Secondary: chrome teal
+       Background: cold onyx
        ═══════════════════════════════════════════════════════════ */
 
-    /* ── Основные поверхности (повышенный контраст для офисных IPS) ── */
-    --background: 220 14% 9%;        /* #14171C — оникс с дыханием, не проваливается в чёрный */
-    --foreground: 210 16% 96%;       /* #F0F3F7 — почти-белый, чёткий на любом мониторе */
+    /* ── Основные поверхности (глубже, чище, премиальнее) ── */
+    --background: 210 22% 7%;        /* холодный onyx */
+    --foreground: 210 22% 96%;       /* чистый soft white */
 
-    --card: 220 13% 13%;             /* #1C2026 — заметно отличается от bg */
+    --card: 210 18% 11%;             /* плотная графитовая плоскость */
     --card-foreground: 210 16% 96%;
 
-    --popover: 220 13% 14%;
+    --popover: 210 18% 12%;
     --popover-foreground: 210 16% 96%;
 
     /* ── Акцентные цвета ── */
-    --primary: 156 100% 54%;         /* #16FFBB — электрический минт */
-    --primary-foreground: 220 14% 9%;
+    --primary: 156 68% 47%;          /* премиальный emerald вместо кислотного mint */
+    --primary-foreground: 210 24% 8%;
 
-    --accent: 179 75% 55%;           /* #29DDDA — яркий циан, чуть ярче для контраста */
+    --accent: 186 62% 58%;           /* chrome cyan / liquid teal */
     --accent-foreground: 210 16% 96%;
 
-    --secondary: 220 12% 16%;        /* Нейтральный вторичный */
-    --secondary-foreground: 215 12% 82%;
+    --secondary: 210 15% 16%;
+    --secondary-foreground: 210 18% 84%;
 
-    --muted: 220 11% 19%;            /* Приглушённые элементы */
-    --muted-foreground: 215 12% 65%;  /* WCAG AA: 5.2:1 на bg */
+    --muted: 210 14% 18%;
+    --muted-foreground: 210 12% 66%;
 
     --destructive: 0 75% 60%;
     --destructive-foreground: 0 0% 98%;
 
     /* ── Границы и формы (видны на любом мониторе) ── */
-    --border: 220 10% 22%;            /* было 15% → 22% — заметно на IPS */
-    --border-strong: 220 10% 30%;     /* для важных разделителей */
-    --input: 220 10% 24%;
-    --ring: 156 100% 54%;
+    --border: 210 18% 22%;
+    --border-strong: 186 24% 34%;
+    --input: 210 16% 24%;
+    --ring: 156 68% 47%;
     --radius: 0.75rem;
 
     /* ── Цветовые "всплески" для эффектов ── */
-    --teal-accent: 179 70% 51%;
-    --cyan-pop: 190 80% 55%;
-    --emerald-glow: 156 100% 54%;
-    --emerald-dim: 160 50% 30%;
-    --emerald-subtle: 220 12% 12%;
+    --teal-accent: 170 52% 44%;
+    --cyan-pop: 190 70% 63%;
+    --emerald-glow: 156 74% 54%;
+    --emerald-dim: 160 42% 28%;
+    --emerald-subtle: 210 18% 10%;
 
     /* ── Severity semantic tokens ── */
     --warning: 45 93% 47%;
     --warning-foreground: 45 10% 10%;
-    --success: 156 100% 54%;
+    --success: 156 68% 47%;
     --success-foreground: 220 16% 6%;
-    --info: 210 60% 50%;
+    --info: 198 68% 58%;
     --info-foreground: 210 10% 95%;
 
     /* ── Extended primary shades ── */
-    --primary-hover: 156 100% 60%;
-    --primary-muted: 156 50% 30%;
-    --primary-subtle: 220 10% 13%;
+    --primary-hover: 156 72% 54%;
+    --primary-muted: 156 42% 30%;
+    --primary-subtle: 210 18% 12%;
 
-    /* ── Многослойные поверхности (Elevation) — заметные ступени ── */
-    --surface-0: 220 14% 9%;          /* = background */
-    --surface-1: 220 13% 13%;         /* карточки (+4%) */
-    --surface-2: 220 12% 17%;         /* приподнятый (+4%) */
-    --surface-3: 220 11% 22%;         /* поповеры (+5%) */
-    --surface-4: 220 10% 27%;         /* модалки (+5%) */
+    /* ── Многослойные поверхности (Elevation) — чище разделение глубины ── */
+    --surface-0: 210 22% 7%;
+    --surface-1: 210 18% 11%;
+    --surface-2: 210 17% 14%;
+    --surface-3: 210 15% 18%;
+    --surface-4: 210 14% 22%;
 
-    --surface: 220 13% 13%;
-    --surface-elevated: 220 12% 17%;
+    --surface: 210 18% 11%;
+    --surface-elevated: 210 17% 14%;
 
     /* ══════════════════════════════════════════════════════════
        🌈 GRADIENT TOKENS
@@ -84,57 +84,62 @@
     --gradient-primary: linear-gradient(
       135deg,
       hsl(var(--primary)) 0%,
+      hsl(var(--teal-accent)) 52%,
       hsl(var(--accent)) 100%
     );
 
     --gradient-surface: linear-gradient(
       145deg,
       hsl(var(--card)) 0%,
-      hsl(var(--surface-elevated)) 100%
+      hsl(var(--surface-elevated)) 58%,
+      hsl(var(--surface-3)) 100%
     );
 
     --gradient-hero: linear-gradient(
       135deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--teal-accent)) 40%,
+      hsl(var(--background)) 0%,
+      hsl(var(--primary) / 0.88) 36%,
+      hsl(var(--accent) / 0.92) 72%,
       hsl(var(--cyan-pop)) 100%
     );
 
     --gradient-glow: radial-gradient(
       circle,
-      hsl(var(--primary) / 0.4) 0%,
-      hsl(var(--teal-accent) / 0.1) 50%,
-      transparent 80%
+      hsl(var(--emerald-glow) / 0.3) 0%,
+      hsl(var(--accent) / 0.12) 38%,
+      hsl(var(--cyan-pop) / 0.08) 60%,
+      transparent 82%
     );
 
     --gradient-border: linear-gradient(
       135deg,
-      hsl(var(--primary) / 0.5) 0%,
-      hsl(var(--teal-accent) / 0.3) 50%,
-      hsl(var(--cyan-pop) / 0.4) 100%
+      hsl(var(--primary) / 0.52) 0%,
+      hsl(var(--teal-accent) / 0.24) 34%,
+      hsl(var(--accent) / 0.34) 68%,
+      hsl(var(--cyan-pop) / 0.42) 100%
     );
 
     /* ══════════════════════════════════════════════════════════
        🔲 SHADOW TOKENS
        ══════════════════════════════════════════════════════════ */
 
-    --shadow-sm: 0 2px 8px -2px hsl(var(--background) / 0.5);
-    --shadow-md: 0 8px 24px -8px hsl(var(--background) / 0.6);
-    --shadow-lg: 0 16px 48px -12px hsl(var(--background) / 0.7);
-    --shadow-glow: 0 0 20px -5px hsl(var(--primary) / 0.3);
+    --shadow-sm: 0 4px 14px -6px hsl(210 26% 3% / 0.42);
+    --shadow-md: 0 16px 36px -14px hsl(210 30% 2% / 0.58);
+    --shadow-lg: 0 28px 72px -24px hsl(210 32% 2% / 0.72);
+    --shadow-glow: 0 0 28px -8px hsl(var(--emerald-glow) / 0.24);
     --shadow-critical: 0 4px 20px -4px hsl(0 68% 52% / 0.25);
     --shadow-warning: 0 4px 20px -4px hsl(45 93% 47% / 0.2);
     --shadow-info: 0 4px 20px -4px hsl(210 60% 50% / 0.2);
 
     /* ── Sidebar (повышенный контраст) ── */
-    --sidebar-background: 220 16% 7%;       /* чуть темнее bg для разделения */
-    --sidebar-foreground: 215 12% 75%;      /* было 65% → 75% — читаемо на IPS */
-    --sidebar-primary: 156 100% 54%;
-    --sidebar-primary-foreground: 220 14% 9%;
-    --sidebar-accent: 220 13% 14%;
+    --sidebar-background: 210 24% 6%;
+    --sidebar-foreground: 210 14% 76%;
+    --sidebar-primary: 156 68% 47%;
+    --sidebar-primary-foreground: 210 24% 8%;
+    --sidebar-accent: 210 18% 12%;
     --sidebar-accent-foreground: 210 16% 92%;
-    --sidebar-border: 220 10% 18%;
-    --sidebar-ring: 156 100% 54%;
+    --sidebar-border: 210 18% 16%;
+    --sidebar-ring: 156 68% 47%;
   }
 
   .light {
@@ -144,83 +149,83 @@
        Градиенты наследуют переменные — менять только цвета выше.
        ═══════════════════════════════════════════════════════════ */
 
-    --background: 148 25% 96%;
-    --foreground: 160 25% 10%;
+    --background: 156 18% 96%;
+    --foreground: 205 24% 12%;
 
-    --card: 150 15% 99%;
-    --card-foreground: 160 25% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 205 24% 12%;
 
-    --popover: 150 15% 99%;
-    --popover-foreground: 160 25% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 205 24% 12%;
 
-    --primary: 158 72% 35%;
+    --primary: 156 58% 34%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 155 18% 91%;
-    --secondary-foreground: 160 20% 25%;
+    --secondary: 190 20% 91%;
+    --secondary-foreground: 205 20% 24%;
 
-    --muted: 155 14% 93%;
-    --muted-foreground: 160 12% 40%;
+    --muted: 180 16% 93%;
+    --muted-foreground: 205 12% 42%;
 
-    --accent: 175 60% 35%;
+    --accent: 188 48% 42%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 68% 48%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 155 20% 86%;
-    --input: 155 20% 86%;
-    --ring: 158 72% 35%;
+    --border: 185 18% 84%;
+    --input: 185 18% 84%;
+    --ring: 156 58% 34%;
 
     /* Многослойные поверхности (light) */
-    --surface-0: 148 25% 96%;
-    --surface-1: 150 15% 99%;
-    --surface-2: 150 14% 95%;
-    --surface-3: 152 12% 92%;
-    --surface-4: 154 10% 89%;
+    --surface-0: 156 18% 96%;
+    --surface-1: 0 0% 100%;
+    --surface-2: 186 20% 95%;
+    --surface-3: 190 16% 92%;
+    --surface-4: 194 14% 88%;
 
-    --surface: 150 14% 95%;
-    --surface-elevated: 150 15% 99%;
-    --emerald-glow: 158 72% 35%;
-    --emerald-dim: 160 35% 55%;
-    --emerald-subtle: 155 25% 85%;
-    --teal-accent: 175 60% 35%;
-    --cyan-pop: 185 65% 40%;
+    --surface: 186 20% 95%;
+    --surface-elevated: 0 0% 100%;
+    --emerald-glow: 156 58% 34%;
+    --emerald-dim: 160 30% 56%;
+    --emerald-subtle: 160 24% 86%;
+    --teal-accent: 172 42% 38%;
+    --cyan-pop: 192 56% 48%;
 
     --warning: 45 90% 42%;
     --warning-foreground: 45 10% 10%;
-    --success: 158 72% 35%;
+    --success: 156 58% 34%;
     --success-foreground: 160 20% 5%;
-    --info: 210 55% 45%;
+    --info: 198 52% 46%;
     --info-foreground: 210 10% 95%;
-    --primary-hover: 158 72% 40%;
-    --primary-muted: 158 35% 50%;
-    --primary-subtle: 155 20% 80%;
+    --primary-hover: 156 60% 38%;
+    --primary-muted: 156 32% 54%;
+    --primary-subtle: 160 24% 84%;
 
     --shadow-critical: 0 4px 20px -4px hsl(0 68% 48% / 0.15);
     --shadow-warning: 0 4px 20px -4px hsl(45 90% 42% / 0.15);
     --shadow-info: 0 4px 20px -4px hsl(210 55% 45% / 0.15);
 
     /* Градиенты — формулы те же, цвета берутся из токенов выше */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
-    --gradient-surface: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--surface)) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--teal-accent)) 40%, hsl(var(--cyan-pop)) 100%);
-    --gradient-glow: radial-gradient(circle, hsl(var(--primary) / 0.2) 0%, hsl(var(--teal-accent) / 0.05) 50%, transparent 80%);
-    --gradient-border: linear-gradient(135deg, hsl(var(--primary) / 0.3) 0%, hsl(var(--teal-accent) / 0.15) 50%, hsl(var(--cyan-pop) / 0.2) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--teal-accent)) 52%, hsl(var(--accent)) 100%);
+    --gradient-surface: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--surface)) 60%, hsl(var(--surface-3)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--primary) / 0.82) 36%, hsl(var(--accent) / 0.9) 72%, hsl(var(--cyan-pop)) 100%);
+    --gradient-glow: radial-gradient(circle, hsl(var(--primary) / 0.18) 0%, hsl(var(--accent) / 0.08) 42%, hsl(var(--cyan-pop) / 0.05) 62%, transparent 84%);
+    --gradient-border: linear-gradient(135deg, hsl(var(--primary) / 0.26) 0%, hsl(var(--teal-accent) / 0.14) 34%, hsl(var(--accent) / 0.18) 68%, hsl(var(--cyan-pop) / 0.2) 100%);
 
     --shadow-sm: 0 2px 8px -2px hsl(var(--foreground) / 0.06);
     --shadow-md: 0 8px 24px -8px hsl(var(--foreground) / 0.08);
     --shadow-lg: 0 16px 48px -12px hsl(var(--foreground) / 0.1);
-    --shadow-glow: 0 0 20px -5px hsl(var(--primary) / 0.15);
+    --shadow-glow: 0 0 24px -8px hsl(var(--primary) / 0.14);
 
-    --sidebar-background: 150 18% 94%;
-    --sidebar-foreground: 160 12% 35%;
-    --sidebar-primary: 158 72% 35%;
+    --sidebar-background: 180 16% 95%;
+    --sidebar-foreground: 205 12% 34%;
+    --sidebar-primary: 156 58% 34%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 155 18% 91%;
-    --sidebar-accent-foreground: 160 20% 20%;
-    --sidebar-border: 155 20% 86%;
-    --sidebar-ring: 158 72% 35%;
+    --sidebar-accent: 186 20% 91%;
+    --sidebar-accent-foreground: 205 20% 20%;
+    --sidebar-border: 185 18% 84%;
+    --sidebar-ring: 156 58% 34%;
   }
 }
 
