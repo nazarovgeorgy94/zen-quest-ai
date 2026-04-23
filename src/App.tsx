@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import AuthGate from "@/components/auth/AuthGate";
 import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index.tsx";
 import Embed from "./pages/Embed.tsx";
@@ -17,15 +18,17 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/embed" element={<Embed />} />
-            <Route path="/root-cause" element={<RootCause />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <AuthGate>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/embed" element={<Embed />} />
+              <Route path="/root-cause" element={<RootCause />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthGate>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
