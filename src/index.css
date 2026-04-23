@@ -7,75 +7,75 @@
 @layer base {
   :root {
     /* ═══════════════════════════════════════════════════════════
-       🎨 DARK THEME — Emerald Noir / Tech Premium
+       🎨 DARK THEME — Graphite Emerald / Cinematic Premium
        ═══════════════════════════════════════════════════════════
-       Primary: глубокий emerald
-       Secondary: chrome teal
-       Background: cold onyx
+       Primary: noble emerald
+       Secondary: chrome cyan
+       Background: lifted graphite
        ═══════════════════════════════════════════════════════════ */
 
-    /* ── Основные поверхности (глубже, чище, премиальнее) ── */
-    --background: 210 22% 7%;        /* холодный onyx */
-    --foreground: 210 22% 96%;       /* чистый soft white */
+    /* ── Основные поверхности (под обычные IPS/тусклые дисплеи) ── */
+    --background: 210 12% 11%;       /* lifted graphite вместо проваливающегося onyx */
+    --foreground: 210 18% 96%;       /* почти white без синего шума */
 
-    --card: 210 18% 11%;             /* плотная графитовая плоскость */
+    --card: 210 11% 16%;             /* плоскости читаются даже на слабом контрасте */
     --card-foreground: 210 16% 96%;
 
-    --popover: 210 18% 12%;
+    --popover: 210 11% 18%;
     --popover-foreground: 210 16% 96%;
 
     /* ── Акцентные цвета ── */
-    --primary: 156 68% 47%;          /* премиальный emerald вместо кислотного mint */
-    --primary-foreground: 210 24% 8%;
+    --primary: 156 23% 45%;          /* graphite emerald */
+    --primary-foreground: 210 22% 9%;
 
-    --accent: 186 62% 58%;           /* chrome cyan / liquid teal */
+    --accent: 191 47% 61%;           /* chrome cyan */
     --accent-foreground: 210 16% 96%;
 
-    --secondary: 210 15% 16%;
-    --secondary-foreground: 210 18% 84%;
+    --secondary: 210 10% 21%;
+    --secondary-foreground: 210 15% 86%;
 
-    --muted: 210 14% 18%;
-    --muted-foreground: 210 12% 66%;
+    --muted: 210 9% 22%;
+    --muted-foreground: 210 10% 72%;
 
     --destructive: 0 75% 60%;
     --destructive-foreground: 0 0% 98%;
 
     /* ── Границы и формы (видны на любом мониторе) ── */
-    --border: 210 18% 22%;
-    --border-strong: 186 24% 34%;
-    --input: 210 16% 24%;
-    --ring: 156 68% 47%;
+    --border: 210 10% 29%;
+    --border-strong: 191 24% 42%;
+    --input: 210 10% 26%;
+    --ring: 156 23% 45%;
     --radius: 0.75rem;
 
     /* ── Цветовые "всплески" для эффектов ── */
-    --teal-accent: 170 52% 44%;
-    --cyan-pop: 190 70% 63%;
-    --emerald-glow: 156 74% 54%;
-    --emerald-dim: 160 42% 28%;
-    --emerald-subtle: 210 18% 10%;
+    --teal-accent: 160 18% 38%;
+    --cyan-pop: 191 54% 68%;
+    --emerald-glow: 150 46% 66%;
+    --emerald-dim: 158 18% 31%;
+    --emerald-subtle: 210 10% 14%;
 
     /* ── Severity semantic tokens ── */
     --warning: 45 93% 47%;
     --warning-foreground: 45 10% 10%;
-    --success: 156 68% 47%;
+    --success: 156 23% 45%;
     --success-foreground: 220 16% 6%;
-    --info: 198 68% 58%;
+    --info: 191 47% 61%;
     --info-foreground: 210 10% 95%;
 
     /* ── Extended primary shades ── */
-    --primary-hover: 156 72% 54%;
-    --primary-muted: 156 42% 30%;
-    --primary-subtle: 210 18% 12%;
+    --primary-hover: 150 34% 56%;
+    --primary-muted: 158 16% 33%;
+    --primary-subtle: 210 10% 18%;
 
     /* ── Многослойные поверхности (Elevation) — чище разделение глубины ── */
-    --surface-0: 210 22% 7%;
-    --surface-1: 210 18% 11%;
-    --surface-2: 210 17% 14%;
-    --surface-3: 210 15% 18%;
-    --surface-4: 210 14% 22%;
+    --surface-0: 210 12% 11%;
+    --surface-1: 210 11% 16%;
+    --surface-2: 210 10% 20%;
+    --surface-3: 210 10% 24%;
+    --surface-4: 210 10% 29%;
 
-    --surface: 210 18% 11%;
-    --surface-elevated: 210 17% 14%;
+    --surface: 210 11% 16%;
+    --surface-elevated: 210 10% 20%;
 
     /* ══════════════════════════════════════════════════════════
        🌈 GRADIENT TOKENS
@@ -84,62 +84,62 @@
     --gradient-primary: linear-gradient(
       135deg,
       hsl(var(--primary)) 0%,
-      hsl(var(--teal-accent)) 52%,
+      hsl(var(--teal-accent)) 44%,
       hsl(var(--accent)) 100%
     );
 
     --gradient-surface: linear-gradient(
       145deg,
       hsl(var(--card)) 0%,
-      hsl(var(--surface-elevated)) 58%,
+      hsl(var(--surface-elevated)) 52%,
       hsl(var(--surface-3)) 100%
     );
 
     --gradient-hero: linear-gradient(
       135deg,
       hsl(var(--background)) 0%,
-      hsl(var(--primary) / 0.88) 36%,
-      hsl(var(--accent) / 0.92) 72%,
-      hsl(var(--cyan-pop)) 100%
+      hsl(var(--surface-2)) 22%,
+      hsl(var(--primary) / 0.88) 56%,
+      hsl(var(--accent) / 0.9) 100%
     );
 
     --gradient-glow: radial-gradient(
       circle,
-      hsl(var(--emerald-glow) / 0.3) 0%,
-      hsl(var(--accent) / 0.12) 38%,
-      hsl(var(--cyan-pop) / 0.08) 60%,
-      transparent 82%
+      hsl(var(--emerald-glow) / 0.28) 0%,
+      hsl(var(--accent) / 0.12) 40%,
+      hsl(var(--cyan-pop) / 0.1) 64%,
+      transparent 84%
     );
 
     --gradient-border: linear-gradient(
       135deg,
-      hsl(var(--primary) / 0.52) 0%,
-      hsl(var(--teal-accent) / 0.24) 34%,
-      hsl(var(--accent) / 0.34) 68%,
-      hsl(var(--cyan-pop) / 0.42) 100%
+      hsl(var(--primary) / 0.46) 0%,
+      hsl(var(--teal-accent) / 0.22) 34%,
+      hsl(var(--accent) / 0.32) 68%,
+      hsl(var(--cyan-pop) / 0.4) 100%
     );
 
     /* ══════════════════════════════════════════════════════════
        🔲 SHADOW TOKENS
        ══════════════════════════════════════════════════════════ */
 
-    --shadow-sm: 0 4px 14px -6px hsl(210 26% 3% / 0.42);
-    --shadow-md: 0 16px 36px -14px hsl(210 30% 2% / 0.58);
-    --shadow-lg: 0 28px 72px -24px hsl(210 32% 2% / 0.72);
-    --shadow-glow: 0 0 28px -8px hsl(var(--emerald-glow) / 0.24);
+    --shadow-sm: 0 4px 16px -6px hsl(210 22% 5% / 0.28);
+    --shadow-md: 0 18px 42px -16px hsl(210 24% 4% / 0.4);
+    --shadow-lg: 0 28px 80px -28px hsl(210 28% 3% / 0.54);
+    --shadow-glow: 0 0 30px -10px hsl(var(--emerald-glow) / 0.2);
     --shadow-critical: 0 4px 20px -4px hsl(0 68% 52% / 0.25);
     --shadow-warning: 0 4px 20px -4px hsl(45 93% 47% / 0.2);
     --shadow-info: 0 4px 20px -4px hsl(210 60% 50% / 0.2);
 
     /* ── Sidebar (повышенный контраст) ── */
-    --sidebar-background: 210 24% 6%;
-    --sidebar-foreground: 210 14% 76%;
-    --sidebar-primary: 156 68% 47%;
-    --sidebar-primary-foreground: 210 24% 8%;
-    --sidebar-accent: 210 18% 12%;
+    --sidebar-background: 210 13% 10%;
+    --sidebar-foreground: 210 11% 80%;
+    --sidebar-primary: 156 23% 45%;
+    --sidebar-primary-foreground: 210 22% 9%;
+    --sidebar-accent: 210 10% 17%;
     --sidebar-accent-foreground: 210 16% 92%;
-    --sidebar-border: 210 18% 16%;
-    --sidebar-ring: 156 68% 47%;
+    --sidebar-border: 210 10% 24%;
+    --sidebar-ring: 156 23% 45%;
   }
 
   .light {
@@ -149,83 +149,83 @@
        Градиенты наследуют переменные — менять только цвета выше.
        ═══════════════════════════════════════════════════════════ */
 
-    --background: 156 18% 96%;
-    --foreground: 205 24% 12%;
+    --background: 170 14% 95%;
+    --foreground: 210 16% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 205 24% 12%;
+    --card-foreground: 210 16% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 205 24% 12%;
+    --popover-foreground: 210 16% 14%;
 
-    --primary: 156 58% 34%;
+    --primary: 158 18% 40%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 190 20% 91%;
-    --secondary-foreground: 205 20% 24%;
+    --secondary: 190 18% 91%;
+    --secondary-foreground: 210 14% 24%;
 
-    --muted: 180 16% 93%;
-    --muted-foreground: 205 12% 42%;
+    --muted: 180 12% 92%;
+    --muted-foreground: 210 10% 42%;
 
-    --accent: 188 48% 42%;
+    --accent: 191 34% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 68% 48%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 185 18% 84%;
-    --input: 185 18% 84%;
-    --ring: 156 58% 34%;
+    --border: 190 12% 80%;
+    --input: 190 12% 80%;
+    --ring: 158 18% 40%;
 
     /* Многослойные поверхности (light) */
-    --surface-0: 156 18% 96%;
+    --surface-0: 170 14% 95%;
     --surface-1: 0 0% 100%;
-    --surface-2: 186 20% 95%;
-    --surface-3: 190 16% 92%;
-    --surface-4: 194 14% 88%;
+    --surface-2: 186 14% 94%;
+    --surface-3: 190 12% 90%;
+    --surface-4: 194 10% 86%;
 
-    --surface: 186 20% 95%;
+    --surface: 186 14% 94%;
     --surface-elevated: 0 0% 100%;
-    --emerald-glow: 156 58% 34%;
-    --emerald-dim: 160 30% 56%;
-    --emerald-subtle: 160 24% 86%;
-    --teal-accent: 172 42% 38%;
-    --cyan-pop: 192 56% 48%;
+    --emerald-glow: 158 32% 58%;
+    --emerald-dim: 158 18% 58%;
+    --emerald-subtle: 158 18% 86%;
+    --teal-accent: 160 18% 42%;
+    --cyan-pop: 191 38% 58%;
 
     --warning: 45 90% 42%;
     --warning-foreground: 45 10% 10%;
-    --success: 156 58% 34%;
+    --success: 158 18% 40%;
     --success-foreground: 160 20% 5%;
-    --info: 198 52% 46%;
+    --info: 191 34% 50%;
     --info-foreground: 210 10% 95%;
-    --primary-hover: 156 60% 38%;
-    --primary-muted: 156 32% 54%;
-    --primary-subtle: 160 24% 84%;
+    --primary-hover: 158 22% 46%;
+    --primary-muted: 158 18% 56%;
+    --primary-subtle: 160 16% 84%;
 
     --shadow-critical: 0 4px 20px -4px hsl(0 68% 48% / 0.15);
     --shadow-warning: 0 4px 20px -4px hsl(45 90% 42% / 0.15);
     --shadow-info: 0 4px 20px -4px hsl(210 55% 45% / 0.15);
 
     /* Градиенты — формулы те же, цвета берутся из токенов выше */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--teal-accent)) 52%, hsl(var(--accent)) 100%);
-    --gradient-surface: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--surface)) 60%, hsl(var(--surface-3)) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--primary) / 0.82) 36%, hsl(var(--accent) / 0.9) 72%, hsl(var(--cyan-pop)) 100%);
-    --gradient-glow: radial-gradient(circle, hsl(var(--primary) / 0.18) 0%, hsl(var(--accent) / 0.08) 42%, hsl(var(--cyan-pop) / 0.05) 62%, transparent 84%);
-    --gradient-border: linear-gradient(135deg, hsl(var(--primary) / 0.26) 0%, hsl(var(--teal-accent) / 0.14) 34%, hsl(var(--accent) / 0.18) 68%, hsl(var(--cyan-pop) / 0.2) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--teal-accent)) 44%, hsl(var(--accent)) 100%);
+    --gradient-surface: linear-gradient(145deg, hsl(var(--card)) 0%, hsl(var(--surface)) 55%, hsl(var(--surface-3)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--surface-2)) 24%, hsl(var(--primary) / 0.84) 58%, hsl(var(--accent) / 0.9) 100%);
+    --gradient-glow: radial-gradient(circle, hsl(var(--primary) / 0.16) 0%, hsl(var(--accent) / 0.08) 40%, hsl(var(--cyan-pop) / 0.06) 65%, transparent 85%);
+    --gradient-border: linear-gradient(135deg, hsl(var(--primary) / 0.22) 0%, hsl(var(--teal-accent) / 0.12) 34%, hsl(var(--accent) / 0.18) 68%, hsl(var(--cyan-pop) / 0.2) 100%);
 
     --shadow-sm: 0 2px 8px -2px hsl(var(--foreground) / 0.06);
     --shadow-md: 0 8px 24px -8px hsl(var(--foreground) / 0.08);
     --shadow-lg: 0 16px 48px -12px hsl(var(--foreground) / 0.1);
-    --shadow-glow: 0 0 24px -8px hsl(var(--primary) / 0.14);
+    --shadow-glow: 0 0 24px -8px hsl(var(--primary) / 0.12);
 
-    --sidebar-background: 180 16% 95%;
-    --sidebar-foreground: 205 12% 34%;
-    --sidebar-primary: 156 58% 34%;
+    --sidebar-background: 180 12% 94%;
+    --sidebar-foreground: 210 10% 34%;
+    --sidebar-primary: 158 18% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 186 20% 91%;
-    --sidebar-accent-foreground: 205 20% 20%;
-    --sidebar-border: 185 18% 84%;
-    --sidebar-ring: 156 58% 34%;
+    --sidebar-accent: 186 14% 90%;
+    --sidebar-accent-foreground: 210 18% 20%;
+    --sidebar-border: 190 12% 80%;
+    --sidebar-ring: 158 18% 40%;
   }
 }
 
@@ -260,12 +260,12 @@
   @media (prefers-contrast: more) {
     :root {
       --foreground: 0 0% 100%;
-      --muted-foreground: 215 15% 78%;
-      --border: 220 10% 32%;
-      --border-strong: 220 10% 42%;
-      --surface-1: 220 13% 16%;
-      --surface-2: 220 12% 20%;
-      --surface-3: 220 11% 25%;
+      --muted-foreground: 210 10% 82%;
+      --border: 210 10% 36%;
+      --border-strong: 191 28% 48%;
+      --surface-1: 210 11% 18%;
+      --surface-2: 210 10% 23%;
+      --surface-3: 210 10% 28%;
     }
   }
 
