@@ -418,49 +418,7 @@ const RCCommandCenter = ({
             </div>
           </motion.button>
 
-          {/* Enter Incident ID */}
-          <motion.div variants={fadeUp}
-            className="w-full rounded-xl bg-surface-1/40 backdrop-blur-sm border border-border/15 hover:border-border/30 transition-all duration-200 overflow-hidden"
-          >
-            {showInput ? (
-              <div className="flex items-center gap-2 px-4 py-3">
-                <Hash className="w-4 h-4 text-primary/60 shrink-0" />
-                <input ref={inputRef} value={incidentInput}
-                  onChange={(e) => { setIncidentInput(e.target.value.toUpperCase()); setInputError(""); }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSubmitId();
-                    if (e.key === "Escape") { setShowInput(false); setIncidentInput(""); setInputError(""); }
-                  }}
-                  placeholder="INC-XXXX"
-                  className="flex-1 bg-transparent text-sm text-foreground font-mono placeholder:text-muted-foreground/50 outline-none"
-                />
-                <button onClick={handleSubmitId} disabled={!incidentInput.trim()}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-primary-foreground disabled:opacity-30 transition-all"
-                  style={{
-                    background: incidentInput.trim()
-                      ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))"
-                      : "hsl(var(--border))",
-                  }}>
-                  Найти
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowInput(true)}
-                className="group w-full flex items-center gap-4 px-5 py-3.5 text-left"
-              >
-                <div className="w-9 h-9 rounded-lg bg-surface-2/60 flex items-center justify-center shrink-0 group-hover:bg-surface-2 transition-colors duration-200">
-                  <Hash className="w-4.5 h-4.5 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">Ввести ID инцидента</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">Прямой переход по номеру INC-XXXX</p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-foreground/60 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
-              </button>
-            )}
-            {inputError && <p className="text-xs text-destructive px-5 pb-2">{inputError}</p>}
-          </motion.div>
+          {/* (Enter ID card removed — global search ⌘K covers ID + free-form queries) */}
 
           {/* Browse */}
           <motion.button variants={fadeUp}
