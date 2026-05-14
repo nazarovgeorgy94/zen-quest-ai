@@ -27,6 +27,8 @@ export interface DiagnosisStep {
   label: string;
   detail: string;
   duration: number;
+  reasoning?: string;
+  summary?: string;
 }
 
 export interface Hypothesis {
