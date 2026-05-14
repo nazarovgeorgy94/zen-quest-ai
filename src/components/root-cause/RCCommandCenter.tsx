@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { Radar, Hash, ArrowRight, Search, AlertTriangle, Clock, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Radar, ArrowRight, Search, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mockIncidents, getSeverityColor, getRelativeTime } from "@/lib/mockIncidents";
 
