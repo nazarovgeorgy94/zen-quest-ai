@@ -73,18 +73,28 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
           )}
         </div>
 
-        {/* Vertical timeline — fluid heights */}
+        {/* Vertical timeline — fluid heights, progressive reveal */}
         <div className="relative ml-1">
           <div className="space-y-1.5">
+            <AnimatePresence initial={false}>
             {steps.map((step, i) => {
               const isActive = isDiagnosing && currentStep === i;
               const isDone = !isDiagnosing || (isDiagnosing && currentStep > i);
               const isReached = isActive || isDone;
+              // Progressive reveal: only render steps that have been reached
+              if (isDiagnosing && i > currentStep) return null;
               const isOpen = !!expanded[i] && isReached;
               const isLast = i === steps.length - 1;
 
               return (
-                <div key={i} className="relative">
+                <motion.div
+                  key={i}
+                  layout
+                  initial={{ opacity: 0, y: -6, filter: "blur(6px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative"
+                >
                   {/* Connector line to next node */}
                   {!isLast && (
                     <div
