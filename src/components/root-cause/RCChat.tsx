@@ -78,43 +78,11 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     return () => el.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
-  // Auto-follow growing content with smooth lerp scroll while user is at bottom
+  // Auto-follow growing content (timeline substeps, streamed messages) while user is at bottom
   const isNearBottomRef = useRef(true);
-  const targetScrollRef = useRef<number | null>(null);
-  const rafRef = useRef<number | null>(null);
-
   useEffect(() => {
     isNearBottomRef.current = isNearBottom;
   }, [isNearBottom]);
-
-  const tickFollow = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el || targetScrollRef.current === null) {
-      rafRef.current = null;
-      return;
-    }
-    const target = targetScrollRef.current;
-    const current = el.scrollTop;
-    const diff = target - current;
-    if (Math.abs(diff) < 0.5) {
-      el.scrollTop = target;
-      targetScrollRef.current = null;
-      rafRef.current = null;
-      return;
-    }
-    // ease-out lerp — faster when far, gentle when close
-    el.scrollTop = current + diff * 0.18;
-    rafRef.current = requestAnimationFrame(tickFollow);
-  }, []);
-
-  const queueSmoothScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    targetScrollRef.current = el.scrollHeight;
-    if (rafRef.current === null) {
-      rafRef.current = requestAnimationFrame(tickFollow);
-    }
-  }, [tickFollow]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -122,14 +90,13 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     const inner = el.firstElementChild as HTMLElement | null;
     if (!inner) return;
     const ro = new ResizeObserver(() => {
-      if (isNearBottomRef.current) queueSmoothScroll();
+      if (isNearBottomRef.current) {
+        el.scrollTop = el.scrollHeight;
+      }
     });
     ro.observe(inner);
-    return () => {
-      ro.disconnect();
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    };
-  }, [queueSmoothScroll]);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     if (incident && incident.id !== prevIncidentRef.current) {
