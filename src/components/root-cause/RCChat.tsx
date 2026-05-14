@@ -263,7 +263,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
-    scrollToBottom();
+    forceScrollToBottom();
 
     setIsTyping(true);
     await new Promise((r) => setTimeout(r, 800 + Math.random() * 800));
@@ -295,7 +295,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, userMsg]);
-      scrollToBottom();
+      forceScrollToBottom();
       setIsTyping(true);
       setTimeout(async () => {
         setIsTyping(false);
