@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { MessageSquare, Network, BookOpen } from "lucide-react";
+import { MessageSquare, Network, BookOpen, Waves, GitBranch } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const MODES = [
   { path: "/root-cause", label: "Chat", icon: MessageSquare },
+  { path: "/root-cause/chat-1", label: "Stream", icon: Waves },
+  { path: "/root-cause/chat-2", label: "Threads", icon: GitBranch },
   { path: "/root-cause/canvas", label: "Canvas", icon: Network },
   { path: "/root-cause/playbook", label: "Playbook", icon: BookOpen },
 ];
