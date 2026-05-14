@@ -8,6 +8,8 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index.tsx";
 import Embed from "./pages/Embed.tsx";
 import RootCause from "./pages/RootCause.tsx";
+import RootCauseCanvas from "./pages/RootCauseCanvas.tsx";
+import RootCausePlaybook from "./pages/RootCausePlaybook.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,8 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/embed" element={<Embed />} />
               <Route path="/root-cause" element={<RootCause />} />
+              <Route path="/root-cause/canvas" element={<RootCauseCanvas />} />
+              <Route path="/root-cause/playbook" element={<RootCausePlaybook />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
