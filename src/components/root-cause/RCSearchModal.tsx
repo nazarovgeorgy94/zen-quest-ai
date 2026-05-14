@@ -36,12 +36,23 @@ interface RCSearchModalProps {
   onCreateIncident?: (incident: Incident) => void;
 }
 
+type ReasoningSubstep = {
+  text: string;
+  /** delay before this substep starts streaming, ms */
+  delay: number;
+  /** chars per second when streaming */
+  speed?: number;
+  /** highlight as a key insight */
+  highlight?: boolean;
+};
+
 type ReasoningStep = {
   id: string;
   icon: React.ReactNode;
   label: string;
-  detail?: string;
+  /** total time the step is "active" before moving on */
   durationMs: number;
+  substeps: ReasoningSubstep[];
 };
 
 const RCSearchModal = ({
@@ -137,7 +148,7 @@ const RCSearchModal = ({
           onSelect(action.payload.id);
         }
         onClose();
-      }, 600);
+      }, 1400);
     },
     [onSelect, onCreateIncident, onClose]
   );
@@ -155,34 +166,87 @@ const RCSearchModal = ({
         entityChips.push(`${parsed.metricPercent}%`);
       if (parsed.service) entityChips.push(parsed.service);
 
+      const relevantCount = ranked.filter((r) => r.score > 0).length;
+      const inc = action.payload;
+
       const steps: ReasoningStep[] = [
         {
           id: "parse",
           icon: <Wand2 className="w-3.5 h-3.5" />,
           label: "Разбираю запрос",
-          detail: entityChips.length
-            ? `Извлечено: ${entityChips.join(" · ")}`
-            : "Анализирую естественный язык…",
-          durationMs: 420 + Math.random() * 280,
+          durationMs: 2200,
+          substeps: [
+            { text: "Токенизирую запрос на естественном языке…", delay: 0, speed: 55 },
+            {
+              text: parsed.id
+                ? `Найден идентификатор инцидента: ${parsed.id}`
+                : "Идентификатор не указан — буду искать по описанию",
+              delay: 600,
+              speed: 60,
+            },
+            ...(parsed.date || parsed.timeRange
+              ? [{
+                  text: `Временной контекст: ${[parsed.date, parsed.timeRange && `${parsed.timeRange.from}–${parsed.timeRange.to}`].filter(Boolean).join(", ")}`,
+                  delay: 1100,
+                  speed: 65,
+                }]
+              : []),
+            ...(parsed.metricPercent !== undefined
+              ? [{
+                  text: `Извлечена аномалия метрики: ${parsed.metricPercent}% — это в диапазоне ${parsed.metricPercent >= 1 ? "Critical" : parsed.metricPercent >= 0.5 ? "High" : "Medium"}`,
+                  delay: 1500,
+                  speed: 60,
+                  highlight: true,
+                }]
+              : []),
+            {
+              text: entityChips.length
+                ? `Готово: ${entityChips.length} сущностей распознано`
+                : "Семантическое представление построено",
+              delay: 1850,
+              speed: 70,
+            },
+          ],
         },
         {
           id: "search",
           icon: <Search className="w-3.5 h-3.5" />,
-          label: "Поиск по базе инцидентов",
-          detail: `Просмотрено ${incidents.length} записей, релевантных: ${
-            ranked.filter((r) => r.score > 0).length
-          }`,
-          durationMs: 520 + Math.random() * 380,
+          label: "Ищу совпадения в базе инцидентов",
+          durationMs: 2600,
+          substeps: [
+            { text: `Запрос к индексу: ${incidents.length} активных инцидентов…`, delay: 0, speed: 55 },
+            { text: "Сканирую по ID, сервису, ключевым словам…", delay: 700, speed: 50 },
+            { text: "Применяю BM25-ранжирование + временную близость…", delay: 1300, speed: 55 },
+            {
+              text:
+                relevantCount > 0
+                  ? `Релевантных результатов: ${relevantCount} (top-score ${ranked[0]?.score ?? 0})`
+                  : "Точных совпадений в базе не обнаружено",
+              delay: 2000,
+              speed: 65,
+              highlight: true,
+            },
+          ],
         },
         {
           id: "correlate",
           icon: <Brain className="w-3.5 h-3.5" />,
-          label: "Сопоставление с историческими паттернами",
-          detail:
-            action.kind === "create"
-              ? "Похожих кейсов не найдено — это новый инцидент"
-              : `Совпадение с ${action.payload.id} — ${action.payload.service}`,
-          durationMs: 640 + Math.random() * 360,
+          label: "Сопоставляю с историческими паттернами",
+          durationMs: 2800,
+          substeps: [
+            { text: "Поднимаю векторные эмбеддинги похожих инцидентов…", delay: 0, speed: 55 },
+            { text: "Кросс-сервисная корреляция: payments, gateway, db…", delay: 800, speed: 55 },
+            { text: "Проверяю окно последних деплоев и алертов…", delay: 1500, speed: 55 },
+            {
+              text:
+                action.kind === "create"
+                  ? `Уверенность: это новый, ранее не виденный паттерн`
+                  : `Совпадение: ${inc.id} · ${inc.service} · сходство паттерна высокое`,
+              delay: 2200,
+              speed: 60,
+              highlight: true,
+            },
+          ],
         },
         {
           id: "ready",
@@ -191,10 +255,19 @@ const RCSearchModal = ({
             action.kind === "create"
               ? "Готовлю виртуальный контекст для диагностики"
               : "Подгружаю контекст инцидента",
-          detail: action.kind === "create"
-            ? `Создан ${action.payload.id} · severity ${action.payload.severity}`
-            : "Метрики, логи, сервисная топология",
-          durationMs: 480 + Math.random() * 320,
+          durationMs: 1900,
+          substeps: [
+            {
+              text:
+                action.kind === "create"
+                  ? `Создаю виртуальный инцидент ${inc.id} (severity: ${inc.severity})`
+                  : `Загружаю метрики и логи для ${inc.id}…`,
+              delay: 0,
+              speed: 55,
+            },
+            { text: "Собираю топологию зависимых сервисов…", delay: 700, speed: 55 },
+            { text: "Готов запустить root-cause анализ", delay: 1350, speed: 70, highlight: true },
+          ],
         },
       ];
 
@@ -646,15 +719,12 @@ const ReasoningView = ({
                 >
                   {step.label}
                 </p>
-                {step.detail && (isActive || isDone) && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.15 }}
-                    className="text-[11px] text-muted-foreground mt-0.5"
-                  >
-                    {step.detail}
-                  </motion.p>
+                {(isActive || isDone) && step.substeps.length > 0 && (
+                  <SubstepsStream
+                    substeps={step.substeps}
+                    isActive={isActive}
+                    isDone={isDone}
+                  />
                 )}
               </div>
             </motion.div>
@@ -679,6 +749,79 @@ const ReasoningView = ({
         )}
       </AnimatePresence>
     </div>
+  );
+};
+
+const SubstepsStream = ({
+  substeps,
+  isActive,
+  isDone,
+}: {
+  substeps: ReasoningSubstep[];
+  isActive: boolean;
+  isDone: boolean;
+}) => {
+  // tick triggers re-render every 60ms while streaming so the typed text grows
+  const [tick, setTick] = useState(0);
+  const startedAtRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (startedAtRef.current === null) {
+      startedAtRef.current = performance.now();
+    }
+    if (isDone) return; // freeze updates after step is done
+    const id = setInterval(() => setTick((t) => t + 1), 55);
+    return () => clearInterval(id);
+  }, [isDone]);
+
+  const elapsed = isDone
+    ? Number.POSITIVE_INFINITY
+    : performance.now() - (startedAtRef.current ?? performance.now());
+
+  return (
+    <div className="mt-1.5 space-y-1">
+      {substeps.map((s, idx) => {
+        const localElapsed = elapsed - s.delay;
+        if (localElapsed < 0) return null;
+        const speed = s.speed ?? 60; // chars/sec
+        const charsToShow = isDone
+          ? s.text.length
+          : Math.min(s.text.length, Math.floor((localElapsed / 1000) * speed));
+        const visibleText = s.text.slice(0, charsToShow);
+        const fullyTyped = charsToShow >= s.text.length;
+        const isLastTyping = !fullyTyped && isActive;
+
+        return (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, x: -4 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-start gap-1.5"
+          >
+            <span
+              className={cn(
+                "mt-1 w-1 h-1 rounded-full shrink-0",
+                s.highlight ? "bg-primary" : "bg-muted-foreground/40"
+              )}
+            />
+            <p
+              className={cn(
+                "text-[11.5px] leading-relaxed font-mono tracking-tight",
+                s.highlight
+                  ? "text-foreground/90"
+                  : "text-muted-foreground"
+              )}
+            >
+              {visibleText}
+              {isLastTyping && (
+                <span className="inline-block w-[6px] h-[10px] ml-0.5 bg-primary/70 align-middle animate-pulse" />
+              )}
+            </p>
+          </motion.div>
+        );
+      })}
+              </div>
   );
 };
 
