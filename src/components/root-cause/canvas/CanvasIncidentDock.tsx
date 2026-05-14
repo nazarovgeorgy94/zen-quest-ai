@@ -1,8 +1,14 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, Plus, Search, Activity } from "lucide-react";
+import { ChevronLeft, Plus, Search, Activity, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Incident } from "@/lib/rootCauseData";
 import { getRelativeTime, getSeverityColor, getStatusLabel } from "@/lib/mockIncidents";
+
+interface OverviewAction {
+  label: string;
+  icon: LucideIcon;
+  onClick: () => void;
+}
 
 interface Props {
   incidents: Incident[];
@@ -11,11 +17,11 @@ interface Props {
   onSelect: (id: string) => void;
   onToggleCollapse: () => void;
   onOpenSearch: () => void;
-  onOpenConstellation: () => void;
+  overview?: OverviewAction;
 }
 
 export default function CanvasIncidentDock({
-  incidents, selectedId, collapsed, onSelect, onToggleCollapse, onOpenSearch, onOpenConstellation,
+  incidents, selectedId, collapsed, onSelect, onToggleCollapse, onOpenSearch, overview,
 }: Props) {
   const grouped = {
     active: incidents.filter((i) => i.status === "active"),
@@ -62,16 +68,18 @@ export default function CanvasIncidentDock({
             </>
           )}
         </button>
-        <button
-          onClick={onOpenConstellation}
-          className={cn(
-            "w-full flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 hover:bg-primary/15 px-2.5 py-2 text-xs text-primary transition-all",
-            collapsed && "justify-center px-0"
-          )}
-        >
-          <Activity className="w-3.5 h-3.5 shrink-0" />
-          {!collapsed && <span>Constellation</span>}
-        </button>
+        {overview && (
+          <button
+            onClick={overview.onClick}
+            className={cn(
+              "w-full flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 hover:bg-primary/15 px-2.5 py-2 text-xs text-primary transition-all",
+              collapsed && "justify-center px-0"
+            )}
+          >
+            <overview.icon className="w-3.5 h-3.5 shrink-0" />
+            {!collapsed && <span>{overview.label}</span>}
+          </button>
+        )}
       </div>
 
       {/* List */}

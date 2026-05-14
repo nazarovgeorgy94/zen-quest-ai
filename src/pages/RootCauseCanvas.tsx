@@ -233,7 +233,7 @@ export default function RootCauseCanvas() {
         onSelect={setSelectedId}
         onToggleCollapse={() => setDockCollapsed((c) => !c)}
         onOpenSearch={() => setSearchOpen(true)}
-        onOpenConstellation={() => setConstellationOpen(true)}
+        overview={{ label: "Constellation", icon: Activity, onClick: () => setConstellationOpen(true) }}
       />
 
       {/* Canvas viewport */}
