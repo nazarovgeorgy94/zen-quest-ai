@@ -5,6 +5,7 @@ import RCChat from "@/components/root-cause/RCChat";
 import RCCommandCenter from "@/components/root-cause/RCCommandCenter";
 import RCDiscovery from "@/components/root-cause/RCDiscovery";
 import RCSearchModal from "@/components/root-cause/RCSearchModal";
+import RCModeSwitcher from "@/components/root-cause/RCModeSwitcher";
 import { mockIncidents } from "@/lib/mockIncidents";
 import type { Incident } from "@/lib/rootCauseData";
 
@@ -60,6 +61,7 @@ const RootCause = () => {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
+      <RCModeSwitcher />
       {/* Living background — статичные градиенты вместо blur+rotate (производительность) */}
       <div className="fixed inset-0 pointer-events-none z-0">
         {/* Noise texture */}
