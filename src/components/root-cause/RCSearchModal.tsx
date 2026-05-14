@@ -174,56 +174,48 @@ const RCSearchModal = ({
           id: "parse",
           icon: <Wand2 className="w-3.5 h-3.5" />,
           label: "Разбираю запрос",
-          durationMs: 2200,
+          durationMs: 1100,
           substeps: [
-            { text: "Токенизирую запрос на естественном языке…", delay: 0, speed: 55 },
+            { text: "Токенизирую запрос…", delay: 0, speed: 140 },
             {
               text: parsed.id
-                ? `Найден идентификатор инцидента: ${parsed.id}`
-                : "Идентификатор не указан — буду искать по описанию",
-              delay: 600,
-              speed: 60,
+                ? `Найден ID: ${parsed.id}`
+                : "ID не указан — ищу по описанию",
+              delay: 300,
+              speed: 140,
             },
-            ...(parsed.date || parsed.timeRange
-              ? [{
-                  text: `Временной контекст: ${[parsed.date, parsed.timeRange && `${parsed.timeRange.from}–${parsed.timeRange.to}`].filter(Boolean).join(", ")}`,
-                  delay: 1100,
-                  speed: 65,
-                }]
-              : []),
             ...(parsed.metricPercent !== undefined
               ? [{
-                  text: `Извлечена аномалия метрики: ${parsed.metricPercent}% — это в диапазоне ${parsed.metricPercent >= 1 ? "Critical" : parsed.metricPercent >= 0.5 ? "High" : "Medium"}`,
-                  delay: 1500,
-                  speed: 60,
+                  text: `Аномалия метрики: ${parsed.metricPercent}% → ${parsed.metricPercent >= 1 ? "Critical" : parsed.metricPercent >= 0.5 ? "High" : "Medium"}`,
+                  delay: 600,
+                  speed: 140,
                   highlight: true,
                 }]
               : []),
             {
               text: entityChips.length
-                ? `Готово: ${entityChips.length} сущностей распознано`
-                : "Семантическое представление построено",
-              delay: 1850,
-              speed: 70,
+                ? `${entityChips.length} сущностей распознано`
+                : "Семантический разбор готов",
+              delay: 900,
+              speed: 160,
             },
           ],
         },
         {
           id: "search",
           icon: <Search className="w-3.5 h-3.5" />,
-          label: "Ищу совпадения в базе инцидентов",
-          durationMs: 2600,
+          label: "Ищу совпадения в базе",
+          durationMs: 1300,
           substeps: [
-            { text: `Запрос к индексу: ${incidents.length} активных инцидентов…`, delay: 0, speed: 55 },
-            { text: "Сканирую по ID, сервису, ключевым словам…", delay: 700, speed: 50 },
-            { text: "Применяю BM25-ранжирование + временную близость…", delay: 1300, speed: 55 },
+            { text: `Запрос к индексу: ${incidents.length} инцидентов…`, delay: 0, speed: 140 },
+            { text: "BM25-ранжирование + временная близость…", delay: 450, speed: 140 },
             {
               text:
                 relevantCount > 0
-                  ? `Релевантных результатов: ${relevantCount} (top-score ${ranked[0]?.score ?? 0})`
-                  : "Точных совпадений в базе не обнаружено",
-              delay: 2000,
-              speed: 65,
+                  ? `Релевантных: ${relevantCount} (top-score ${ranked[0]?.score ?? 0})`
+                  : "Точных совпадений не найдено",
+              delay: 950,
+              speed: 160,
               highlight: true,
             },
           ],
@@ -231,19 +223,18 @@ const RCSearchModal = ({
         {
           id: "correlate",
           icon: <Brain className="w-3.5 h-3.5" />,
-          label: "Сопоставляю с историческими паттернами",
-          durationMs: 2800,
+          label: "Сопоставляю с паттернами",
+          durationMs: 1300,
           substeps: [
-            { text: "Поднимаю векторные эмбеддинги похожих инцидентов…", delay: 0, speed: 55 },
-            { text: "Кросс-сервисная корреляция: payments, gateway, db…", delay: 800, speed: 55 },
-            { text: "Проверяю окно последних деплоев и алертов…", delay: 1500, speed: 55 },
+            { text: "Кросс-сервисная корреляция…", delay: 0, speed: 140 },
+            { text: "Проверяю окно деплоев и алертов…", delay: 500, speed: 140 },
             {
               text:
                 action.kind === "create"
-                  ? `Уверенность: это новый, ранее не виденный паттерн`
-                  : `Совпадение: ${inc.id} · ${inc.service} · сходство паттерна высокое`,
-              delay: 2200,
-              speed: 60,
+                  ? `Это новый, ранее не виденный паттерн`
+                  : `Совпадение: ${inc.id} · ${inc.service}`,
+              delay: 950,
+              speed: 160,
               highlight: true,
             },
           ],
@@ -253,20 +244,19 @@ const RCSearchModal = ({
           icon: <Sparkles className="w-3.5 h-3.5" />,
           label:
             action.kind === "create"
-              ? "Готовлю виртуальный контекст для диагностики"
+              ? "Готовлю контекст диагностики"
               : "Подгружаю контекст инцидента",
-          durationMs: 1900,
+          durationMs: 900,
           substeps: [
             {
               text:
                 action.kind === "create"
-                  ? `Создаю виртуальный инцидент ${inc.id} (severity: ${inc.severity})`
-                  : `Загружаю метрики и логи для ${inc.id}…`,
+                  ? `Создан ${inc.id} (severity: ${inc.severity})`
+                  : `Загружаю метрики и логи ${inc.id}…`,
               delay: 0,
-              speed: 55,
+              speed: 160,
             },
-            { text: "Собираю топологию зависимых сервисов…", delay: 700, speed: 55 },
-            { text: "Готов запустить root-cause анализ", delay: 1350, speed: 70, highlight: true },
+            { text: "Готов к root-cause анализу", delay: 500, speed: 180, highlight: true },
           ],
         },
       ];
