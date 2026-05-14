@@ -6,6 +6,7 @@ import RCCommandCenter from "@/components/root-cause/RCCommandCenter";
 import RCDiscovery from "@/components/root-cause/RCDiscovery";
 import RCSearchModal from "@/components/root-cause/RCSearchModal";
 import { mockIncidents } from "@/lib/mockIncidents";
+import type { Incident } from "@/lib/rootCauseData";
 
 type AppMode = "empty" | "discovery" | "diagnosis";
 
@@ -15,9 +16,11 @@ const RootCause = () => {
   const [mode, setMode] = useState<AppMode>("empty");
   const [lastScanTime, setLastScanTime] = useState<Date | null>(null);
   const [scanComplete, setScanComplete] = useState(false);
+  const [extraIncidents, setExtraIncidents] = useState<Incident[]>([]);
 
+  const allIncidents = [...extraIncidents, ...mockIncidents];
   const selectedIncident =
-    mockIncidents.find((i) => i.id === selectedId) || null;
+    allIncidents.find((i) => i.id === selectedId) || null;
 
   useEffect(() => {
     if (selectedId) setMode("diagnosis");
