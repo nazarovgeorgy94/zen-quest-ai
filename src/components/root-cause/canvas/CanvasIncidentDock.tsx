@@ -68,16 +68,18 @@ export default function CanvasIncidentDock({
             </>
           )}
         </button>
-        <button
-          onClick={onOpenConstellation}
-          className={cn(
-            "w-full flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 hover:bg-primary/15 px-2.5 py-2 text-xs text-primary transition-all",
-            collapsed && "justify-center px-0"
-          )}
-        >
-          <Activity className="w-3.5 h-3.5 shrink-0" />
-          {!collapsed && <span>Constellation</span>}
-        </button>
+        {overview && (
+          <button
+            onClick={overview.onClick}
+            className={cn(
+              "w-full flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 hover:bg-primary/15 px-2.5 py-2 text-xs text-primary transition-all",
+              collapsed && "justify-center px-0"
+            )}
+          >
+            <overview.icon className="w-3.5 h-3.5 shrink-0" />
+            {!collapsed && <span>{overview.label}</span>}
+          </button>
+        )}
       </div>
 
       {/* List */}
