@@ -1,8 +1,14 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, Plus, Search, Activity } from "lucide-react";
+import { ChevronLeft, Plus, Search, Activity, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Incident } from "@/lib/rootCauseData";
 import { getRelativeTime, getSeverityColor, getStatusLabel } from "@/lib/mockIncidents";
+
+interface OverviewAction {
+  label: string;
+  icon: LucideIcon;
+  onClick: () => void;
+}
 
 interface Props {
   incidents: Incident[];
@@ -11,11 +17,11 @@ interface Props {
   onSelect: (id: string) => void;
   onToggleCollapse: () => void;
   onOpenSearch: () => void;
-  onOpenConstellation: () => void;
+  overview?: OverviewAction;
 }
 
 export default function CanvasIncidentDock({
-  incidents, selectedId, collapsed, onSelect, onToggleCollapse, onOpenSearch, onOpenConstellation,
+  incidents, selectedId, collapsed, onSelect, onToggleCollapse, onOpenSearch, overview,
 }: Props) {
   const grouped = {
     active: incidents.filter((i) => i.status === "active"),
