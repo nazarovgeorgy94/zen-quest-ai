@@ -78,6 +78,26 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
     return () => el.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
+  // Auto-follow growing content (timeline substeps, streamed messages) while user is at bottom
+  const isNearBottomRef = useRef(true);
+  useEffect(() => {
+    isNearBottomRef.current = isNearBottom;
+  }, [isNearBottom]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const inner = el.firstElementChild as HTMLElement | null;
+    if (!inner) return;
+    const ro = new ResizeObserver(() => {
+      if (isNearBottomRef.current) {
+        el.scrollTop = el.scrollHeight;
+      }
+    });
+    ro.observe(inner);
+    return () => ro.disconnect();
+  }, []);
+
   useEffect(() => {
     if (incident && incident.id !== prevIncidentRef.current) {
       prevIncidentRef.current = incident.id;
