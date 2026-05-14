@@ -752,4 +752,77 @@ const ReasoningView = ({
   );
 };
 
+const SubstepsStream = ({
+  substeps,
+  isActive,
+  isDone,
+}: {
+  substeps: ReasoningSubstep[];
+  isActive: boolean;
+  isDone: boolean;
+}) => {
+  // tick triggers re-render every 60ms while streaming so the typed text grows
+  const [tick, setTick] = useState(0);
+  const startedAtRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (startedAtRef.current === null) {
+      startedAtRef.current = performance.now();
+    }
+    if (isDone) return; // freeze updates after step is done
+    const id = setInterval(() => setTick((t) => t + 1), 55);
+    return () => clearInterval(id);
+  }, [isDone]);
+
+  const elapsed = isDone
+    ? Number.POSITIVE_INFINITY
+    : performance.now() - (startedAtRef.current ?? performance.now());
+
+  return (
+    <div className="mt-1.5 space-y-1">
+      {substeps.map((s, idx) => {
+        const localElapsed = elapsed - s.delay;
+        if (localElapsed < 0) return null;
+        const speed = s.speed ?? 60; // chars/sec
+        const charsToShow = isDone
+          ? s.text.length
+          : Math.min(s.text.length, Math.floor((localElapsed / 1000) * speed));
+        const visibleText = s.text.slice(0, charsToShow);
+        const fullyTyped = charsToShow >= s.text.length;
+        const isLastTyping = !fullyTyped && isActive;
+
+        return (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, x: -4 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-start gap-1.5"
+          >
+            <span
+              className={cn(
+                "mt-1 w-1 h-1 rounded-full shrink-0",
+                s.highlight ? "bg-primary" : "bg-muted-foreground/40"
+              )}
+            />
+            <p
+              className={cn(
+                "text-[11.5px] leading-relaxed font-mono tracking-tight",
+                s.highlight
+                  ? "text-foreground/90"
+                  : "text-muted-foreground"
+              )}
+            >
+              {visibleText}
+              {isLastTyping && (
+                <span className="inline-block w-[6px] h-[10px] ml-0.5 bg-primary/70 align-middle animate-pulse" />
+              )}
+            </p>
+          </motion.div>
+        );
+      })}
+              </div>
+  );
+};
+
 export default RCSearchModal;
