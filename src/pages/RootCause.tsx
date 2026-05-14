@@ -5,10 +5,15 @@ import RCChat from "@/components/root-cause/RCChat";
 import RCCommandCenter from "@/components/root-cause/RCCommandCenter";
 import RCDiscovery from "@/components/root-cause/RCDiscovery";
 import RCSearchModal from "@/components/root-cause/RCSearchModal";
+import RCAgentWorkspace from "@/components/root-cause/RCAgentWorkspace";
+import RCCausalCanvas from "@/components/root-cause/RCCausalCanvas";
 import { mockIncidents } from "@/lib/mockIncidents";
 import type { Incident } from "@/lib/rootCauseData";
+import { MessageSquare, Network, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type AppMode = "empty" | "discovery" | "diagnosis";
+type DiagnosisView = "chat" | "workspace" | "canvas";
 
 const RootCause = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -17,6 +22,7 @@ const RootCause = () => {
   const [lastScanTime, setLastScanTime] = useState<Date | null>(null);
   const [scanComplete, setScanComplete] = useState(false);
   const [extraIncidents, setExtraIncidents] = useState<Incident[]>([]);
+  const [diagnosisView, setDiagnosisView] = useState<DiagnosisView>("chat");
 
   const allIncidents = [...extraIncidents, ...mockIncidents];
   const selectedIncident =
@@ -139,13 +145,60 @@ const RootCause = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -30 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="flex-1"
+              className="flex-1 relative"
             >
-              <RCChat
-                incident={selectedIncident}
-                onStartScan={handleStartScan}
-                onSelectIncident={handleSelectIncident}
-              />
+              {/* View switcher */}
+              <div className="absolute top-2.5 right-3 z-30 flex items-center gap-1 rounded-full border border-border/50 bg-surface-1/80 backdrop-blur-md p-0.5 shadow-lg">
+                {([
+                  { id: "chat", icon: MessageSquare, label: "Chat" },
+                  { id: "workspace", icon: Sparkles, label: "Agents" },
+                  { id: "canvas", icon: Network, label: "Canvas" },
+                ] as const).map((v) => {
+                  const active = diagnosisView === v.id;
+                  const Icon = v.icon;
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => setDiagnosisView(v.id)}
+                      className={cn(
+                        "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all",
+                        active
+                          ? "bg-primary/20 text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                      title={v.label}
+                    >
+                      <Icon className="w-3 h-3" />
+                      <span className="hidden sm:inline">{v.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={diagnosisView}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-full"
+                >
+                  {diagnosisView === "chat" && (
+                    <RCChat
+                      incident={selectedIncident}
+                      onStartScan={handleStartScan}
+                      onSelectIncident={handleSelectIncident}
+                    />
+                  )}
+                  {diagnosisView === "workspace" && (
+                    <RCAgentWorkspace incident={selectedIncident} />
+                  )}
+                  {diagnosisView === "canvas" && (
+                    <RCCausalCanvas incident={selectedIncident} />
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>
