@@ -293,9 +293,10 @@ const RCSearchModal = ({
 
   const handleSelect = useCallback(
     (inc: Incident) => {
-      runReasoning({ kind: "select", payload: inc });
+      onSelect(inc.id);
+      onClose();
     },
-    [runReasoning]
+    [onSelect, onClose]
   );
 
   const handleCreate = useCallback(() => {
