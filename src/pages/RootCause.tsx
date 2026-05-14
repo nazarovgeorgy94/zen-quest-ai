@@ -5,10 +5,15 @@ import RCChat from "@/components/root-cause/RCChat";
 import RCCommandCenter from "@/components/root-cause/RCCommandCenter";
 import RCDiscovery from "@/components/root-cause/RCDiscovery";
 import RCSearchModal from "@/components/root-cause/RCSearchModal";
+import RCAgentWorkspace from "@/components/root-cause/RCAgentWorkspace";
+import RCCausalCanvas from "@/components/root-cause/RCCausalCanvas";
 import { mockIncidents } from "@/lib/mockIncidents";
 import type { Incident } from "@/lib/rootCauseData";
+import { MessageSquare, Network, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type AppMode = "empty" | "discovery" | "diagnosis";
+type DiagnosisView = "chat" | "workspace" | "canvas";
 
 const RootCause = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
