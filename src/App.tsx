@@ -10,6 +10,8 @@ import Embed from "./pages/Embed.tsx";
 import RootCause from "./pages/RootCause.tsx";
 import RootCauseCanvas from "./pages/RootCauseCanvas.tsx";
 import RootCausePlaybook from "./pages/RootCausePlaybook.tsx";
+import RootCauseChatStream from "./pages/RootCauseChatStream.tsx";
+import RootCauseChatThreads from "./pages/RootCauseChatThreads.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
               <Route path="/root-cause" element={<RootCause />} />
               <Route path="/root-cause/canvas" element={<RootCauseCanvas />} />
               <Route path="/root-cause/playbook" element={<RootCausePlaybook />} />
+              <Route path="/root-cause/chat-1" element={<RootCauseChatStream />} />
+              <Route path="/root-cause/chat-2" element={<RootCauseChatThreads />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
