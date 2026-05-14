@@ -358,7 +358,7 @@ const RCSidebar = ({
         <div className="px-1 pt-1 pb-2 flex items-center justify-between gap-2">
           <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
             <Activity className="w-3 h-3" />
-            Очередь расследования
+            Активные
           </p>
           <span className="text-[10px] font-mono text-muted-foreground/65">{filteredActive.length}</span>
         </div>

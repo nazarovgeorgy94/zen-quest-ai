@@ -105,7 +105,7 @@ export function buildVirtualIncident(q: ParsedQuery): Incident {
     title,
     description: q.raw,
     severity,
-    status: "investigating",
+    status: "active",
     service: q.service || "auto-detected",
     createdAt: new Date(),
     metrics: [
