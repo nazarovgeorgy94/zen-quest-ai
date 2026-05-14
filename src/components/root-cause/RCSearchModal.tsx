@@ -89,7 +89,7 @@ const RCSearchModal = ({
   }, [parsed.id, incidents]);
 
   const showCreateOption =
-    parsed.isRich && !exactIdMatch && (filtered[0]?.score ?? 0) < 30;
+    parsed.isRich && !exactIdMatch && (ranked[0]?.score ?? 0) < 30;
 
   useEffect(() => {
     if (open) {
