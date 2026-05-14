@@ -22,6 +22,7 @@ const RootCause = () => {
   const [lastScanTime, setLastScanTime] = useState<Date | null>(null);
   const [scanComplete, setScanComplete] = useState(false);
   const [extraIncidents, setExtraIncidents] = useState<Incident[]>([]);
+  const [diagnosisView, setDiagnosisView] = useState<DiagnosisView>("chat");
 
   const allIncidents = [...extraIncidents, ...mockIncidents];
   const selectedIncident =
