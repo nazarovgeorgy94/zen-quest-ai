@@ -237,9 +237,10 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </motion.div>
               );
             })}
+            </AnimatePresence>
           </div>
         </div>
       </div>
