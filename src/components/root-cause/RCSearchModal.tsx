@@ -36,12 +36,23 @@ interface RCSearchModalProps {
   onCreateIncident?: (incident: Incident) => void;
 }
 
+type ReasoningSubstep = {
+  text: string;
+  /** delay before this substep starts streaming, ms */
+  delay: number;
+  /** chars per second when streaming */
+  speed?: number;
+  /** highlight as a key insight */
+  highlight?: boolean;
+};
+
 type ReasoningStep = {
   id: string;
   icon: React.ReactNode;
   label: string;
-  detail?: string;
+  /** total time the step is "active" before moving on */
   durationMs: number;
+  substeps: ReasoningSubstep[];
 };
 
 const RCSearchModal = ({
