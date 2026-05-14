@@ -719,15 +719,12 @@ const ReasoningView = ({
                 >
                   {step.label}
                 </p>
-                {step.detail && (isActive || isDone) && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.15 }}
-                    className="text-[11px] text-muted-foreground mt-0.5"
-                  >
-                    {step.detail}
-                  </motion.p>
+                {(isActive || isDone) && step.substeps.length > 0 && (
+                  <SubstepsStream
+                    substeps={step.substeps}
+                    isActive={isActive}
+                    isDone={isDone}
+                  />
                 )}
               </div>
             </motion.div>
