@@ -98,13 +98,13 @@ const DiagnosisTimeline = ({ steps, currentStep, isDiagnosing }: DiagnosisTimeli
                   {/* Connector line to next node */}
                   {!isLast && (
                     <div
-                      className="absolute left-[9px] top-7 bottom-[-6px] w-px bg-border/30"
+                      className="absolute left-[17px] top-[26px] bottom-[-6px] w-px bg-border/30"
                       aria-hidden
                     />
                   )}
                   {!isLast && isDone && (
                     <motion.div
-                      className="absolute left-[9px] top-7 bottom-[-6px] w-px"
+                      className="absolute left-[17px] top-[26px] bottom-[-6px] w-px"
                       style={{
                         background:
                           "linear-gradient(180deg, hsl(var(--primary)), hsl(var(--accent)))",
