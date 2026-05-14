@@ -90,7 +90,7 @@ const RootCause = () => {
 
       <div className="relative z-10 flex w-full">
         <RCSidebar
-          incidents={mockIncidents}
+          incidents={allIncidents}
           selectedId={selectedId}
           onSelect={handleSelectIncident}
           onNewChat={handleNewChat}
@@ -154,8 +154,15 @@ const RootCause = () => {
       <RCSearchModal
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
-        incidents={mockIncidents}
+        incidents={allIncidents}
         onSelect={handleSelectIncident}
+        onCreateIncident={(inc) => {
+          setExtraIncidents((prev) =>
+            prev.find((p) => p.id === inc.id) ? prev : [inc, ...prev]
+          );
+          setSelectedId(inc.id);
+          setMode("diagnosis");
+        }}
       />
     </div>
   );
