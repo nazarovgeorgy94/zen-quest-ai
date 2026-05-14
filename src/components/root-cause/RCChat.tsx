@@ -62,35 +62,59 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
   const prevIncidentRef = useRef<string | null>(null);
   const streamingRef = useRef(false);
 
-  // Track scroll position
+  // Track scroll position + user intent. Once user scrolls up manually, auto-follow pauses
+  // until they return to the bottom themselves.
+  const isNearBottomRef = useRef(true);
+  const userScrolledUpRef = useRef(false);
+
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
     const threshold = 80;
     const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+    isNearBottomRef.current = atBottom;
     setIsNearBottom(atBottom);
+    if (atBottom) userScrolledUpRef.current = false;
   }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    el.addEventListener("scroll", handleScroll);
-    return () => el.removeEventListener("scroll", handleScroll);
+
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY < 0) userScrolledUpRef.current = true;
+    };
+    const onTouchStart = () => {
+      const atBottom =
+        el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+      if (!atBottom) userScrolledUpRef.current = true;
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (["ArrowUp", "PageUp", "Home"].includes(e.key)) {
+        userScrolledUpRef.current = true;
+      }
+    };
+
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    el.addEventListener("wheel", onWheel, { passive: true });
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      el.removeEventListener("scroll", handleScroll);
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [handleScroll]);
 
-  // Auto-follow growing content (timeline substeps, streamed messages) while user is at bottom
-  const isNearBottomRef = useRef(true);
-  useEffect(() => {
-    isNearBottomRef.current = isNearBottom;
-  }, [isNearBottom]);
-
+  // Auto-follow growing content while user hasn't scrolled up
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     const inner = el.firstElementChild as HTMLElement | null;
     if (!inner) return;
     const ro = new ResizeObserver(() => {
-      if (isNearBottomRef.current) {
+      if (isNearBottomRef.current && !userScrolledUpRef.current) {
         el.scrollTop = el.scrollHeight;
       }
     });
