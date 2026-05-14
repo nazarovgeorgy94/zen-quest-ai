@@ -293,28 +293,7 @@ const RCCommandCenter = ({
   onSelectIncident,
   onHighlightSidebar,
 }: RCCommandCenterProps) => {
-  const [incidentInput, setIncidentInput] = useState("");
-  const [showInput, setShowInput] = useState(false);
-  const [inputError, setInputError] = useState("");
   const [orbHovered, setOrbHovered] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (showInput) inputRef.current?.focus();
-  }, [showInput]);
-
-  const handleSubmitId = () => {
-    const id = incidentInput.trim().toUpperCase();
-    const found = mockIncidents.find((i) => i.id === id);
-    if (found) {
-      onSelectIncident(found.id);
-      setShowInput(false);
-      setIncidentInput("");
-      setInputError("");
-    } else {
-      setInputError(`Инцидент ${id} не найден`);
-    }
-  };
 
   return (
     <div className="flex-1 flex items-center justify-center h-screen relative overflow-hidden">
