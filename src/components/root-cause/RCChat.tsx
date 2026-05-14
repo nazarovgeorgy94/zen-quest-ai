@@ -154,6 +154,7 @@ const RCChat = ({ incident, onStartScan, onSelectIncident }: RCChatProps) => {
   }, [isNearBottom]);
 
   const forceScrollToBottom = useCallback(() => {
+    userScrolledUpRef.current = false;
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     setIsNearBottom(true);
   }, []);
