@@ -148,7 +148,7 @@ const RCSearchModal = ({
           onSelect(action.payload.id);
         }
         onClose();
-      }, 1400);
+      }, 400);
     },
     [onSelect, onCreateIncident, onClose]
   );
